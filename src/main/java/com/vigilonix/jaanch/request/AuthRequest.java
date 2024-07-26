@@ -1,6 +1,5 @@
 package com.vigilonix.jaanch.request;
 
-import com.dt.beyond.enums.SsoProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

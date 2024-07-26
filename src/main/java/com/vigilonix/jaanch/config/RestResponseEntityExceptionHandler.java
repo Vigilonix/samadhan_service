@@ -1,11 +1,13 @@
 package com.vigilonix.jaanch.config;
 
-import com.dt.beyond.enums.ValidationError;
-import com.dt.beyond.enums.ValidationErrorEnum;
-import com.dt.beyond.exception.AuthProviderException;
-import com.dt.beyond.exception.ValidationRuntimeException;
-import com.dt.beyond.pojo.CustomValidationError;
-import com.dt.beyond.service.AuditService;
+import com.vigilonix.jaanch.enums.ValidationError;
+import com.vigilonix.jaanch.enums.ValidationErrorEnum;
+import com.vigilonix.jaanch.exception.AuthProviderException;
+import com.vigilonix.jaanch.exception.ValidationRuntimeException;
+import com.vigilonix.jaanch.helper.AuthHelper;
+import com.vigilonix.jaanch.pojo.CustomValidationError;
+import com.vigilonix.jaanch.service.AuditService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

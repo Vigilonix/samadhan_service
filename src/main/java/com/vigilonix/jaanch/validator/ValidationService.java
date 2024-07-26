@@ -18,7 +18,7 @@ public interface ValidationService<T> {
                 .map(v -> v.validate(t))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        if (Collections.isNotEmpty(validatorResponse)) {
+        if (CollectionUtils.isNotEmpty(validatorResponse)) {
             throw new ValidationRuntimeException(validatorResponse);
         }
     }

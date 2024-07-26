@@ -1,18 +1,16 @@
 package com.vigilonix.jaanch.controller;
 
-import com.dt.beyond.pojo.LoginResponse;
-import com.dt.beyond.request.AuthRequest;
-import com.dt.beyond.request.OAuth2Response;
-import com.dt.beyond.request.RefreshTokenRequest;
-import com.dt.beyond.service.UserService;
+import com.vigilonix.jaanch.request.AuthRequest;
+import com.vigilonix.jaanch.request.LoginResponse;
+import com.vigilonix.jaanch.request.OAuth2Response;
+import com.vigilonix.jaanch.request.RefreshTokenRequest;
+import com.vigilonix.jaanch.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping(AuthController.OAUTH)

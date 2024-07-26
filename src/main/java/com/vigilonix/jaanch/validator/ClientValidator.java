@@ -1,11 +1,10 @@
 package com.vigilonix.jaanch.validator;
 
-import com.dt.beyond.enums.ValidationError;
-import com.dt.beyond.enums.ValidationErrorEnum;
-import com.dt.beyond.request.AuthRequest;
+import com.vigilonix.jaanch.enums.ValidationError;
+import com.vigilonix.jaanch.enums.ValidationErrorEnum;
+import com.vigilonix.jaanch.request.AuthRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
