@@ -1,9 +1,8 @@
 package com.vigilonix.jaanch.aop;
 
-import com.dt.beyond.config.AuthHelper;
-import com.dt.beyond.enums.ValidationErrorEnum;
-import com.dt.beyond.exception.ValidationRuntimeException;
-import com.google.common.collect.Sets;
+import com.vigilonix.jaanch.enums.ValidationErrorEnum;
+import com.vigilonix.jaanch.exception.ValidationRuntimeException;
+import com.vigilonix.jaanch.helper.AuthHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Set;
 
 @Slf4j
 @Aspect
@@ -31,7 +31,7 @@ public class AllowedAspect {
         Method method = methodSignature.getMethod();
         Allowed annotation = method.getAnnotation(Allowed.class);
 
-        if (Sets.newHashSet(annotation.roles()).contains(authHelper.getPrincipal().getRole())) {
+        if (Set.of(annotation.roles()).contains(authHelper.getPrincipal().getRole())) {
             return joinPoint.proceed();
         } else {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.UNAUTHORIZED_REQUEST));

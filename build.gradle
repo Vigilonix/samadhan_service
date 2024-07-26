@@ -14,17 +14,31 @@ repositories {
     maven { url 'https://repo.spring.io/milestone' }
     maven { url 'https://repo.spring.io/snapshot' }
 }
-
+configurations {
+    compile.exclude module: 'spring-boot-starter-tomcat'
+}
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter:3.3.2' // Latest Spring Boot version
+    implementation 'org.springframework.boot:spring-boot-starter:3.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-web:3.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-jetty:3.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.2'
-
-    // SLF4J and Logback with specific versions
-    implementation 'org.slf4j:slf4j-api:2.0.9' // Latest SLF4J version
-    implementation 'ch.qos.logback:logback-classic:1.4.12' // Latest Logback version
-
+    implementation 'org.hibernate:hibernate-core:6.5.2.Final'
+    implementation 'com.vladmihalcea:hibernate-types-52:2.21.1'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'ch.qos.logback:logback-classic:1.4.12'
+    implementation 'org.projectlombok:lombok:1.18.28'
+    implementation 'org.springframework.boot:spring-boot-starter-aop:3.3.2'
+    implementation 'org.aspectj:aspectjrt:1.9.22'
+    implementation 'org.aspectj:aspectjweaver:1.9.22'
+    implementation 'com.google.guava:guava:32.0.1-jre'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.2'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-collections4
+    implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.4'
+
+    annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    implementation 'com.zaxxer:HikariCP:5.0.2'
+    implementation 'org.postgresql:postgresql:42.6.0'
+    implementation 'org.springframework.security:spring-security-crypto:6.1.1'
 }
 
 test {
