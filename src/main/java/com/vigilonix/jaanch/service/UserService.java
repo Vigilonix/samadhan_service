@@ -92,14 +92,17 @@ public class UserService {
         userRequestValidationService.validate(userRequest);
         User user = User.builder()
                 .email(userRequest.getEmail())
+                .name(userRequest.getName())
                 .secret(StringUtils.isNotEmpty(userRequest.getPassword()) ? encoder.encode(userRequest.getPassword()) : null)
                 .username(userRequest.getUsername())
                 .createdOn(System.currentTimeMillis())
                 .modifiedOn(System.currentTimeMillis())
                 .lastLive(System.currentTimeMillis())
+                .rank(userRequest.getRank())
                 .state(State.ACTIVE)
                 .uuid(UUID.randomUUID())
                 .role(Role.NORMAL)
+                .phoneNumber(userRequest.getPhoneNumber())
                 .build();
         userRepository.save(user);
         return user;
@@ -183,7 +186,6 @@ public class UserService {
                 throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.EMPTY_USERNAME));
             }
             User user = signUp(userRequest);
-            user.setRole(Role.BOT);
             try {
                 userRepository.save(user);
             } catch (ConstraintViolationException e) {
