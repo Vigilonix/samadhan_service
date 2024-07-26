@@ -15,7 +15,8 @@ repositories {
     maven { url 'https://repo.spring.io/snapshot' }
 }
 configurations {
-//    compile.exclude module: 'spring-boot-starter-tomcat'
+    compile.exclude module: 'spring-boot-starter-tomcat'
+    compile.exclude module: 'commons-logging'
 }
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter:3.3.2'
@@ -23,8 +24,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jetty:3.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.2'
-    implementation 'org.hibernate:hibernate-core:6.5.2.Final'
-    implementation 'com.vladmihalcea:hibernate-types-52:2.21.1'
+//    implementation 'org.hibernate:hibernate-core:6.5.2.Final'
+//    implementation 'com.vladmihalcea:hibernate-types-52:2.21.1'
     implementation 'org.slf4j:slf4j-api:2.0.9'
     implementation 'ch.qos.logback:logback-classic:1.4.12'
     implementation 'org.projectlombok:lombok:1.18.28'
@@ -39,10 +40,16 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
     // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.1.0'
-    implementation 'org.postgresql:postgresql:42.6.0'
     implementation 'org.springframework.security:spring-security-crypto:6.1.1'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
-    implementation 'commons-validator:commons-validator:1.7'
+    implementation ('commons-validator:commons-validator:1.7') {
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+    implementation 'org.postgresql:postgresql:42.7.3'
+// https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-community-dialects
+//    implementation group: 'org.hibernate.orm', name: 'hibernate-community-dialects', version: '6.5.2.Final'
+
+
 }
 
 test {

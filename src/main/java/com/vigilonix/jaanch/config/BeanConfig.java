@@ -32,8 +32,8 @@ import java.util.concurrent.TimeUnit;
 
 @EnableTransactionManagement
 @Configuration
-@ComponentScan({"com.dt.beyond"})
-@EnableJpaRepositories(basePackages = "com.dt.beyond.dao")
+@ComponentScan({"com.vigilonix.jaanch"})
+@EnableJpaRepositories(basePackages = "com.vigilonix.jaanch.repository")
 public class BeanConfig {
 
 
