@@ -33,11 +33,15 @@ public class User {
     private UUID uuid;
     @Column
     private Long stateChangedOn;
+
+    @Enumerated(EnumType.STRING)
     @Column
     private Role role;
     @Column
+    @Enumerated(EnumType.STRING)
     private Rank rank;
     @Column
+    @Enumerated(EnumType.STRING)
     private State state;
     @Column
     private String deviceToken;

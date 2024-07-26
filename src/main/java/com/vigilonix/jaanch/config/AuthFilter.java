@@ -5,23 +5,18 @@ import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.model.OAuthToken;
 import com.vigilonix.jaanch.service.AuditService;
 import com.vigilonix.jaanch.service.TokenService;
-import io.micrometer.common.util.StringUtils;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
+import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.logging.Filter;
-import java.util.logging.LogRecord;
 
 @Component
 @Order(1)
@@ -39,6 +34,7 @@ public class AuthFilter implements Filter {
     private final TokenService tokenService;
     private final AuditService auditService;
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest) {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -66,10 +62,5 @@ public class AuthFilter implements Filter {
             return;
         }
         ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, objectMapper.writeValueAsString(Collections.singletonList(ValidationErrorEnum.INVALID_TOKEN)));
-    }
-
-    @Override
-    public boolean isLoggable(LogRecord logRecord) {
-        return false;
     }
 }
