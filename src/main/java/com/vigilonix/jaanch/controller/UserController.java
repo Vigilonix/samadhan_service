@@ -1,23 +1,16 @@
 package com.vigilonix.jaanch.controller;
 
-import com.dt.beyond.aop.LogPayload;
-import com.dt.beyond.config.AuthHelper;
-import com.dt.beyond.pojo.*;
-import com.dt.beyond.request.*;
-import com.dt.beyond.service.UserService;
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.helper.AuthHelper;
 import com.vigilonix.jaanch.request.OAuth2Response;
 import com.vigilonix.jaanch.request.UserRequest;
 import com.vigilonix.jaanch.request.UserResponse;
 import com.vigilonix.jaanch.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(UserController.V_1_USER)
@@ -43,15 +36,6 @@ public class UserController {
         userService.logout(authHelper.getPrincipal());
     }
 
-    @DeleteMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public FbGdprResponse deleteAccount() {
-        return userService.deleteAccount(authHelper.getPrincipal());
-    }
-
-    @PostMapping(path = "/state", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public FbGdprResponse changeState(@Valid @RequestBody UserStateChaneRequest userStateChaneRequest) {
-        return userService.changeState(userStateChaneRequest, authHelper.getPrincipal());
-    }
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserResponse getDetails() {
         return userService.getDetails(authHelper.getPrincipal());

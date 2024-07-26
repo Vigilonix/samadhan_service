@@ -1,15 +1,14 @@
 package com.vigilonix.jaanch.controller;
 
 import com.vigilonix.jaanch.request.AuthRequest;
-import com.vigilonix.jaanch.request.LoginResponse;
 import com.vigilonix.jaanch.request.OAuth2Response;
 import com.vigilonix.jaanch.request.RefreshTokenRequest;
 import com.vigilonix.jaanch.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,9 +21,8 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping(path = TOKEN, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OAuth2Response> login(@Valid @RequestBody AuthRequest athRequest) {
-        LoginResponse response = userService.login(athRequest);
-        return new ResponseEntity<>(response.getOAuth2Response(), HttpStatus.valueOf(response.getStatusCode()));
+    public OAuth2Response login(@Valid @RequestBody AuthRequest athRequest) {
+        return userService.login(athRequest);
     }
 
     @ResponseStatus(HttpStatus.OK)

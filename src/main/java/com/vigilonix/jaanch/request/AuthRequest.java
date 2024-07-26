@@ -2,9 +2,9 @@ package com.vigilonix.jaanch.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
 
 @AllArgsConstructor
 @Getter
@@ -29,10 +29,6 @@ public class AuthRequest {
     @NotEmpty(message = "client_id is missing")
     @JsonProperty("client_id")
     private String clientId;
-    @JsonProperty("sso_provider")
-    private SsoProvider ssoProvider;
-    @JsonProperty("sso_id")
-    private String ssoId;
     @JsonProperty("auth_token")
     private String authToken;
 }

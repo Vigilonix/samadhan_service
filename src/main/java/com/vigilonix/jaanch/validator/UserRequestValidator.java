@@ -30,13 +30,6 @@ public class UserRequestValidator implements Validator<List<ValidationError>, Us
         if (user.getName() != null && (user.getName().length() > 64 || StringUtils.countMatches(user.getName(), '\n') > 0)) {
             errors.add(ValidationErrorEnum.NAME_ATTRIBUTE_LENGTH_MORE_THAN_EXPECTED);
         }
-        if (user.getJobTitle() != null && (user.getJobTitle().length() > MAX_JOB_LENGTH || StringUtils.countMatches(user.getJobTitle(), '\n') > 0)) {
-            errors.add(ValidationErrorEnum.JOB_TITLE_SIZE_MORE);
-        }
-        if (user.getDescription() != null && (user.getDescription().length() > 512 || StringUtils.countMatches(user.getDescription(), '\n') > 10)) {
-            errors.add(ValidationErrorEnum.DESCRIPTION_SIZE_MORE);
-        }
-
         return errors;
     }
 

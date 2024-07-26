@@ -4,7 +4,7 @@ import com.vigilonix.jaanch.model.OAuthToken;
 import com.vigilonix.jaanch.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OAuthTokenDao extends JpaRepository<OAuthToken, String> {
+public interface OAuthTokenRepository extends JpaRepository<OAuthToken, String> {
     OAuthToken findByUserAndExpireTimeGreaterThan(User user, Long expireTime);
 
     OAuthToken findByToken(String token);

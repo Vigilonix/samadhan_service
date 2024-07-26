@@ -5,7 +5,7 @@ import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.exception.ValidationRuntimeException;
 import com.vigilonix.jaanch.model.OAuthToken;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.repository.OAuthTokenDao;
+import com.vigilonix.jaanch.repository.OAuthTokenRepository;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.RefreshTokenRequest;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Slf4j
 public class TokenService {
     public static final String FAILED_TO_FIND_TOKEN_FOR_REFRESH_TOKEN_REQUEST = "failed to find token for refreshToken request {}";
-    private final com.vigilonix.jaanch.repository.OAuthTokenDao OAuthTokenDao;
+    private final OAuthTokenRepository OAuthTokenRepository;
 
     public OAuthToken save(AuthRequest authRequest, User user) {
         OAuthToken oAuthToken = OAuthToken.builder()
@@ -36,25 +36,25 @@ public class TokenService {
                 .refreshToken(UUID.randomUUID().toString())
                 .token(UUID.randomUUID().toString())
                 .build();
-        OAuthTokenDao.deleteByUser(user);
-        OAuthTokenDao.save(oAuthToken);
+        OAuthTokenRepository.deleteByUser(user);
+        OAuthTokenRepository.save(oAuthToken);
         return oAuthToken;
     }
 
     public OAuthToken validateToken(String authToken) {
-        return OAuthTokenDao.findByTokenAndExpireTimeGreaterThan(authToken, System.currentTimeMillis());
+        return OAuthTokenRepository.findByTokenAndExpireTimeGreaterThan(authToken, System.currentTimeMillis());
     }
 
     public void deleteByUserId(User user) {
-        OAuthTokenDao.deleteByUser(user);
+        OAuthTokenRepository.deleteByUser(user);
     }
 
     public void removeStaleToken() {
-        OAuthTokenDao.deleteByExpireTime(System.currentTimeMillis() - Constant.TOKEN_EXPIRE_BUFFER);
+        OAuthTokenRepository.deleteByExpireTime(System.currentTimeMillis() - Constant.TOKEN_EXPIRE_BUFFER);
     }
 
     public OAuthToken refreshStaleToken(RefreshTokenRequest refreshTokenRequest) {
-        OAuthToken token = OAuthTokenDao.
+        OAuthToken token = OAuthTokenRepository.
                 findByTokenAndRefreshToken(refreshTokenRequest.getAuthToken(), refreshTokenRequest.getRefreshToken());
         if (token == null) {
             log.error(FAILED_TO_FIND_TOKEN_FOR_REFRESH_TOKEN_REQUEST, refreshTokenRequest);
@@ -71,8 +71,8 @@ public class TokenService {
                 .refreshToken(UUID.randomUUID().toString())
                 .token(token.getUser().getUuid().toString())
                 .build();
-        OAuthTokenDao.delete(token);
-        OAuthTokenDao.save(newToken);
+        OAuthTokenRepository.delete(token);
+        OAuthTokenRepository.save(newToken);
         return newToken;
     }
 }

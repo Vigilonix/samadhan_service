@@ -3,6 +3,7 @@ package com.vigilonix.jaanch.model;
 
 import com.vigilonix.jaanch.enums.Rank;
 import com.vigilonix.jaanch.enums.Role;
+import com.vigilonix.jaanch.enums.State;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
@@ -37,9 +38,19 @@ public class User {
     @Column
     private Rank rank;
     @Column
+    private State state;
+    @Column
     private String deviceToken;
     @Column
     private String secret;
     @Column
     private String phoneNumber;
+    @Column
+    private Long lastLive;
+    @Column
+    private Long lastLocationUpdateTimeInMillis;
+    @Column
+    private Double latitude;
+    @Column
+    private Double longitude;
 }
