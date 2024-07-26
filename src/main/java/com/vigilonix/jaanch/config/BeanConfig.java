@@ -125,9 +125,4 @@ public class BeanConfig {
     public ValidationService<AuthRequest> clientValidatorService(ClientValidator clientValidator) {
         return () -> Collections.singletonList(clientValidator);
     }
-
-    @Bean
-    public CloseableHttpClient getHttpClient() {
-        return HttpClients.createDefault();
-    }
 }

@@ -1,9 +1,5 @@
 package com.vigilonix.jaanch.request;
 
-import com.dt.beyond.enums.Country;
-import com.dt.beyond.enums.State;
-import com.dt.beyond.model.*;
-import com.dt.beyond.request.UserMediaResponse;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

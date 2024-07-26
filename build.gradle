@@ -41,7 +41,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.6.0'
     implementation 'org.springframework.security:spring-security-crypto:6.1.1'
     implementation 'org.apache.commons:commons-lang3:3.13.0'
-
+    implementation 'commons-validator:commons-validator:1.7'
 }
 
 test {
