@@ -16,7 +16,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter:3.3.2' // Latest Spring Boot version
+    implementation 'org.springframework.boot:spring-boot-starter-web:3.3.2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.2'
+
+    // SLF4J and Logback with specific versions
+    implementation 'org.slf4j:slf4j-api:2.0.9' // Latest SLF4J version
+    implementation 'ch.qos.logback:logback-classic:1.4.12' // Latest Logback version
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.3.2'
 }
 
 test {
