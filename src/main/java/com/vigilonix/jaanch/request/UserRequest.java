@@ -3,12 +3,15 @@ package com.vigilonix.jaanch.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.Rank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,4 +39,6 @@ public class UserRequest {
 
     @JsonProperty("location_range")
     private Integer locationRangeInMeters;
+    @JsonProperty("post_field_map")
+    private Map<Post, List<UUID>> postFieldGeoNodeUuidMap;
 }

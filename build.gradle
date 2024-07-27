@@ -24,8 +24,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jetty:3.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.3.2'
     implementation 'org.springframework.boot:spring-boot-starter-validation:3.3.2'
-//    implementation 'org.hibernate:hibernate-core:6.5.2.Final'
-//    implementation 'com.vladmihalcea:hibernate-types-52:2.21.1'
+    // https://mvnrepository.com/artifact/io.hypersistence/hypersistence-utils-hibernate-63
+    implementation group: 'io.hypersistence', name: 'hypersistence-utils-hibernate-63', version: '3.8.2'
     implementation 'org.slf4j:slf4j-api:2.0.9'
     implementation 'ch.qos.logback:logback-classic:1.4.12'
     implementation 'org.projectlombok:lombok:1.18.28'
@@ -46,9 +46,6 @@ dependencies {
         exclude group: 'commons-logging', module: 'commons-logging'
     }
     implementation 'org.postgresql:postgresql:42.7.3'
-// https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-community-dialects
-//    implementation group: 'org.hibernate.orm', name: 'hibernate-community-dialects', version: '6.5.2.Final'
-
 }
 
 test {

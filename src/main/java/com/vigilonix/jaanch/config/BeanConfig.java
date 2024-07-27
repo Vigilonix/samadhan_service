@@ -1,12 +1,15 @@
 package com.vigilonix.jaanch.config;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vigilonix.jaanch.pojo.FieldGeoNode;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
 import com.vigilonix.jaanch.validator.ClientValidator;
 import com.vigilonix.jaanch.validator.UserRequestValidator;
 import com.vigilonix.jaanch.validator.ValidationService;
 import jakarta.servlet.MultipartConfigElement;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +27,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -97,5 +104,15 @@ public class BeanConfig {
     @Bean
     public ValidationService<AuthRequest> clientValidatorService(ClientValidator clientValidator) {
         return () -> Collections.singletonList(clientValidator);
+    }
+
+    @Bean
+    @Qualifier("ROOT_NODE")
+    public FieldGeoNode parseFieldGeoNodes(ObjectMapper objectMapper) {
+        try (InputStream inputStream = Files.newInputStream(Paths.get( Constant.GEOFENCE_HIERARCHY))) {
+            return objectMapper.readValue(inputStream, FieldGeoNode.class);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to parse geofence_hierarchy.json file", e);
+        }
     }
 }

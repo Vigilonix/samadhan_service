@@ -1,11 +1,19 @@
 package com.vigilonix.jaanch.model;
 
 
+import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.Rank;
 import com.vigilonix.jaanch.enums.Role;
 import com.vigilonix.jaanch.enums.State;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonStringType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity(name = "users")
@@ -57,4 +65,7 @@ public class User {
     private Double latitude;
     @Column
     private Double longitude;
+    @Column
+    @Type(JsonStringType.class)
+    private Map<Post, List<UUID>> postFieldGeoNodeUuidMap;
 }

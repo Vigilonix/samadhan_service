@@ -1,0 +1,188 @@
+{
+  "name": "India",
+  "type": "COUNTRY",
+  "uuid": "4c8e37d8-1d42-4e4f-8b5b-8e2f7f8e3a9b",
+  "geofence": [],
+  "children": [
+    {
+      "name": "Bihar",
+      "type": "STATE",
+      "uuid": "6b4d9f8c-7a4e-4f6b-8e3f-2f5a7e9b8a7c",
+      "geofence": [],
+      "children": [
+        {
+          "name": "Patna",
+          "type": "DISTRICT",
+          "uuid": "9e5a4f7b-8c3e-4a5f-8b7c-6e4a5b3f9a7e",
+          "geofence": [],
+          "children": [
+            {
+              "name": "Patna Sadar",
+              "type": "SUB_DIVISION",
+              "uuid": "3e6a7f4b-9c8e-4a5f-8b7c-6e4a5b3f9a7e",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Patna City Circle",
+                  "type": "CIRCLE",
+                  "uuid": "8f3a6e4b-7c9f-4b5e-8a7f-3e6a5b7c8e9a",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "Chowk",
+                      "type": "THANA",
+                      "uuid": "6e7a5f4b-9f7c-4c5b-8a3e-4f6b3e9f7a8e",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "Khajekalan",
+                      "type": "THANA",
+                      "uuid": "4a6b97e3-a7d5-4f9a-8b6e-7f3e2a5f7c8e",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "Alamganj",
+                      "type": "THANA",
+                      "uuid": "5e4a3f6b-8f7c-4e3b-8a5f-6f3e7a9b4c8e",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Barh",
+              "type": "SUB_DIVISION",
+              "uuid": "b634f8c2-894f-4e9a-8b69-3e3e77f8cb3f",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Barh Circle",
+                  "type": "CIRCLE",
+                  "uuid": "bcf74c8f-2b3a-47b5-8f93-f3b7f3e3f7e7",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "Barh",
+                      "type": "THANA",
+                      "uuid": "3a72e5a8-24a8-497d-8975-3a9a3f5f5f3a",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "Mokama",
+                      "type": "THANA",
+                      "uuid": "8b6f3c7e-3f5a-4c6b-8f3e-6e4a3f9f7c6e",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Danapur",
+              "type": "SUB_DIVISION",
+              "uuid": "3c6b97f5-a7f5-4a97-8b7d-2a8f9e3e7a6a",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Danapur Circle",
+                  "type": "CIRCLE",
+                  "uuid": "a4e6f7b8-8f7b-4c3e-8f6a-3c9a4e3f5e6a",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "Danapur",
+                      "type": "THANA",
+                      "uuid": "7a5e6f4b-8c3e-4a5b-8f7c-9e4a3f6b7c8e",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "Maner",
+                      "type": "THANA",
+                      "uuid": "5e4a3f6b-8f7c-4e3b-8a5f-6f3e7a9b4c8e",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Masaurhi",
+              "type": "SUB_DIVISION",
+              "uuid": "6e83d9f7-88cf-45f6-8f3a-0bfa6b98c3e4",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Masaurhi Circle",
+                  "type": "CIRCLE",
+                  "uuid": "7d67cbe2-6a3b-4c37-8c38-8f7fca7ab4a6",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "Masaurhi",
+                      "type": "THANA",
+                      "uuid": "3b68db55-6bb1-4e13-a6f4-d6f3b25b4954",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "Paliganj",
+                      "type": "THANA",
+                      "uuid": "4a6b97e3-a7d5-4f9a-8b6e-7f3e2a5f7c8e",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Patna City",
+              "type": "SUB_DIVISION",
+              "uuid": "9e4a3f6b-8c5e-4a7b-8f3c-6e7a4f5b3a9e",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Patna City Circle",
+                  "type": "CIRCLE",
+                  "uuid": "7d67cbe2-6a3b-4c37-8c38-8f7fca7ab4a6",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "Patliputra",
+                      "type": "THANA",
+                      "uuid": "9f7812a4-8a7a-4397-9f5e-8b1c2f7a8b8a",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "Gandhi Maidan",
+                      "type": "THANA",
+                      "uuid": "7d67cbe2-6a3b-4c37-8c38-8f7fca7ab4a6",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "Kadamkuan",
+                      "type": "THANA",
+                      "uuid": "6e83d9f7-88cf-45f6-8f3a-0bfa6b98c3e4",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

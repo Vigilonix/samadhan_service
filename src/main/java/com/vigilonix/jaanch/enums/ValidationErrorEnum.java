@@ -79,7 +79,8 @@ public enum ValidationErrorEnum implements ValidationError {
     JOB_TITLE_SIZE_MORE(60, "Job title size is greater than 64 chars", Collections.emptyList()),
     JOB_COMPANY_SIZE_MORE(61, "Job company size is greater than 64 chars", Collections.emptyList()),
     EDUCATION_SIZE_MORE(62, "Education size is greater than 64 chars", Collections.emptyList()),
-    INVALID_BARRIER_REQUEST(63, "Invalid Barrier Request", Collections.emptyList());
+    INVALID_BARRIER_REQUEST(63, "Invalid Barrier Request", Collections.emptyList()),
+    NULL_POST(64, "Post can not be empty", Collections.emptyList());
 
 
     private final int code;

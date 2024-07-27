@@ -103,6 +103,7 @@ public class UserService {
                 .uuid(UUID.randomUUID())
                 .role(Role.NORMAL)
                 .phoneNumber(userRequest.getPhoneNumber())
+                .postFieldGeoNodeUuidMap(userRequest.getPostFieldGeoNodeUuidMap())
                 .build();
         userRepository.save(user);
         return user;
