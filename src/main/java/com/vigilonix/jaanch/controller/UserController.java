@@ -27,7 +27,7 @@ public class UserController {
 
     @LogPayload
     @PutMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserResponse updateUser(@Valid @RequestBody UserRequest userRequest) {
+    public UserResponse updateUser(@RequestBody UserRequest userRequest) {
         return userService.updateUser(authHelper.getPrincipal(), userRequest);
     }
 

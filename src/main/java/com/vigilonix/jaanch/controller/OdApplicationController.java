@@ -3,23 +3,20 @@ package com.vigilonix.jaanch.controller;
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.helper.AuthHelper;
 import com.vigilonix.jaanch.pojo.ODApplicationPojo;
-import com.vigilonix.jaanch.pojo.ODApplicationStatus;
-import com.vigilonix.jaanch.pojo.OdReceiptPojo;
-import com.vigilonix.jaanch.service.ODApplicationService;
+import com.vigilonix.jaanch.service.OdApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/public_application/")
+@RequestMapping("/v1/od_application")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ODApplicationController {
+public class OdApplicationController {
     public static final String UUID = "/{uuid}";
-    private final ODApplicationService publicApplicationService;
+    private final OdApplicationService publicApplicationService;
     private final AuthHelper authHelper;
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)

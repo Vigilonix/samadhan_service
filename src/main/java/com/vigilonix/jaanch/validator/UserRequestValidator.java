@@ -31,9 +31,9 @@ public class UserRequestValidator implements Validator<List<ValidationError>, Us
         if (user.getName() != null && (user.getName().length() > 64 || StringUtils.countMatches(user.getName(), '\n') > 0)) {
             errors.add(ValidationErrorEnum.NAME_ATTRIBUTE_LENGTH_MORE_THAN_EXPECTED);
         }
-        if(user.getPostFieldGeoNodeUuidMap()==null) {
-            errors.add(ValidationErrorEnum.NULL_POST);
-        }
+//        if(user.getPostFieldGeoNodeUuidMap()==null) {
+//            errors.add(ValidationErrorEnum.NULL_POST);
+//        }
         return errors;
     }
 

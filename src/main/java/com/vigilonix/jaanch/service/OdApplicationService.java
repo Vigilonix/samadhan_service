@@ -11,7 +11,6 @@ import com.vigilonix.jaanch.pojo.ODApplicationStatus;
 import com.vigilonix.jaanch.repository.OdApplicationRepository;
 import com.vigilonix.jaanch.repository.UserRepository;
 import com.vigilonix.jaanch.transformer.OdApplicationTransformer;
-import com.vigilonix.jaanch.validator.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 @Component
 @Transactional
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ODApplicationService {
+public class OdApplicationService {
     private final OdApplicationRepository odApplicationRepository;
     private final OdApplicationTransformer odApplicationTransformer;
     private final UserRepository userRepository;

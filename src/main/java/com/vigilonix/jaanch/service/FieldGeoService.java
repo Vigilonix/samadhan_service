@@ -82,4 +82,8 @@ public class FieldGeoService {
         set.addAll(post);
         return set.last();
     }
+
+    public FieldGeoNode getFieldGeoNode(UUID uuid) {
+        return fieldGeoNodeIndexByUuid.get(uuid);
+    }
 }

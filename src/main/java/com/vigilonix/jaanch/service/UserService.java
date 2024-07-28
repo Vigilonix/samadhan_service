@@ -18,6 +18,7 @@ import com.vigilonix.jaanch.transformer.UserResponseTransformer;
 import com.vigilonix.jaanch.validator.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +50,9 @@ public class UserService {
     private final AuthTokenTransformer authTokenTransformer;
     private final UserResponseTransformer userResponseTransformer;
     private final ValidationService<AuthRequest> clientValidator;
-    private final ObjectMapper objectMapper;
-    private final AppConfig appConfig;
     private final UserRepository userRepository;
     private final ChangeDetector changeDetector;
+    private final FieldGeoService fieldGeoService;
 
     private static String toHexString(byte[] bytes) {
         Formatter formatter = new Formatter();
@@ -73,9 +73,9 @@ public class UserService {
     public OAuth2Response login(AuthRequest authRequest) {
         clientValidator.validate(authRequest);
         User user = userRepository.findByUsername(authRequest.getUsername());
-            if (user != null && !encoder.matches(authRequest.getPassword(), user.getSecret())) {
-                user = null;
-            }
+        if (user != null && !encoder.matches(authRequest.getPassword(), user.getSecret())) {
+            user = null;
+        }
         if (user == null) {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_GRANT));
         }
@@ -129,7 +129,6 @@ public class UserService {
     }
 
 
-
     public UserResponse updateUser(User principal, UserRequest userRequest) {
         userRequestValidationService.validate(userRequest);
         if (StringUtils.isNotEmpty(userRequest.getName())
@@ -139,6 +138,15 @@ public class UserService {
         }
         if (State.DISABLED.equals(principal.getState())) {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.DISABLED_USER));
+        }
+        if (MapUtils.isNotEmpty(userRequest.getPostFieldGeoNodeUuidMap())) {
+            userRequest.getPostFieldGeoNodeUuidMap().values().stream().flatMap(Collection::stream).forEach(uuid -> {
+                        if (fieldGeoService.getFieldGeoNode(uuid) == null) {
+                            throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
+                        }
+                    }
+            );
+            principal.setPostFieldGeoNodeUuidMap(userRequest.getPostFieldGeoNodeUuidMap());
         }
 
 
@@ -150,8 +158,6 @@ public class UserService {
 
         return userResponseTransformer.transform(principal);
     }
-
-
 
 
     public void logout(User principal) {

@@ -18,11 +18,12 @@ public class ODApplicationPojo {
     private UUID uuid;
     private String applicantName;
     private String applicantPhoneNumber;
-    private UUID ODUuid;
+    private UUID OdUuid;
     private String applicationFilePath;
     private UUID fieldGeoNodeUuid;
     private UUID enquiryOfficerUuid;
     private String enquiryFilePath;
+    private Long enquirySubmittedAt;
     private ODApplicationStatus status;
     private String receiptNo;
     private Long createdAt;
