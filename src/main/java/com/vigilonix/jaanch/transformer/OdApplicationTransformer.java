@@ -13,7 +13,7 @@ public class OdApplicationTransformer implements Transformer<OdApplication, ODAp
                 .uuid(odApplication.getUuid())
                 .applicantName(odApplication.getApplicantName())
                 .applicantPhoneNumber(odApplication.getApplicantPhoneNumber())
-                .OdUuid(odApplication.getOdUuid())
+                .odUuid(odApplication.getOdUuid())
                 .applicationFilePath(odApplication.getApplicationFilePath())
                 .fieldGeoNodeUuid(odApplication.getFieldGeoNodeUuid())
                 .enquiryOfficerUuid(odApplication.getEnquiryOfficerUuid())

@@ -18,7 +18,7 @@ public class ODApplicationPojo {
     private UUID uuid;
     private String applicantName;
     private String applicantPhoneNumber;
-    private UUID OdUuid;
+    private UUID odUuid;
     private String applicationFilePath;
     private UUID fieldGeoNodeUuid;
     private UUID enquiryOfficerUuid;

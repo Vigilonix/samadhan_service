@@ -20,7 +20,7 @@ public class OAuthToken {
     private User user;
 
     @Id
-    @Column(name = "id", nullable = false, length = 2048)
+    @Column(name = "id", nullable = false, length = 2049)
     private String token;
 
     @Column(name = "client_id", nullable = false)
