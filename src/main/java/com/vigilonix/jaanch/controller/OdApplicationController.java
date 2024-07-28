@@ -30,7 +30,7 @@ public class OdApplicationController {
         return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPojo);
     }
 
-    @GetMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/application"+UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ODApplicationPojo getOdApplicationByUuid(@PathVariable(name = "uuid") String odApplicationUuid) {
         return odApplicationService.get(java.util.UUID.fromString(odApplicationUuid), authHelper.getPrincipal());
     }

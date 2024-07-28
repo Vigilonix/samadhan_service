@@ -66,7 +66,8 @@ public class FieldGeoService {
     }
 
     public FieldGeoNode highestPostGeoNode(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
-        return null;
+        Post post = highestPost(postFieldGeoNodeUuidMap);
+        return fieldGeoNodeIndexByUuid.get(postFieldGeoNodeUuidMap.get(post).get(0));
     }
 
     public List<UUID> getAllChildren(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
