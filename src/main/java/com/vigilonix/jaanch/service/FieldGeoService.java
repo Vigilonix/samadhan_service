@@ -54,13 +54,14 @@ public class FieldGeoService {
     }
 
     public FieldGeoNode resolveFieldGeoNode(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
-        return null;
+        return highestPostGeoNode(postFieldGeoNodeUuidMap);
     }
 
-    public List<FieldGeoNode> getOwnershipGeoNode(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
+    public List<FieldGeoNode> getOwnershipGeoNodes(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
         return postFieldGeoNodeUuidMap.entrySet().stream().filter(e->e.getKey().getLevel()>1)
                 .flatMap(e->e.getValue().stream())
                 .map(fieldGeoNodeIndexByUuid::get)
+                .distinct()
                 .collect(Collectors.toList());
     }
 
@@ -69,9 +70,9 @@ public class FieldGeoService {
     }
 
     public List<UUID> getAllChildren(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
-        return getOwnershipGeoNode(postFieldGeoNodeUuidMap)
-                .stream().map(fieldGeoNodeIndexByUuid::get)
+        return getOwnershipGeoNodes(postFieldGeoNodeUuidMap).stream()
                 .flatMap(f->getAllChildren(f).stream())
+                .filter(Objects::nonNull)
                 .map(FieldGeoNode::getUuid)
                 .collect(Collectors.toList());
     }
@@ -85,5 +86,10 @@ public class FieldGeoService {
 
     public FieldGeoNode getFieldGeoNode(UUID uuid) {
         return fieldGeoNodeIndexByUuid.get(uuid);
+    }
+
+    public List<UUID> getAllFieldGeoNode(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
+        return postFieldGeoNodeUuidMap.values().stream().flatMap(Collection::stream)
+                .distinct().collect(Collectors.toList());
     }
 }

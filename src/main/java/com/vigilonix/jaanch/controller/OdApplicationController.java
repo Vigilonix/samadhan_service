@@ -16,31 +16,31 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OdApplicationController {
     public static final String UUID = "/{uuid}";
-    private final OdApplicationService publicApplicationService;
+    private final OdApplicationService odApplicationService;
     private final AuthHelper authHelper;
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ODApplicationPojo create(@RequestBody ODApplicationPojo publicApplicationPojo) {
-        return publicApplicationService.create(publicApplicationPojo, authHelper.getPrincipal());
+        return odApplicationService.create(publicApplicationPojo, authHelper.getPrincipal());
     }
 
     @LogPayload
     @PutMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ODApplicationPojo update(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody ODApplicationPojo odApplicationPojo) {
-        return publicApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPojo);
+        return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPojo);
     }
 
     @GetMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ODApplicationPojo getOdApplicationByUuid(@PathVariable(name = "uuid") String odApplicationUuid) {
-        return publicApplicationService.get(java.util.UUID.fromString(odApplicationUuid), authHelper.getPrincipal());
+        return odApplicationService.get(java.util.UUID.fromString(odApplicationUuid), authHelper.getPrincipal());
     }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<ODApplicationPojo> getOdApplication(@RequestParam(name = "status", required = false) String status) {
-        return publicApplicationService.getList(status, authHelper.getPrincipal());
+        return odApplicationService.getList(status, authHelper.getPrincipal());
     }
     @GetMapping(path = "/receipt", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<ODApplicationPojo> getOdApplication() {
-        return publicApplicationService.getReceiptList(authHelper.getPrincipal());
+        return odApplicationService.getReceiptList(authHelper.getPrincipal());
     }
 }

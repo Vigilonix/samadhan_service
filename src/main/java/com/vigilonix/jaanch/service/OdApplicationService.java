@@ -105,7 +105,7 @@ public class OdApplicationService {
         if(StringUtils.isNotEmpty(odApplicationStatus)) {
             status = ODApplicationStatus.valueOf(odApplicationStatus);
         }
-        List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNode(principal.getPostFieldGeoNodeUuidMap());
+        List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
         if(CollectionUtils.isEmpty(fieldNodes)){
             return  odApplicationRepository.findByOdUuidAndStatus(principal.getUuid(), status)
                     .stream()
@@ -120,7 +120,7 @@ public class OdApplicationService {
     }
 
     public List<ODApplicationPojo> getReceiptList(User principal) {
-        List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNode(principal.getPostFieldGeoNodeUuidMap());
+        List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
         if(CollectionUtils.isEmpty(fieldNodes)){
             return  odApplicationRepository.findByOdUuid(principal.getUuid())
                     .stream()

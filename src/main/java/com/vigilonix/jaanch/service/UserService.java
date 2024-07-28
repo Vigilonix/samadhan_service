@@ -140,7 +140,7 @@ public class UserService {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.DISABLED_USER));
         }
         if (MapUtils.isNotEmpty(userRequest.getPostFieldGeoNodeUuidMap())) {
-            userRequest.getPostFieldGeoNodeUuidMap().values().stream().flatMap(Collection::stream).forEach(uuid -> {
+            fieldGeoService.getAllFieldGeoNode(userRequest.getPostFieldGeoNodeUuidMap()).forEach(uuid -> {
                         if (fieldGeoService.getFieldGeoNode(uuid) == null) {
                             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
                         }
