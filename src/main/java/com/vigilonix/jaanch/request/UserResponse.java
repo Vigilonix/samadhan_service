@@ -3,6 +3,8 @@ package com.vigilonix.jaanch.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.Rank;
 import com.vigilonix.jaanch.enums.Role;
@@ -24,6 +26,7 @@ import java.util.UUID;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserResponse {
     private final UUID uuid;
     private final String name;
@@ -46,6 +49,7 @@ public class UserResponse {
     private Long lastLocationUpdateTimeInMillis;
     private Double latitude;
     private Double longitude;
+    @JsonProperty("post_field_map")
     private Map<Post, List<UUID>> postFieldGeoNodeUuidMap;
     private Post highestPost;
 }
