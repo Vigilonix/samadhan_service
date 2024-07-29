@@ -21,14 +21,14 @@ public class OdApplication {
     private String applicantName;
     @Column
     private String applicantPhoneNumber;
-    @Column
-    private UUID odUuid;
+    @ManyToOne
+    private User od;
     @Column
     private String applicationFilePath;
     @Column
     private UUID fieldGeoNodeUuid;
-    @Column
-    private UUID enquiryOfficerUuid;
+    @ManyToOne
+    private User enquiryOfficer;
     @Column
     private String enquiryFilePath;
     @Column

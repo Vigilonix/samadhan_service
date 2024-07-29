@@ -22,6 +22,7 @@ public interface OAuthTokenRepository extends JpaRepository<OAuthToken, String> 
     void deleteByUser(User user);
 
     @Modifying
+    @Query("delete from OAuthToken o where o.expireTime= :currentTimeMillis")
     void deleteByExpireTime(long currentTimeMillis);
 
     OAuthToken findByTokenAndRefreshToken(String authToken, String refreshToken);

@@ -42,7 +42,7 @@ public class OdApplicationService {
         OdApplication odApplication = OdApplication.builder()
                 .fieldGeoNodeUuid(fieldGeoNode.getUuid())
                 .uuid(UUID.randomUUID())
-                .odUuid(principal.getUuid())
+                .od(principal)
                 .applicantName(odApplicationPojo.getApplicantName())
                 .applicationFilePath(odApplicationPojo.getApplicationFilePath())
                 .applicantPhoneNumber(odApplicationPojo.getApplicantPhoneNumber())
@@ -78,7 +78,7 @@ public class OdApplicationService {
                 throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
             }
             FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(enquiryOfficer.getPostFieldGeoNodeUuidMap());
-            odApplication.setEnquiryOfficerUuid(enquiryOfficer.getUuid());
+            odApplication.setEnquiryOfficer(enquiryOfficer);
             odApplication.setFieldGeoNodeUuid(fieldGeoNode.getUuid());
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
@@ -106,14 +106,21 @@ public class OdApplicationService {
             status = ODApplicationStatus.valueOf(odApplicationStatus);
         }
         List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
-        if(CollectionUtils.isEmpty(fieldNodes)){
-            return  odApplicationRepository.findByOdUuidAndStatus(principal.getUuid(), status)
-                    .stream()
-                    .map(odApplicationTransformer::transform)
-                    .collect(Collectors.toList());
+        List<OdApplication> result = new ArrayList<>();
+        if(status!= null) {
+            if (CollectionUtils.isEmpty(fieldNodes)) {
+                result = odApplicationRepository.findByOdAndStatus(principal, status);
+            } else {
+                result = odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(fieldGeoService.getAllChildren(principal.getPostFieldGeoNodeUuidMap()), status);
+            }
+        }else {
+            if (CollectionUtils.isEmpty(fieldNodes)) {
+                result = odApplicationRepository.findByOd(principal);
+            } else {
+                result = odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllChildren(principal.getPostFieldGeoNodeUuidMap()));
+            }
         }
-        return  odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(fieldGeoService.getAllChildren(principal.getPostFieldGeoNodeUuidMap()), status)
-                .stream()
+        return  result.stream()
                 .map(odApplicationTransformer::transform)
                 .collect(Collectors.toList());
 
@@ -122,7 +129,7 @@ public class OdApplicationService {
     public List<ODApplicationPojo> getReceiptList(User principal) {
         List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
         if(CollectionUtils.isEmpty(fieldNodes)){
-            return  odApplicationRepository.findByOdUuid(principal.getUuid())
+            return  odApplicationRepository.findByOd(principal)
                     .stream()
                     .map(odApplicationTransformer::transform)
                     .collect(Collectors.toList());
