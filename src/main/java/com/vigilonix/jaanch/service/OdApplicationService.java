@@ -97,6 +97,7 @@ public class OdApplicationService {
 
     public ODApplicationPojo get(UUID odUuid, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odUuid);
+
         return odApplicationTransformer.transform(odApplication);
     }
 
