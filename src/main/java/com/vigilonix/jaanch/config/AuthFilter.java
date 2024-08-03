@@ -26,8 +26,8 @@ public class AuthFilter implements Filter {
     public static final String OAUTH_TOKEN = "/oauth/token";
     public static final String OAUTH_REFRESH_TOKEN = "/oauth/refresh_token";
     public static final String FAVICON_ICO = "/favicon.ico";
-    public static final String V_3_API_DOCS = "/v3/api-docs";
-    public static final String SWAGGER_UI = "/swagger-ui";
+    public static final String V_3_API_DOCS = "/api-docs";
+    public static final String SWAGGER_UI = "/swagger";
     public static final String V_1_ANON = "/v1/anon";
     private final static String AUTH_HEADER = "Authorization";
     private final ObjectMapper objectMapper;
@@ -54,6 +54,7 @@ public class AuthFilter implements Filter {
                     httpServletRequest.setAttribute(Constant.CLIENT_ID, oauthToken.getClientId());
                     auditService.audit(oauthToken.getUser(), httpServletRequest.getRequestURI(), null);
                 } else {
+                    log.error("unprotected invalid request for {}", httpServletRequest.getRequestURI());
                     ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, objectMapper.writeValueAsString(Collections.singletonList(ValidationErrorEnum.INVALID_TOKEN)));
                     return;
                 }

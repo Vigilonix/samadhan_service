@@ -9,6 +9,7 @@ import com.vigilonix.jaanch.validator.ClientValidator;
 import com.vigilonix.jaanch.validator.UserRequestValidator;
 import com.vigilonix.jaanch.validator.ValidationService;
 import jakarta.servlet.MultipartConfigElement;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
@@ -18,6 +19,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -108,8 +111,9 @@ public class BeanConfig {
 
     @Bean
     @Qualifier("ROOT_NODE")
-    public FieldGeoNode parseFieldGeoNodes(ObjectMapper objectMapper) {
-        try (InputStream inputStream = Files.newInputStream(Paths.get( Constant.GEOFENCE_HIERARCHY))) {
+    public FieldGeoNode parseFieldGeoNodes(@Autowired ResourceLoader resourceLoader,@Autowired ObjectMapper objectMapper) {
+        Resource resource = resourceLoader.getResource(Constant.GEOFENCE_HIERARCHY);
+        try (InputStream inputStream = resource.getInputStream()) {
             return objectMapper.readValue(inputStream, FieldGeoNode.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to parse geofence_hierarchy.json file", e);
