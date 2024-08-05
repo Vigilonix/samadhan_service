@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.service;
 
+import com.google.common.collect.Sets;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.exception.ValidationRuntimeException;
@@ -82,7 +83,7 @@ public class OdApplicationService {
             odApplication.setFieldGeoNodeUuid(fieldGeoNode.getUuid());
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
-        if(StringUtils.isNotEmpty(odApplicationPojo.getEnquiryFilePath())) {
+        if(StringUtils.isNotEmpty(odApplicationPojo.getEnquiryFilePath()) && Sets.newHashSet(ODApplicationStatus.REVIEW, ODApplicationStatus.ENQUIRY).contains(odApplication.getStatus())) {
             odApplication.setEnquiryFilePath(odApplicationPojo.getEnquiryFilePath());
             odApplication.setStatus(ODApplicationStatus.REVIEW);
         }
@@ -92,7 +93,7 @@ public class OdApplicationService {
 
         odApplication.setModifiedAt(System.currentTimeMillis());
         odApplicationRepository.save(odApplication);
-        return null;
+        return odApplicationPojo;
     }
 
     public ODApplicationPojo get(UUID odUuid, User principal) {
