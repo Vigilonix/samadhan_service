@@ -83,7 +83,7 @@ public class OdApplicationService {
             odApplication.setFieldGeoNodeUuid(fieldGeoNode.getUuid());
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
-        if(StringUtils.isNotEmpty(odApplicationPojo.getEnquiryFilePath()) && Sets.newHashSet(ODApplicationStatus.REVIEW, ODApplicationStatus.ENQUIRY).contains(odApplication.getStatus())) {
+        if(StringUtils.isNotEmpty(odApplicationPojo.getEnquiryFilePath()) && !Sets.newHashSet(ODApplicationStatus.OPEN).contains(odApplication.getStatus())) {
             odApplication.setEnquiryFilePath(odApplicationPojo.getEnquiryFilePath());
             odApplication.setStatus(ODApplicationStatus.REVIEW);
         }
