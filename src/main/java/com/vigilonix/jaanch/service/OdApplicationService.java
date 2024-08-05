@@ -93,7 +93,7 @@ public class OdApplicationService {
 
         odApplication.setModifiedAt(System.currentTimeMillis());
         odApplicationRepository.save(odApplication);
-        return odApplicationPojo;
+        return odApplicationTransformer.transform(odApplication);
     }
 
     public ODApplicationPojo get(UUID odUuid, User principal) {
