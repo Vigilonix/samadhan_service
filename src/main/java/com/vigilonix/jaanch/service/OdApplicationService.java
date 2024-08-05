@@ -73,7 +73,7 @@ public class OdApplicationService {
 //        OdApplicationValidatorService.validate(odApplicationPojo);
         OdApplication odApplication = odApplicationRepository.findByUuid(uuid);
         if(!Objects.isNull(odApplicationPojo.getEnquiryOfficerUuid())) {
-            User enquiryOfficer = userRepository.findByUuid(odApplicationPojo.getFieldGeoNodeUuid());
+            User enquiryOfficer = userRepository.findByUuid(odApplicationPojo.getEnquiryOfficerUuid());
             if(enquiryOfficer == null) {
                 throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
             }
