@@ -8,6 +8,7 @@ import com.vigilonix.jaanch.pojo.FieldGeoNode;
 import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.ODApplicationPojo;
 import com.vigilonix.jaanch.pojo.ODApplicationStatus;
+import com.vigilonix.jaanch.pojo.ODApplicationTransformationRequest;
 import com.vigilonix.jaanch.repository.OdApplicationRepository;
 import com.vigilonix.jaanch.repository.UserRepository;
 import com.vigilonix.jaanch.transformer.OdApplicationTransformer;
@@ -53,7 +54,7 @@ public class OdApplicationService {
                 .status(ODApplicationStatus.OPEN)
                 .build();
         odApplicationRepository.save(odApplication);
-        return odApplicationTransformer.transform(odApplication);
+        return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
     private String generateReceiptNumber(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
@@ -69,7 +70,7 @@ public class OdApplicationService {
       return String.format("%s_%s_%s", jurisdictionName, formattedDate, System.currentTimeMillis()/1000);
     }
 
-    public ODApplicationPojo update(UUID uuid, ODApplicationPojo odApplicationPojo) {
+    public ODApplicationPojo update(UUID uuid, ODApplicationPojo odApplicationPojo, User principal) {
 //        OdApplicationValidatorService.validate(odApplicationPojo);
         OdApplication odApplication = odApplicationRepository.findByUuid(uuid);
         if(!Objects.isNull(odApplicationPojo.getEnquiryOfficerUuid())) {
@@ -97,13 +98,12 @@ public class OdApplicationService {
 
         odApplication.setModifiedAt(System.currentTimeMillis());
         odApplicationRepository.save(odApplication);
-        return odApplicationTransformer.transform(odApplication);
+        return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
     public ODApplicationPojo get(UUID odUuid, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odUuid);
-
-        return odApplicationTransformer.transform(odApplication);
+        return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
     public List<ODApplicationPojo> getList(String odApplicationStatus, User principal) {
@@ -127,7 +127,7 @@ public class OdApplicationService {
             }
         }
         return  result.stream()
-                .map(odApplicationTransformer::transform)
+                .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                 .collect(Collectors.toList());
 
     }
@@ -137,12 +137,12 @@ public class OdApplicationService {
         if(CollectionUtils.isEmpty(fieldNodes)){
             return  odApplicationRepository.findByOd(principal)
                     .stream()
-                    .map(odApplicationTransformer::transform)
+                    .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                     .collect(Collectors.toList());
         }
         return  odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()))
                 .stream()
-                .map(odApplicationTransformer::transform)
+                .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                 .collect(Collectors.toList());
 
     }

@@ -113,4 +113,11 @@ public class FieldGeoService {
         sameOrBelowGeoNodes.addAll(fieldGeoNodes);
         return sameOrBelowGeoNodes.stream().toList();
     }
+
+    public boolean hasGeoAuthority(UUID fieldGeoNodeUuid, User principalUser) {
+        Map<UUID, Post> resultMap = principalUser.getPostFieldGeoNodeUuidMap().entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream().map(uuid -> Map.entry(uuid, entry.getKey())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return resultMap.getOrDefault(fieldGeoNodeUuid, Post.BEAT).getLevel()>1;
+    }
 }

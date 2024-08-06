@@ -30,4 +30,7 @@ public class ODApplicationPojo {
     private String receiptNo;
     private Long createdAt;
     private Long modifiedAt;
+    private boolean hasAuthorityOnOpenStatus;
+    private boolean hasAuthorityOnEnquiryStatus;
+    private boolean hasAuthorityOnReviewStatus;
 }

@@ -27,7 +27,7 @@ public class OdApplicationController {
     @LogPayload
     @PutMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ODApplicationPojo update(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody ODApplicationPojo odApplicationPojo) {
-        return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPojo);
+        return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPojo, authHelper.getPrincipal());
     }
 
     @GetMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
