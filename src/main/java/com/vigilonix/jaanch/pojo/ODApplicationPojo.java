@@ -19,9 +19,11 @@ public class ODApplicationPojo {
     private String applicantName;
     private String applicantPhoneNumber;
     private UUID odUuid;
+    private String odName;
     private String applicationFilePath;
     private UUID fieldGeoNodeUuid;
     private UUID enquiryOfficerUuid;
+    private String enquiryOfficerName;
     private String enquiryFilePath;
     private Long enquirySubmittedAt;
     private ODApplicationStatus status;
