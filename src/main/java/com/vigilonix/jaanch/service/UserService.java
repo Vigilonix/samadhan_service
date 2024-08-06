@@ -227,8 +227,8 @@ public class UserService {
 
     public List<UserResponse> getAllUsersFromSameGeoFence(User principal, String prefixName) {
         List<UUID> geoNodes = fieldGeoService.getSameOrBelowGeoNodeUuids(principal);
-//        List<User> users = userRepository.findByPrefixNameAndGeoNodeIn();
-        List<User> users = new ArrayList<>();
+//        List<User> users = userRepository.findByPrefixNameAndGeoNodeIn(prefixName, geoNodes);
+List<User> users =         userRepository.findByNameStartingWith(prefixName);
         return users.stream().map(searchUserResponseTransformer::transform).collect(Collectors.toList());
 
     }

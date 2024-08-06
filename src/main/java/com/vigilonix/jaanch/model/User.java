@@ -65,7 +65,7 @@ public class User {
     private Double latitude;
     @Column
     private Double longitude;
-    @Column
-    @Type(JsonStringType.class)
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
     private Map<Post, List<UUID>> postFieldGeoNodeUuidMap;
 }

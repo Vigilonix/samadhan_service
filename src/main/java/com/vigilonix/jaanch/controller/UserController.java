@@ -42,8 +42,8 @@ public class UserController {
         return userService.getDetails(authHelper.getPrincipal());
     }
 
-    @GetMapping(path = "/geofence", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<UserResponse> getAllUsersFromSameGeoFences(@RequestParam("prefix_name")String prefixName) {
+    @GetMapping(path = "/peer", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserResponse> getAllUsersFromSameGeoFences(@RequestParam(value = "prefix_name", defaultValue = "")String prefixName) {
         return userService.getAllUsersFromSameGeoFence(authHelper.getPrincipal(), prefixName);
     }
 
