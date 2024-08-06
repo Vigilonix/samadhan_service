@@ -87,9 +87,13 @@ public class OdApplicationService {
             odApplication.setEnquiryFilePath(odApplicationPojo.getEnquiryFilePath());
             odApplication.setStatus(ODApplicationStatus.REVIEW);
         }
-        if(ODApplicationStatus.CLOSED.equals(odApplicationPojo.getStatus())) {
+        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.ENQUIRY.equals(odApplicationPojo.getStatus())) {
+            odApplication.setStatus(ODApplicationStatus.ENQUIRY);
+        }
+        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.CLOSED.equals(odApplicationPojo.getStatus())) {
             odApplication.setStatus(ODApplicationStatus.CLOSED);
         }
+
 
         odApplication.setModifiedAt(System.currentTimeMillis());
         odApplicationRepository.save(odApplication);
