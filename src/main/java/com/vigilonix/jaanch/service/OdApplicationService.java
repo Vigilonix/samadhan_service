@@ -1,6 +1,5 @@
 package com.vigilonix.jaanch.service;
 
-import com.google.common.collect.Sets;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.exception.ValidationRuntimeException;
@@ -81,6 +80,7 @@ public class OdApplicationService {
             FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(enquiryOfficer.getPostFieldGeoNodeUuidMap());
             odApplication.setEnquiryOfficer(enquiryOfficer);
             odApplication.setFieldGeoNodeUuid(fieldGeoNode.getUuid());
+            odApplication.setEnquirySubmittedAt(System.currentTimeMillis());
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
         if(StringUtils.isNotEmpty(odApplicationPojo.getEnquiryFilePath()) ) {
@@ -113,13 +113,13 @@ public class OdApplicationService {
             if (CollectionUtils.isEmpty(fieldNodes)) {
                 result = odApplicationRepository.findByOdAndStatus(principal, status);
             } else {
-                result = odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(fieldGeoService.getAllChildren(principal.getPostFieldGeoNodeUuidMap()), status);
+                result = odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()), status);
             }
         }else {
             if (CollectionUtils.isEmpty(fieldNodes)) {
                 result = odApplicationRepository.findByOd(principal);
             } else {
-                result = odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllChildren(principal.getPostFieldGeoNodeUuidMap()));
+                result = odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()));
             }
         }
         return  result.stream()
@@ -136,7 +136,7 @@ public class OdApplicationService {
                     .map(odApplicationTransformer::transform)
                     .collect(Collectors.toList());
         }
-        return  odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllChildren(principal.getPostFieldGeoNodeUuidMap()))
+        return  odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()))
                 .stream()
                 .map(odApplicationTransformer::transform)
                 .collect(Collectors.toList());

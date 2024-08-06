@@ -2,6 +2,7 @@ package com.vigilonix.jaanch.service;
 
 import com.vigilonix.jaanch.enums.GeoHierarchyType;
 import com.vigilonix.jaanch.enums.Post;
+import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.FieldGeoNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,11 +71,22 @@ public class FieldGeoService {
         return fieldGeoNodeIndexByUuid.get(postFieldGeoNodeUuidMap.get(post).get(0));
     }
 
-    public List<UUID> getAllChildren(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
+    public List<UUID> getAllOwnershipChildren(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
         return getOwnershipGeoNodes(postFieldGeoNodeUuidMap).stream()
-                .flatMap(f->getAllChildren(f).stream())
+                .flatMap(f-> getAllChildren(f).stream())
                 .filter(Objects::nonNull)
                 .map(FieldGeoNode::getUuid)
+                .collect(Collectors.toList());
+    }
+
+    public List<UUID> getAllGeoChildren(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
+        return postFieldGeoNodeUuidMap.entrySet().stream()
+                .flatMap(e->e.getValue().stream())
+                .map(fieldGeoNodeIndexByUuid::get)
+                .flatMap(f-> getAllChildren(f).stream())
+                .filter(Objects::nonNull)
+                .map(FieldGeoNode::getUuid)
+                .distinct()
                 .collect(Collectors.toList());
     }
 
@@ -92,5 +104,13 @@ public class FieldGeoService {
     public List<UUID> getAllFieldGeoNode(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
         return postFieldGeoNodeUuidMap.values().stream().flatMap(Collection::stream)
                 .distinct().collect(Collectors.toList());
+    }
+
+    List<UUID> getSameOrBelowGeoNodeUuids(User principal) {
+        List<UUID> fieldGeoNodes = getAllGeoChildren(principal.getPostFieldGeoNodeUuidMap());
+        List<UUID> allFeildNode = getAllFieldGeoNode(principal.getPostFieldGeoNodeUuidMap());
+        Set<UUID> sameOrBelowGeoNodes = new HashSet<>();
+        sameOrBelowGeoNodes.addAll(fieldGeoNodes);
+        return sameOrBelowGeoNodes.stream().toList();
     }
 }

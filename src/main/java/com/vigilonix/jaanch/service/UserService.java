@@ -1,9 +1,7 @@
 package com.vigilonix.jaanch.service;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vigilonix.jaanch.aop.Timed;
-import com.vigilonix.jaanch.config.AppConfig;
 import com.vigilonix.jaanch.enums.Role;
 import com.vigilonix.jaanch.enums.State;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
@@ -14,6 +12,7 @@ import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.repository.UserRepository;
 import com.vigilonix.jaanch.request.*;
 import com.vigilonix.jaanch.transformer.AuthTokenTransformer;
+import com.vigilonix.jaanch.transformer.SearchUserResponseTransformer;
 import com.vigilonix.jaanch.transformer.UserResponseTransformer;
 import com.vigilonix.jaanch.validator.ValidationService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +48,7 @@ public class UserService {
     private final ValidationService<UserRequest> userRequestValidationService;
     private final AuthTokenTransformer authTokenTransformer;
     private final UserResponseTransformer userResponseTransformer;
+    private final SearchUserResponseTransformer searchUserResponseTransformer;
     private final ValidationService<AuthRequest> clientValidator;
     private final UserRepository userRepository;
     private final ChangeDetector changeDetector;
@@ -223,5 +223,13 @@ public class UserService {
             log.error("invalid delete verification request {}", id, e);
         }
         throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_ID));
+    }
+
+    public List<UserResponse> getAllUsersFromSameGeoFence(User principal, String prefixName) {
+        List<UUID> geoNodes = fieldGeoService.getSameOrBelowGeoNodeUuids(principal);
+//        List<User> users = userRepository.findByPrefixNameAndGeoNodeIn();
+        List<User> users = new ArrayList<>();
+        return users.stream().map(searchUserResponseTransformer::transform).collect(Collectors.toList());
+
     }
 }

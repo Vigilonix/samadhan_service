@@ -6,11 +6,12 @@ import com.vigilonix.jaanch.request.OAuth2Response;
 import com.vigilonix.jaanch.request.UserRequest;
 import com.vigilonix.jaanch.request.UserResponse;
 import com.vigilonix.jaanch.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(UserController.V_1_USER)
@@ -39,6 +40,11 @@ public class UserController {
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserResponse getDetails() {
         return userService.getDetails(authHelper.getPrincipal());
+    }
+
+    @GetMapping(path = "/geofence", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<UserResponse> getAllUsersFromSameGeoFences(@RequestParam("prefix_name")String prefixName) {
+        return userService.getAllUsersFromSameGeoFence(authHelper.getPrincipal(), prefixName);
     }
 
 }

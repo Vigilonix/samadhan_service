@@ -32,6 +32,8 @@ public class OdApplication {
     @Column
     private String enquiryFilePath;
     @Column
+    private Long enquirySubmittedAt;
+    @Column
     private ODApplicationStatus status;
     @Column
     private String receiptNo;
