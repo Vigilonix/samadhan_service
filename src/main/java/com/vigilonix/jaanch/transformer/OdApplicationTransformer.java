@@ -35,7 +35,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .createdAt(odApplication.getCreatedAt())
                 .modifiedAt(odApplication.getModifiedAt())
                 .hasAuthorityOnReviewStatus(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
-                .hasAuthorityOnEnquiryStatus(ODApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid()))
+                .hasAuthorityOnEnquiryStatus(ODApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid()) || fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser)))
                 .hasAuthorityOnOpenStatus(ODApplicationStatus.OPEN.equals(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
                 .build();
     }
