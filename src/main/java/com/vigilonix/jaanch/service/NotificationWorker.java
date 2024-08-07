@@ -7,11 +7,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class GupshupNotificationWorker implements INotificationWorker {
-    private final NotificationWorker notificationWorker;
-    @Override
-    public void notify(NotificationTemplatePayload notificationTemplatePayload) {
-
-        notificationWorker.notifu(notificationTemplatePayload);
+public class NotificationWorker {
+    public     boolean notifu(NotificationTemplatePayload notificationTemplatePayload) {
+        return false;
     }
 }
