@@ -115,13 +115,13 @@ public class OdApplicationService {
         List<OdApplication> result = new ArrayList<>();
         if(status!= null) {
             if (CollectionUtils.isEmpty(fieldNodes)) {
-                result = odApplicationRepository.findByOdAndStatus(principal, status);
+                result = odApplicationRepository.findByOdOrEnquiryOfficerAndStatus(principal, status);
             } else {
                 result = odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()), status);
             }
         }else {
             if (CollectionUtils.isEmpty(fieldNodes)) {
-                result = odApplicationRepository.findByOd(principal);
+                result = odApplicationRepository.findByOdOrEnquiryOfficer(principal);
             } else {
                 result = odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()));
             }

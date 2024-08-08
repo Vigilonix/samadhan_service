@@ -11,6 +11,8 @@ import org.apache.commons.collections4.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OdApplicationTransformer implements Transformer<ODApplicationTransformationRequest, ODApplicationPojo> {
@@ -37,6 +39,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .hasAuthorityOnReviewStatus(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
                 .hasAuthorityOnEnquiryStatus(ODApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid()) || fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser)))
                 .hasAuthorityOnOpenStatus(ODApplicationStatus.OPEN.equals(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
+                .hasAuthorityToReassign(Arrays.asList(ODApplicationStatus.ENQUIRY, ODApplicationStatus.REVIEW).contains(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
                 .build();
     }
 }

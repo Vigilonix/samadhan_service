@@ -33,4 +33,5 @@ public class ODApplicationPojo {
     private boolean hasAuthorityOnOpenStatus;
     private boolean hasAuthorityOnEnquiryStatus;
     private boolean hasAuthorityOnReviewStatus;
+    private boolean hasAuthorityToReassign;
 }
