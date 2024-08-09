@@ -4,19 +4,18 @@ import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.exception.ValidationRuntimeException;
 import com.vigilonix.jaanch.model.OdApplication;
-import com.vigilonix.jaanch.pojo.FieldGeoNode;
+import com.vigilonix.jaanch.pojo.*;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.pojo.ODApplicationPojo;
-import com.vigilonix.jaanch.pojo.ODApplicationStatus;
-import com.vigilonix.jaanch.pojo.ODApplicationTransformationRequest;
 import com.vigilonix.jaanch.repository.OdApplicationRepository;
 import com.vigilonix.jaanch.repository.UserRepository;
 import com.vigilonix.jaanch.transformer.OdApplicationTransformer;
+import com.vigilonix.jaanch.validator.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,25 +27,40 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @Transactional
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OdApplicationService {
     private final OdApplicationRepository odApplicationRepository;
     private final OdApplicationTransformer odApplicationTransformer;
     private final UserRepository userRepository;
     private final FieldGeoService fieldGeoService;
-//    private final ValidationService<ODApplicationPojo> OdApplicationValidatorService;
-    private final UserService userService;
+    private final ValidationService<ODApplicationValidationPayload> odUpdateValidationService;
+    private final ValidationService<ODApplicationValidationPayload> odCreateValidationService;
 
-    public ODApplicationPojo create(ODApplicationPojo odApplicationPojo, User principal) {
-//        OdApplicationValidatorService.validate(odApplicationPojo);
+    @Autowired
+    public OdApplicationService(
+            OdApplicationRepository odApplicationRepository,
+            OdApplicationTransformer odApplicationTransformer,
+            UserRepository userRepository,
+            FieldGeoService fieldGeoService,
+            @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
+            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService) {
+        this.odApplicationRepository = odApplicationRepository;
+        this.odApplicationTransformer = odApplicationTransformer;
+        this.userRepository = userRepository;
+        this.fieldGeoService = fieldGeoService;
+        this.odUpdateValidationService = odUpdateValidationService;
+        this.odCreateValidationService = odCreateValidationService;
+    }
+
+    public ODApplicationPayload create(ODApplicationPayload odApplicationPayload, User principal) {
+        odCreateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
         FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(principal.getPostFieldGeoNodeUuidMap());
         OdApplication odApplication = OdApplication.builder()
                 .fieldGeoNodeUuid(fieldGeoNode.getUuid())
                 .uuid(UUID.randomUUID())
                 .od(principal)
-                .applicantName(odApplicationPojo.getApplicantName())
-                .applicationFilePath(odApplicationPojo.getApplicationFilePath())
-                .applicantPhoneNumber(odApplicationPojo.getApplicantPhoneNumber())
+                .applicantName(odApplicationPayload.getApplicantName())
+                .applicationFilePath(odApplicationPayload.getApplicationFilePath())
+                .applicantPhoneNumber(odApplicationPayload.getApplicantPhoneNumber())
                 .receiptNo(generateReceiptNumber(principal.getPostFieldGeoNodeUuidMap()))
                 .fieldGeoNodeUuid(fieldGeoService.highestPostGeoNode(principal.getPostFieldGeoNodeUuidMap()).getUuid())
                 .createdAt(System.currentTimeMillis())
@@ -70,11 +84,11 @@ public class OdApplicationService {
       return String.format("%s_%s_%s", jurisdictionName, formattedDate, System.currentTimeMillis()/1000);
     }
 
-    public ODApplicationPojo update(UUID uuid, ODApplicationPojo odApplicationPojo, User principal) {
-//        OdApplicationValidatorService.validate(odApplicationPojo);
+    public ODApplicationPayload update(UUID uuid, ODApplicationPayload odApplicationPayload, User principal) {
+        odUpdateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
         OdApplication odApplication = odApplicationRepository.findByUuid(uuid);
-        if(!Objects.isNull(odApplicationPojo.getEnquiryOfficerUuid())) {
-            User enquiryOfficer = userRepository.findByUuid(odApplicationPojo.getEnquiryOfficerUuid());
+        if(!Objects.isNull(odApplicationPayload.getEnquiryOfficerUuid())) {
+            User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
             if(enquiryOfficer == null) {
                 throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
             }
@@ -84,14 +98,14 @@ public class OdApplicationService {
             odApplication.setEnquirySubmittedAt(System.currentTimeMillis());
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
-        if(StringUtils.isNotEmpty(odApplicationPojo.getEnquiryFilePath()) ) {
-            odApplication.setEnquiryFilePath(odApplicationPojo.getEnquiryFilePath());
+        if(StringUtils.isNotEmpty(odApplicationPayload.getEnquiryFilePath()) ) {
+            odApplication.setEnquiryFilePath(odApplicationPayload.getEnquiryFilePath());
             odApplication.setStatus(ODApplicationStatus.REVIEW);
         }
-        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.ENQUIRY.equals(odApplicationPojo.getStatus())) {
+        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
-        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.CLOSED.equals(odApplicationPojo.getStatus())) {
+        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(ODApplicationStatus.CLOSED);
         }
 
@@ -101,12 +115,12 @@ public class OdApplicationService {
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
-    public ODApplicationPojo get(UUID odUuid, User principal) {
+    public ODApplicationPayload get(UUID odUuid, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odUuid);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
-    public List<ODApplicationPojo> getList(String odApplicationStatus, User principal) {
+    public List<ODApplicationPayload> getList(String odApplicationStatus, User principal) {
         ODApplicationStatus status = null;
         if(StringUtils.isNotEmpty(odApplicationStatus)) {
             status = ODApplicationStatus.valueOf(odApplicationStatus);
@@ -132,7 +146,7 @@ public class OdApplicationService {
 
     }
 
-    public List<ODApplicationPojo> getReceiptList(User principal) {
+    public List<ODApplicationPayload> getReceiptList(User principal) {
         List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
         if(CollectionUtils.isEmpty(fieldNodes)){
             return  odApplicationRepository.findByOd(principal)

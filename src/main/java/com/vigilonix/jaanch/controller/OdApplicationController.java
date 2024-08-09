@@ -2,7 +2,7 @@ package com.vigilonix.jaanch.controller;
 
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.helper.AuthHelper;
-import com.vigilonix.jaanch.pojo.ODApplicationPojo;
+import com.vigilonix.jaanch.pojo.ODApplicationPayload;
 import com.vigilonix.jaanch.service.OdApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,27 +20,27 @@ public class OdApplicationController {
     private final AuthHelper authHelper;
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ODApplicationPojo create(@RequestBody ODApplicationPojo publicApplicationPojo) {
+    public ODApplicationPayload create(@RequestBody ODApplicationPayload publicApplicationPojo) {
         return odApplicationService.create(publicApplicationPojo, authHelper.getPrincipal());
     }
 
     @LogPayload
     @PutMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ODApplicationPojo update(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody ODApplicationPojo odApplicationPojo) {
-        return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPojo, authHelper.getPrincipal());
+    public ODApplicationPayload update(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody ODApplicationPayload odApplicationPayload) {
+        return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPayload, authHelper.getPrincipal());
     }
 
     @GetMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ODApplicationPojo getOdApplicationByUuid(@PathVariable(name = "uuid") String odApplicationUuid) {
+    public ODApplicationPayload getOdApplicationByUuid(@PathVariable(name = "uuid") String odApplicationUuid) {
         return odApplicationService.get(java.util.UUID.fromString(odApplicationUuid), authHelper.getPrincipal());
     }
 
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<ODApplicationPojo> getOdApplication(@RequestParam(name = "status", required = false) String status) {
+    public List<ODApplicationPayload> getOdApplication(@RequestParam(name = "status", required = false) String status) {
         return odApplicationService.getList(status, authHelper.getPrincipal());
     }
     @GetMapping(path = "/receipt", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<ODApplicationPojo> getOdApplication() {
+    public List<ODApplicationPayload> getOdApplication() {
         return odApplicationService.getReceiptList(authHelper.getPrincipal());
     }
 }

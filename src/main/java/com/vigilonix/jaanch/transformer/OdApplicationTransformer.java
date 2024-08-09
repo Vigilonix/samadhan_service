@@ -2,7 +2,7 @@ package com.vigilonix.jaanch.transformer;
 
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.pojo.ODApplicationPojo;
+import com.vigilonix.jaanch.pojo.ODApplicationPayload;
 import com.vigilonix.jaanch.pojo.ODApplicationStatus;
 import com.vigilonix.jaanch.pojo.ODApplicationTransformationRequest;
 import com.vigilonix.jaanch.service.FieldGeoService;
@@ -15,13 +15,13 @@ import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class OdApplicationTransformer implements Transformer<ODApplicationTransformationRequest, ODApplicationPojo> {
+public class OdApplicationTransformer implements Transformer<ODApplicationTransformationRequest, ODApplicationPayload> {
     private final FieldGeoService fieldGeoService;
     @Override
-    public ODApplicationPojo transform(ODApplicationTransformationRequest odApplicationTransformationRequest) {
+    public ODApplicationPayload transform(ODApplicationTransformationRequest odApplicationTransformationRequest) {
         User principalUser = odApplicationTransformationRequest.getPrincipalUser();
         OdApplication odApplication = odApplicationTransformationRequest.getOdApplication();
-        return ODApplicationPojo.builder()
+        return ODApplicationPayload.builder()
                 .uuid(odApplication.getUuid())
                 .applicantName(odApplication.getApplicantName())
                 .applicantPhoneNumber(odApplication.getApplicantPhoneNumber())
@@ -37,7 +37,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .createdAt(odApplication.getCreatedAt())
                 .modifiedAt(odApplication.getModifiedAt())
                 .hasAuthorityOnReviewStatus(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
-                .hasAuthorityOnEnquiryStatus(ODApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid()) || fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser)))
+                .hasAuthorityOnEnquiryStatus(ODApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid())))
                 .hasAuthorityOnOpenStatus(ODApplicationStatus.OPEN.equals(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
                 .hasAuthorityToReassign(Arrays.asList(ODApplicationStatus.ENQUIRY, ODApplicationStatus.REVIEW).contains(odApplication.getStatus()) && fieldGeoService.hasGeoAuthority(odApplication.getFieldGeoNodeUuid(), principalUser))
                 .build();

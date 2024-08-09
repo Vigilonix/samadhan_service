@@ -3,6 +3,7 @@ package com.vigilonix.jaanch.config;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vigilonix.jaanch.pojo.FieldGeoNode;
+import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
 import com.vigilonix.jaanch.validator.ClientValidator;
@@ -104,9 +105,22 @@ public class BeanConfig {
     public ValidationService<UserRequest> userRequestValidationService(UserRequestValidator userRequestValidator) {
         return () -> Collections.singletonList(userRequestValidator);
     }
+
     @Bean
     public ValidationService<AuthRequest> clientValidatorService(ClientValidator clientValidator) {
         return () -> Collections.singletonList(clientValidator);
+    }
+
+    @Bean
+    @Qualifier("create")
+    public ValidationService<ODApplicationValidationPayload> odCreaateValidationService() {
+        return () -> Collections.emptyList();
+    }
+
+    @Bean
+    @Qualifier("update")
+    public ValidationService<ODApplicationValidationPayload> odUpdateValidationService() {
+        return () -> Collections.emptyList();
     }
 
     @Bean
