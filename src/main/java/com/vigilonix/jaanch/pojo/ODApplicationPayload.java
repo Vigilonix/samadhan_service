@@ -33,5 +33,6 @@ public class ODApplicationPayload {
     private boolean hasAuthorityOnOpenStatus;
     private boolean hasAuthorityOnEnquiryStatus;
     private boolean hasAuthorityOnReviewStatus;
+    private boolean hasAuthorityOnClosedStatus;
     private boolean hasAuthorityToReassign;
 }
