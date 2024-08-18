@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.controller;
 
+import com.vigilonix.jaanch.aop.Allowed;
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.helper.AuthHelper;
 import com.vigilonix.jaanch.pojo.OdApplicationPayload;
@@ -31,15 +32,19 @@ public class OdApplicationController {
         return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPayload, authHelper.getPrincipal());
     }
 
+    @LogPayload
     @GetMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public OdApplicationPayload getOdApplicationByUuid(@PathVariable(name = "uuid") String odApplicationUuid) {
         return odApplicationService.get(java.util.UUID.fromString(odApplicationUuid), authHelper.getPrincipal());
     }
 
+    @LogPayload
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<OdApplicationPayload> getOdApplication(@RequestParam(name = "status", required = false) String status) {
         return odApplicationService.getList(status, authHelper.getPrincipal());
     }
+
+    @LogPayload
     @GetMapping(path = "/receipt", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<OdApplicationPayload> getOdApplication() {
         return odApplicationService.getReceiptList(authHelper.getPrincipal());

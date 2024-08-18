@@ -9,6 +9,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -19,8 +20,9 @@ import java.util.Set;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@EnableAspectJAutoProxy
 public class AllowedAspect {
-    public static final String ANNOTATION_COM_DT_BEYOND_AOP_ALLOWED = "@annotation(com.dt.beyond.aop.Allowed)";
+    public static final String ANNOTATION_COM_DT_BEYOND_AOP_ALLOWED = "@annotation(com.vigilonix.jaanch.aop.Allowed)";
     private final AuthHelper authHelper;
 
     @Around(ANNOTATION_COM_DT_BEYOND_AOP_ALLOWED)
