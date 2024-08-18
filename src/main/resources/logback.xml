@@ -1,7 +1,7 @@
-<configuration scan="true" scanPeriod="30 seconds">
+<configuration scan="true" scanPeriod="30 seconds" debug="true">
     <!-- Define property placeholders for log file location and max history -->
-    <property name="LOG_FILE" value="${logging.file.name}" />
-    <property name="MAX_HISTORY" value="${logging.file.max-history:-30}" />
+    <property name="LOG_FILE" value="/var/log/jaanch/application.log" />
+    <property name="MAX_HISTORY" value="30" />
 
     <!-- Console appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -31,9 +31,4 @@
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FILE" />
     </root>
-
-    <!-- Specific logger settings (optional) -->
-    <logger name="org.springframework.web" level="DEBUG">
-        <appender-ref ref="FILE" />
-    </logger>
 </configuration>
