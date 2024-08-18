@@ -6,9 +6,7 @@ import com.vigilonix.jaanch.pojo.FieldGeoNode;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
-import com.vigilonix.jaanch.validator.ClientValidator;
-import com.vigilonix.jaanch.validator.UserRequestValidator;
-import com.vigilonix.jaanch.validator.ValidationService;
+import com.vigilonix.jaanch.validator.*;
 import jakarta.servlet.MultipartConfigElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -113,14 +111,14 @@ public class BeanConfig {
 
     @Bean
     @Qualifier("create")
-    public ValidationService<ODApplicationValidationPayload> odCreaateValidationService() {
-        return () -> Collections.emptyList();
+    public ValidationService<ODApplicationValidationPayload> odCreaateValidationService(OdApplicationCreationValidator odApplicationCreationValidator) {
+        return () -> Collections.singletonList(odApplicationCreationValidator);
     }
 
     @Bean
     @Qualifier("update")
-    public ValidationService<ODApplicationValidationPayload> odUpdateValidationService() {
-        return () -> Collections.emptyList();
+    public ValidationService<ODApplicationValidationPayload> odUpdateValidationService(OdApplicationUpdateValidator odApplicationUpdateValidator) {
+        return () -> Collections.singletonList(odApplicationUpdateValidator);
     }
 
     @Bean

@@ -23,13 +23,13 @@ public class OdApplicationCreationValidator implements Validator<List<Validation
     public List<ValidationError> validate(ODApplicationValidationPayload odApplicationValidationPayload) {
         List<ValidationError> errors = new ArrayList<>();
         OdApplicationPayload odRequest = odApplicationValidationPayload.getOdApplicationPayload();
-        if(Objects.isNull(odRequest.getFieldGeoNodeUuid()) || Objects.isNull(fieldGeoService.getFieldGeoNode(odRequest.getFieldGeoNodeUuid()))) {
-            errors.add(ValidationErrorEnum.INVALID_GEONODE_UUID);
-        }
+//        if(Objects.isNull(odRequest.getFieldGeoNodeUuid()) || Objects.isNull(fieldGeoService.getFieldGeoNode(odRequest.getFieldGeoNodeUuid()))) {
+//            errors.add(ValidationErrorEnum.INVALID_GEONODE_UUID);
+//        }
         if(StringUtils.isEmpty(odRequest.getApplicantName()) || odRequest.getApplicantName().length()>64) {
             errors.add(ValidationErrorEnum.NAME_ATTRIBUTE_LENGTH_MORE_THAN_EXPECTED);
         }
-        if(StringUtils.isEmpty(odRequest.getApplicantPhoneNumber()) || odRequest.getApplicantPhoneNumber().length()!=10 || odRequest.getApplicantPhoneNumber().chars().allMatch(Character::isDigit)) {
+        if(StringUtils.isEmpty(odRequest.getApplicantPhoneNumber()) || odRequest.getApplicantPhoneNumber().length()!=10 || !odRequest.getApplicantPhoneNumber().chars().allMatch(Character::isDigit)) {
             errors.add(ValidationErrorEnum.INVALID_PHONE_NUMBER);
         }
         errors.addAll(pdfValidator.validate(odRequest.getApplicationFilePath()));

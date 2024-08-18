@@ -30,11 +30,10 @@ public class OdApplicationUpdateValidator implements Validator<List<ValidationEr
         if(Objects.isNull(odRequest.getEnquiryOfficerUuid()) && ODApplicationStatus.OPEN.equals(odApplicationValidationPayload.getOdApplication().getStatus())) {
             return odApplicationCreationValidator.validate(odApplicationValidationPayload);
         }
-        else if(ODApplicationStatus.OPEN.equals(odApplicationValidationPayload.getOdApplication().getStatus())) {
-            if(Objects.isNull(odRequest.getEnquiryOfficerUuid()) || Objects.isNull(odApplicationValidationPayload.getEnquiryUser())) {
+        if(!Objects.isNull(odRequest.getEnquiryOfficerUuid()) && Objects.isNull(odApplicationValidationPayload.getEnquiryUser())) {
                 errors.add(ValidationErrorEnum.INVALID_ID);
-            }
         }
+
         if(StringUtils.isNotEmpty(odRequest.getEnquiryFilePath())) {
             errors.addAll(pdfValidator.validate(odRequest.getApplicationFilePath()));
             if(!principal.getUuid().equals(odApplicationValidationPayload.getOdApplication().getEnquiryOfficer().getUuid())) {
