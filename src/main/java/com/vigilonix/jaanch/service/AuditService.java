@@ -19,13 +19,13 @@ public class AuditService {
     private final ThreadPoolExecutor threadPoolExecutor;
     private final ObjectMapper objectMapper;
 
-    public void audit(User principal, String uri, Object body) {
+    public void audit(User principal, String requestURI, String method, Object body) {
         threadPoolExecutor.submit(() -> {
             try {
                 String jsonPayload = objectMapper.writeValueAsString(body);
-                log.info(REQUEST_BY_USER_ID, principal.getId(), uri, jsonPayload);
+                log.info(REQUEST_BY_USER_ID, principal.getId(), requestURI, method, jsonPayload);
             } catch (Exception ex) {
-                log.error(FAILED_TO_AUDIT_REQUEST_FOR_TOKEN_FOR_USER_REQUEST, principal.getId(), uri, body);
+                log.error(FAILED_TO_AUDIT_REQUEST_FOR_TOKEN_FOR_USER_REQUEST, principal.getId(),requestURI, method,  body);
             }
         });
     }

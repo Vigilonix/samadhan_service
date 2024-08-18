@@ -52,7 +52,7 @@ public class AuthFilter implements Filter {
                     }
                     httpServletRequest.setAttribute(Constant.PRINCIPAL, oauthToken.getUser());
                     httpServletRequest.setAttribute(Constant.CLIENT_ID, oauthToken.getClientId());
-                    auditService.audit(oauthToken.getUser(), httpServletRequest.getRequestURI(), null);
+                    auditService.audit(oauthToken.getUser(), httpServletRequest.getRequestURI(), httpServletRequest.getMethod(),  null);
                 } else {
                     log.error("unprotected invalid request for {}", httpServletRequest.getRequestURI());
                     ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, objectMapper.writeValueAsString(Collections.singletonList(ValidationErrorEnum.INVALID_TOKEN)));

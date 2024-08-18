@@ -19,6 +19,7 @@ public class OdApplicationController {
     private final OdApplicationService odApplicationService;
     private final AuthHelper authHelper;
 
+    @LogPayload
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public OdApplicationPayload create(@RequestBody OdApplicationPayload publicApplicationPojo) {
         return odApplicationService.create(publicApplicationPojo, authHelper.getPrincipal());

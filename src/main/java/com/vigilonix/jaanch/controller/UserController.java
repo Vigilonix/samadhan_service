@@ -32,6 +32,7 @@ public class UserController {
         return userService.updateUser(authHelper.getPrincipal(), userRequest);
     }
 
+    @LogPayload
     @PostMapping(path = "/logout", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void logout() {
         userService.logout(authHelper.getPrincipal());
