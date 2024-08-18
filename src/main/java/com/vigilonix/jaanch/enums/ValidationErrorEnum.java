@@ -80,7 +80,7 @@ public enum ValidationErrorEnum implements ValidationError {
     JOB_COMPANY_SIZE_MORE(61, "Job company size is greater than 64 chars", Collections.emptyList()),
     EDUCATION_SIZE_MORE(62, "Education size is greater than 64 chars", Collections.emptyList()),
     INVALID_BARRIER_REQUEST(63, "Invalid Barrier Request", Collections.emptyList()),
-    NULL_POST(64, "Post can not be empty", Collections.emptyList());
+    NULL_POST(64, "Post can not be empty", Collections.emptyList()), INVALID_GEONODE_UUID(65, "GeoNodeUuid is invalid", Collections.emptyList()), INVALID_PHONE_NUMBER(66, "Invalid Phone Number", Collections.emptyList());
 
 
     private final int code;

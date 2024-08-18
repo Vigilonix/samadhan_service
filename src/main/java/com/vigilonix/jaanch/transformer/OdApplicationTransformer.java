@@ -2,7 +2,7 @@ package com.vigilonix.jaanch.transformer;
 
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.pojo.ODApplicationPayload;
+import com.vigilonix.jaanch.pojo.OdApplicationPayload;
 import com.vigilonix.jaanch.pojo.ODApplicationStatus;
 import com.vigilonix.jaanch.pojo.ODApplicationTransformationRequest;
 import com.vigilonix.jaanch.service.FieldGeoService;
@@ -15,13 +15,13 @@ import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class OdApplicationTransformer implements Transformer<ODApplicationTransformationRequest, ODApplicationPayload> {
+public class OdApplicationTransformer implements Transformer<ODApplicationTransformationRequest, OdApplicationPayload> {
     private final FieldGeoService fieldGeoService;
     @Override
-    public ODApplicationPayload transform(ODApplicationTransformationRequest odApplicationTransformationRequest) {
+    public OdApplicationPayload transform(ODApplicationTransformationRequest odApplicationTransformationRequest) {
         User principalUser = odApplicationTransformationRequest.getPrincipalUser();
         OdApplication odApplication = odApplicationTransformationRequest.getOdApplication();
-        return ODApplicationPayload.builder()
+        return OdApplicationPayload.builder()
                 .uuid(odApplication.getUuid())
                 .applicantName(odApplication.getApplicantName())
                 .applicantPhoneNumber(odApplication.getApplicantPhoneNumber())

@@ -14,7 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ODApplicationPayload {
+public class OdApplicationPayload {
     private UUID uuid;
     private String applicantName;
     private String applicantPhoneNumber;

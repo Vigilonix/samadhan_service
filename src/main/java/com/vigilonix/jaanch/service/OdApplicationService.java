@@ -10,7 +10,6 @@ import com.vigilonix.jaanch.repository.OdApplicationRepository;
 import com.vigilonix.jaanch.repository.UserRepository;
 import com.vigilonix.jaanch.transformer.OdApplicationTransformer;
 import com.vigilonix.jaanch.validator.ValidationService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +50,7 @@ public class OdApplicationService {
         this.odCreateValidationService = odCreateValidationService;
     }
 
-    public ODApplicationPayload create(ODApplicationPayload odApplicationPayload, User principal) {
+    public OdApplicationPayload create(OdApplicationPayload odApplicationPayload, User principal) {
         odCreateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
         FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(principal.getPostFieldGeoNodeUuidMap());
         OdApplication odApplication = OdApplication.builder()
@@ -84,14 +83,15 @@ public class OdApplicationService {
       return String.format("%s_%s_%s", jurisdictionName, formattedDate, System.currentTimeMillis()/1000);
     }
 
-    public ODApplicationPayload update(UUID uuid, ODApplicationPayload odApplicationPayload, User principal) {
-        odUpdateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
+    public OdApplicationPayload update(UUID uuid, OdApplicationPayload odApplicationPayload, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(uuid);
+        odUpdateValidationService.validate(ODApplicationValidationPayload.builder()
+                .odApplicationPayload(odApplicationPayload)
+                        .odApplication(odApplication)
+                        .enquiryUser(userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid()))
+                .principalUser(principal).build());
         if(!Objects.isNull(odApplicationPayload.getEnquiryOfficerUuid())) {
             User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
-            if(enquiryOfficer == null) {
-                throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
-            }
             FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(enquiryOfficer.getPostFieldGeoNodeUuidMap());
             odApplication.setEnquiryOfficer(enquiryOfficer);
             odApplication.setFieldGeoNodeUuid(fieldGeoNode.getUuid());
@@ -115,12 +115,12 @@ public class OdApplicationService {
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
-    public ODApplicationPayload get(UUID odUuid, User principal) {
+    public OdApplicationPayload get(UUID odUuid, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odUuid);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
-    public List<ODApplicationPayload> getList(String odApplicationStatus, User principal) {
+    public List<OdApplicationPayload> getList(String odApplicationStatus, User principal) {
         ODApplicationStatus status = null;
         if(StringUtils.isNotEmpty(odApplicationStatus)) {
             status = ODApplicationStatus.valueOf(odApplicationStatus);
@@ -146,7 +146,7 @@ public class OdApplicationService {
 
     }
 
-    public List<ODApplicationPayload> getReceiptList(User principal) {
+    public List<OdApplicationPayload> getReceiptList(User principal) {
         List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
         if(CollectionUtils.isEmpty(fieldNodes)){
             return  odApplicationRepository.findByOd(principal)
