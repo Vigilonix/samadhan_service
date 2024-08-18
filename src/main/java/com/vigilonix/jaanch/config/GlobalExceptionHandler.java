@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @ControllerAdvice
-public class RestResponseEntityExceptionHandler {
+public class GlobalExceptionHandler {
     public static final String VALIDATION_FAILED = "validation failed {}";
     public static final String INVALID_REQUEST = "invalid request";
     @Autowired
@@ -77,4 +79,15 @@ public class RestResponseEntityExceptionHandler {
         log.error("number format exception", ex);
         return new ResponseEntity<>(Collections.singletonList(ValidationErrorEnum.NUMBER_FORMAT_EXCEPTION), HttpStatus.BAD_REQUEST);
     }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException ex, WebRequest request) {
+        // Extract and customize the error message as needed
+        log.error("invalid parseable input {}", request, ex);
+        // Create and return a custom error response
+        return new ResponseEntity<>(Collections.singletonList(ValidationErrorEnum.INVALID_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
 }
