@@ -1,4 +1,4 @@
-<configuration scan="true" scanPeriod="30 seconds" debug="true">
+<configuration>
     <!-- Define property placeholders for log file location and max history -->
     <property name="LOG_FILE" value="/var/log/jaanch/application.log" />
     <property name="MAX_HISTORY" value="30" />
