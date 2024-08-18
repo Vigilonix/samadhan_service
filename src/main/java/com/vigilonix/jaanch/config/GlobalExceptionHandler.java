@@ -41,7 +41,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = {AuthProviderException.class})
     public ResponseEntity<List<ValidationError>> handleConflict(RuntimeException ex) {
         log.error(INVALID_REQUEST, ex);
-        return new ResponseEntity<>(Collections.singletonList(ValidationErrorEnum.INVALID_TOKEN), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(Collections.singletonList(ValidationErrorEnum.INVALID_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
@@ -78,6 +78,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<List<ValidationError>> handleDataConstraintViolation(NumberFormatException ex) {
         log.error("number format exception", ex);
         return new ResponseEntity<>(Collections.singletonList(ValidationErrorEnum.NUMBER_FORMAT_EXCEPTION), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    public ResponseEntity<List<ValidationError>> handleIllegalArgument(IllegalArgumentException ex) {
+        log.error("number format exception", ex);
+        return new ResponseEntity<>(Collections.singletonList(ValidationErrorEnum.INVALID_REQUEST), HttpStatus.BAD_REQUEST);
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
