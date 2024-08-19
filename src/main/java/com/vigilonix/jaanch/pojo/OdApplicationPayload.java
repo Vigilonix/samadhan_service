@@ -25,7 +25,7 @@ public class OdApplicationPayload {
     private String enquiryOfficerName;
     private String enquiryFilePath;
     private Long enquirySubmittedAt;
-    private ODApplicationStatus status;
+    private OdApplicationStatus status;
     private String receiptNo;
     private Long createdAt;
     private Long modifiedAt;

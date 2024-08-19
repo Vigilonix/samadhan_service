@@ -1,6 +1,6 @@
 package com.vigilonix.jaanch.pojo;
 
-public enum ODApplicationStatus {
+public enum OdApplicationStatus {
     OPEN,
     ENQUIRY,
     REVIEW,

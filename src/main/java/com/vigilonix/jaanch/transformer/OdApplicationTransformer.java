@@ -3,7 +3,7 @@ package com.vigilonix.jaanch.transformer;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.OdApplicationPayload;
-import com.vigilonix.jaanch.pojo.ODApplicationStatus;
+import com.vigilonix.jaanch.pojo.OdApplicationStatus;
 import com.vigilonix.jaanch.pojo.ODApplicationTransformationRequest;
 import com.vigilonix.jaanch.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +37,11 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .receiptNo(odApplication.getReceiptNo())
                 .createdAt(odApplication.getCreatedAt())
                 .modifiedAt(odApplication.getModifiedAt())
-                .hasAuthorityOnReviewStatus(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
-                .hasAuthorityOnEnquiryStatus(ODApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid())))
-                .hasAuthorityOnOpenStatus(ODApplicationStatus.OPEN.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
-                .hasAuthorityOnClosedStatus(ODApplicationStatus.CLOSED.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
-                .hasAuthorityToReassign(Arrays.asList(ODApplicationStatus.ENQUIRY, ODApplicationStatus.REVIEW).contains(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
+                .hasAuthorityOnReviewStatus(OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
+                .hasAuthorityOnEnquiryStatus(OdApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid())))
+                .hasAuthorityOnOpenStatus(OdApplicationStatus.OPEN.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
+                .hasAuthorityOnClosedStatus(OdApplicationStatus.CLOSED.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
+                .hasAuthorityToReassign(Arrays.asList(OdApplicationStatus.ENQUIRY, OdApplicationStatus.REVIEW).contains(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
                 .build();
     }
 }

@@ -1,12 +1,17 @@
 package com.vigilonix.jaanch.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
+import com.vigilonix.jaanch.pojo.NotificationPayload;
+import com.vigilonix.jaanch.pojo.OdApplicationStatus;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
+import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationNotificationTransformer;
 import com.vigilonix.jaanch.validator.*;
 import jakarta.servlet.MultipartConfigElement;
+import org.apache.commons.collections4.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -31,6 +36,8 @@ import org.springframework.web.filter.CorsFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -127,5 +134,12 @@ public class BeanConfig {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to parse geofence_hierarchy.json file", e);
         }
+    }
+
+    @Bean
+    public Map<OdApplicationStatus, Transformer<OdApplication, NotificationPayload>> getNotificationPayloadTransformer(ApplicantApplicationCreationNotificationTransformer applicantApplicationCreationNotificationTransformer) {
+        Map<OdApplicationStatus, Transformer<OdApplication, NotificationPayload>> templateTransformerMap = new HashMap<>();
+        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationNotificationTransformer);
+        return templateTransformerMap;
     }
 }

@@ -1,6 +1,6 @@
 package com.vigilonix.jaanch.model;
 
-import com.vigilonix.jaanch.pojo.ODApplicationStatus;
+import com.vigilonix.jaanch.pojo.OdApplicationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +34,7 @@ public class OdApplication {
     @Column
     private Long enquirySubmittedAt;
     @Column
-    private ODApplicationStatus status;
+    private OdApplicationStatus status;
     @Column
     private String receiptNo;
     @Column

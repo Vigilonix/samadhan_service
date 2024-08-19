@@ -4,7 +4,7 @@ import com.google.common.collect.Sets;
 import com.vigilonix.jaanch.enums.ValidationError;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.pojo.ODApplicationStatus;
+import com.vigilonix.jaanch.pojo.OdApplicationStatus;
 import com.vigilonix.jaanch.pojo.OdApplicationPayload;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.service.GeoHierarchyService;
@@ -32,14 +32,14 @@ public class OdApplicationUpdateValidator implements Validator<List<ValidationEr
         if(Objects.isNull(odApplicationValidationPayload.getOdApplication())) {
             return Collections.singletonList(ValidationErrorEnum.INVALID_UUID);
         }
-        if(Objects.isNull(odRequest.getEnquiryOfficerUuid()) && ODApplicationStatus.OPEN.equals(odApplicationValidationPayload.getOdApplication().getStatus())) {
+        if(Objects.isNull(odRequest.getEnquiryOfficerUuid()) && OdApplicationStatus.OPEN.equals(odApplicationValidationPayload.getOdApplication().getStatus())) {
             return odApplicationCreationValidator.validate(odApplicationValidationPayload);
         }
         if(!Objects.isNull(odRequest.getEnquiryOfficerUuid()) && Objects.isNull(odApplicationValidationPayload.getEnquiryUser())) {
             errors.add(ValidationErrorEnum.INVALID_ID);
         }
         if((!Objects.isNull(odApplicationValidationPayload.getEnquiryUser()) ||
-                Sets.newHashSet(ODApplicationStatus.REVIEW)
+                Sets.newHashSet(OdApplicationStatus.REVIEW)
                     .contains(odApplicationValidationPayload.getOdApplication().getStatus()))
                 && !geoHierarchyService.hasAuthority(odApplicationValidationPayload.getOdApplication().getFieldGeoNodeUuid(),principal.getPostFieldGeoNodeUuidMap())) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);

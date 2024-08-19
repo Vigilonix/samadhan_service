@@ -54,22 +54,6 @@ public class UserService {
     private final ChangeDetector changeDetector;
     private final GeoHierarchyService geoHierarchyService;
 
-    private static String toHexString(byte[] bytes) {
-        Formatter formatter = new Formatter();
-        for (byte b : bytes) {
-            formatter.format("%02x", b);
-        }
-        return formatter.toString();
-    }
-
-    public static String calculateHMAC(String data, String key)
-            throws NoSuchAlgorithmException, InvalidKeyException {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), HMAC_SHA256);
-        Mac mac = Mac.getInstance(HMAC_SHA256);
-        mac.init(secretKeySpec);
-        return toHexString(mac.doFinal(data.getBytes()));
-    }
-
     public OAuth2Response login(AuthRequest authRequest) {
         clientValidator.validate(authRequest);
         User user = userRepository.findByUsername(authRequest.getUsername());

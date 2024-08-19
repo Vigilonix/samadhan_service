@@ -2,7 +2,7 @@ package com.vigilonix.jaanch.repository;
 
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.pojo.ODApplicationStatus;
+import com.vigilonix.jaanch.pojo.OdApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,15 +19,15 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     List<OdApplication> findByFieldGeoNodeUuidIn(List<UUID> uuids);
 
-    List<OdApplication> findByOdAndStatus(User od, ODApplicationStatus status);
+    List<OdApplication> findByOdAndStatus(User od, OdApplicationStatus status);
 
-    List<OdApplication> findByFieldGeoNodeUuidInAndStatus(List<UUID> uuid, ODApplicationStatus status);
+    List<OdApplication> findByFieldGeoNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
 
     @Query("SELECT o FROM od_application o WHERE (o.od = :user OR o.enquiryOfficer = :user)")
     List<OdApplication> findByOdOrEnquiryOfficer(User user);
 
     @Query("SELECT o FROM od_application o WHERE (o.od = :user OR o.enquiryOfficer = :user) AND o.status = :status")
-    List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, ODApplicationStatus status);
+    List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, OdApplicationStatus status);
 
 
 

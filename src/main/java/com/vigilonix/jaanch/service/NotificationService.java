@@ -1,7 +1,8 @@
 package com.vigilonix.jaanch.service;
 
-import com.vigilonix.jaanch.helper.NotificationTemplatePayload;
-import com.vigilonix.jaanch.helper.TemplateTransformerWorker;
+import com.vigilonix.jaanch.pojo.NotificationPayload;
+import com.vigilonix.jaanch.helper.NotificationPayloadTransformerFactory;
+import com.vigilonix.jaanch.helper.NotificationWorkerFactory;
 import com.vigilonix.jaanch.model.OdApplication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +15,13 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NotificationService {
-    private final TemplateTransformerWorker templateTransformerWorker;
-    private final GupshupNotificationWorker notificationWorker;
+    private final NotificationPayloadTransformerFactory notificationPayloadTransformerFactory;
+    private final NotificationWorkerFactory notificationWorkerFactory;
 
     void sendNotification(OdApplication odApplication) {
-        Optional<NotificationTemplatePayload> notificationPayload = templateTransformerWorker.getTemplatePayload(odApplication);
+        Optional<NotificationPayload> notificationPayload = notificationPayloadTransformerFactory.transform(odApplication);
         if(notificationPayload.isPresent()) {
-            notificationWorker.notify(notificationPayload.get());
+            notificationWorkerFactory.notify(notificationPayload.get());
         }
     }
-
 }

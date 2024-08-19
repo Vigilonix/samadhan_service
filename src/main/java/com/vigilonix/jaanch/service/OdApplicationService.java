@@ -71,9 +71,10 @@ public class OdApplicationService {
                 .fieldGeoNodeUuid(geoHierarchyNode.getUuid())
                 .createdAt(epoch)
                 .modifiedAt(epoch)
-                .status(ODApplicationStatus.OPEN)
+                .status(OdApplicationStatus.OPEN)
                 .build();
         odApplicationRepository.save(odApplication);
+        notificationService.sendNotification(odApplication);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
@@ -102,22 +103,23 @@ public class OdApplicationService {
             odApplication.setEnquiryOfficer(enquiryOfficer);
             odApplication.setFieldGeoNodeUuid(geoHierarchyNode.getUuid());
             odApplication.setEnquirySubmittedAt(System.currentTimeMillis());
-            odApplication.setStatus(ODApplicationStatus.ENQUIRY);
+            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
         }
         if (StringUtils.isNotEmpty(odApplicationPayload.getEnquiryFilePath())) {
             odApplication.setEnquiryFilePath(odApplicationPayload.getEnquiryFilePath());
-            odApplication.setStatus(ODApplicationStatus.REVIEW);
+            odApplication.setStatus(OdApplicationStatus.REVIEW);
         }
-        if (ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
-            odApplication.setStatus(ODApplicationStatus.ENQUIRY);
+        if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
+            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
         }
-        if (ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
-            odApplication.setStatus(ODApplicationStatus.CLOSED);
+        if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
+            odApplication.setStatus(OdApplicationStatus.CLOSED);
         }
 
 
         odApplication.setModifiedAt(System.currentTimeMillis());
         odApplicationRepository.save(odApplication);
+        notificationService.sendNotification(odApplication);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
@@ -127,9 +129,9 @@ public class OdApplicationService {
     }
 
     public List<OdApplicationPayload> getList(String odApplicationStatus, User principal) {
-        ODApplicationStatus status = null;
+        OdApplicationStatus status = null;
         if (StringUtils.isNotEmpty(odApplicationStatus)) {
-            status = ODApplicationStatus.valueOf(odApplicationStatus);
+            status = OdApplicationStatus.valueOf(odApplicationStatus);
         }
         List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostFieldGeoNodeUuidMap());
         List<OdApplication> result = new ArrayList<>();
