@@ -5,9 +5,7 @@ import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.request.UserResponse;
 import com.vigilonix.jaanch.service.FieldGeoService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +37,12 @@ public class UserResponseTransformer implements Transformer<User, UserResponse> 
                 .lastLive(principal.getLastLive())
                 .latitude(principal.getLatitude())
                 .longitude(principal.getLongitude())
-                .postFieldGeoNodeUuidMap(principal.getPostFieldGeoNodeUuidMap())
+                .postFieldGeoNodeUuidMap(principal.getPostFieldGeoNodeUuidMap().entrySet().stream().collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().stream()
+                                .map(uuid -> fieldGeoService.clean(fieldGeoService.getFieldGeoNode(uuid)))
+                                .collect(Collectors.toList())
+                )))
                 .highestPost(fieldGeoService.highestPost(principal.getPostFieldGeoNodeUuidMap()))
                 .build();
     }

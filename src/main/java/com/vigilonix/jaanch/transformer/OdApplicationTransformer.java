@@ -29,6 +29,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .odName(odApplication.getOd().getName())
                 .applicationFilePath(odApplication.getApplicationFilePath())
                 .fieldGeoNodeUuid(odApplication.getFieldGeoNodeUuid())
+                .fieldGeoNodeName(fieldGeoService.getFieldGeoNode(odApplication.getFieldGeoNodeUuid()).getName())
                 .enquiryOfficerUuid(odApplication.getEnquiryOfficer()!=null?odApplication.getEnquiryOfficer().getUuid():null)
                 .enquiryOfficerName(odApplication.getEnquiryOfficer()!=null?odApplication.getEnquiryOfficer().getName():null)
                 .enquiryFilePath(odApplication.getEnquiryFilePath())

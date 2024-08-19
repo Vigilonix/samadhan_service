@@ -20,6 +20,7 @@ public class OdApplicationPayload {
     private String odName;
     private String applicationFilePath;
     private UUID fieldGeoNodeUuid;
+    private String fieldGeoNodeName;
     private UUID enquiryOfficerUuid;
     private String enquiryOfficerName;
     private String enquiryFilePath;

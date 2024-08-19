@@ -124,4 +124,13 @@ public class FieldGeoService {
                 ));
         return resultMap.getOrDefault(fieldGeoNodeUuid, Post.BEAT).getLevel()>1;
     }
+
+    public FieldGeoNode clean(FieldGeoNode fieldGeoNode) {
+        return FieldGeoNode.builder()
+                .uuid(fieldGeoNode.getUuid())
+                .name(fieldGeoNode.getName())
+                .geofence(fieldGeoNode.getGeofence())
+                .type(fieldGeoNode.getType())
+                .build();
+    }
 }
