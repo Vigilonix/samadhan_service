@@ -1,6 +1,9 @@
 package com.vigilonix.jaanch.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vigilonix.jaanch.enums.NotificationMethod;
+import com.vigilonix.jaanch.helper.INotificationWorker;
+import com.vigilonix.jaanch.helper.WhatsappNotificationWorker;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
@@ -141,5 +144,12 @@ public class BeanConfig {
         Map<OdApplicationStatus, Transformer<OdApplication, NotificationPayload>> templateTransformerMap = new HashMap<>();
         templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationNotificationTransformer);
         return templateTransformerMap;
+    }
+
+    @Bean
+    public Map<NotificationMethod, INotificationWorker> getNotificationWorkerMap(WhatsappNotificationWorker whatsappNotificationWorker) {
+        Map<NotificationMethod, INotificationWorker> notificationWorkerMap = new HashMap<>();
+        notificationWorkerMap.put(NotificationMethod.WHATSAPP, whatsappNotificationWorker);
+        return notificationWorkerMap;
     }
 }

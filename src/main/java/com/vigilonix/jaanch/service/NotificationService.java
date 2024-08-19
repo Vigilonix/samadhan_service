@@ -18,10 +18,11 @@ public class NotificationService {
     private final NotificationPayloadTransformerFactory notificationPayloadTransformerFactory;
     private final NotificationWorkerFactory notificationWorkerFactory;
 
-    void sendNotification(OdApplication odApplication) {
+    public boolean sendNotification(OdApplication odApplication) {
         Optional<NotificationPayload> notificationPayload = notificationPayloadTransformerFactory.transform(odApplication);
         if(notificationPayload.isPresent()) {
-            notificationWorkerFactory.notify(notificationPayload.get());
+            return notificationWorkerFactory.notify(notificationPayload.get());
         }
+        return false;
     }
 }

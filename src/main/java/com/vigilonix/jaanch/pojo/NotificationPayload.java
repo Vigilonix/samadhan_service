@@ -14,5 +14,5 @@ public class NotificationPayload {
     private final List<String> values;
     private final String templateId;
     private final String phoneNumber;
-    private final NotificationMethod notificationMethod;
+    private final List<NotificationMethod> notificationMethod;
 }
