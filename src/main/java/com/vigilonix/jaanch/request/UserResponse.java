@@ -9,13 +9,8 @@ import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.Rank;
 import com.vigilonix.jaanch.enums.Role;
 import com.vigilonix.jaanch.enums.State;
-import com.vigilonix.jaanch.pojo.FieldGeoNode;
-import io.hypersistence.utils.hibernate.type.json.JsonType;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
 import java.util.List;
 import java.util.Map;
@@ -51,6 +46,6 @@ public class UserResponse {
     private Double latitude;
     private Double longitude;
     @JsonProperty("post_field_map")
-    private Map<Post, List<FieldGeoNode>> postFieldGeoNodeUuidMap;
+    private Map<Post, List<GeoHierarchyNode>> postFieldGeoNodeUuidMap;
     private Post highestPost;
 }

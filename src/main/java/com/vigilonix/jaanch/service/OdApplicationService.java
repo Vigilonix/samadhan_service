@@ -27,7 +27,7 @@ public class OdApplicationService {
     private final OdApplicationRepository odApplicationRepository;
     private final OdApplicationTransformer odApplicationTransformer;
     private final UserRepository userRepository;
-    private final FieldGeoService fieldGeoService;
+    private final GeoHierarchyService geoHierarchyService;
     private final ValidationService<ODApplicationValidationPayload> odUpdateValidationService;
     private final ValidationService<ODApplicationValidationPayload> odCreateValidationService;
     private final NotificationService notificationService;
@@ -37,13 +37,13 @@ public class OdApplicationService {
             OdApplicationRepository odApplicationRepository,
             OdApplicationTransformer odApplicationTransformer,
             UserRepository userRepository,
-            FieldGeoService fieldGeoService,
+            GeoHierarchyService geoHierarchyService,
             @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
             @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService) {
         this.odApplicationRepository = odApplicationRepository;
         this.odApplicationTransformer = odApplicationTransformer;
         this.userRepository = userRepository;
-        this.fieldGeoService = fieldGeoService;
+        this.geoHierarchyService = geoHierarchyService;
         this.odUpdateValidationService = odUpdateValidationService;
         this.odCreateValidationService = odCreateValidationService;
         this.notificationService = notificationService;
@@ -53,22 +53,22 @@ public class OdApplicationService {
         odCreateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
 
         Long epoch = System.currentTimeMillis();
-        FieldGeoNode fieldGeoNode = Objects.isNull(odApplicationPayload.getFieldGeoNodeUuid())
-                ? fieldGeoService.resolveFieldGeoNode(principal.getPostFieldGeoNodeUuidMap())
-                : fieldGeoService.getFieldGeoNode(odApplicationPayload.getFieldGeoNodeUuid());
-        Optional<Integer> maxBucketNo = odApplicationRepository.findMaxReceiptBucketNumberForCurrentMonth(fieldGeoNode.getUuid());
+        GeoHierarchyNode geoHierarchyNode = Objects.isNull(odApplicationPayload.getFieldGeoNodeUuid())
+                ? geoHierarchyService.getHighestPostNode(principal.getPostFieldGeoNodeUuidMap())
+                : geoHierarchyService.getNodeById(odApplicationPayload.getFieldGeoNodeUuid());
+        Optional<Integer> maxBucketNo = odApplicationRepository.findMaxReceiptBucketNumberForCurrentMonth(geoHierarchyNode.getUuid());
         int bucketNo = maxBucketNo.map(integer -> integer + 1).orElse(1);
 
         OdApplication odApplication = OdApplication.builder()
-                .fieldGeoNodeUuid(fieldGeoNode.getUuid())
+                .fieldGeoNodeUuid(geoHierarchyNode.getUuid())
                 .uuid(UUID.randomUUID())
                 .od(principal)
                 .applicantName(odApplicationPayload.getApplicantName())
                 .applicationFilePath(odApplicationPayload.getApplicationFilePath())
                 .applicantPhoneNumber(odApplicationPayload.getApplicantPhoneNumber())
-                .receiptNo(generateReceiptNumber(fieldGeoNode, bucketNo))
+                .receiptNo(generateReceiptNumber(geoHierarchyNode, bucketNo))
                 .receiptBucketNumber(bucketNo)
-                .fieldGeoNodeUuid(fieldGeoNode.getUuid())
+                .fieldGeoNodeUuid(geoHierarchyNode.getUuid())
                 .createdAt(epoch)
                 .modifiedAt(epoch)
                 .status(ODApplicationStatus.OPEN)
@@ -77,8 +77,8 @@ public class OdApplicationService {
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
-    private String generateReceiptNumber(FieldGeoNode fieldGeoNode, int bucketNo) {
-        String jurisdictionName = fieldGeoNode.getName().replace("  ", " ")
+    private String generateReceiptNumber(GeoHierarchyNode geoHierarchyNode, int bucketNo) {
+        String jurisdictionName = geoHierarchyNode.getName().replace("  ", " ")
                 .replace(" ", "_");
         // Get the current date
         LocalDate currentDate = LocalDate.now();
@@ -98,9 +98,9 @@ public class OdApplicationService {
                 .principalUser(principal).build());
         if (!Objects.isNull(odApplicationPayload.getEnquiryOfficerUuid())) {
             User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
-            FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(enquiryOfficer.getPostFieldGeoNodeUuidMap());
+            GeoHierarchyNode geoHierarchyNode = geoHierarchyService.getHighestPostNode(enquiryOfficer.getPostFieldGeoNodeUuidMap());
             odApplication.setEnquiryOfficer(enquiryOfficer);
-            odApplication.setFieldGeoNodeUuid(fieldGeoNode.getUuid());
+            odApplication.setFieldGeoNodeUuid(geoHierarchyNode.getUuid());
             odApplication.setEnquirySubmittedAt(System.currentTimeMillis());
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
@@ -131,19 +131,19 @@ public class OdApplicationService {
         if (StringUtils.isNotEmpty(odApplicationStatus)) {
             status = ODApplicationStatus.valueOf(odApplicationStatus);
         }
-        List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
+        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostFieldGeoNodeUuidMap());
         List<OdApplication> result = new ArrayList<>();
         if (status != null) {
-            if (CollectionUtils.isEmpty(fieldNodes)) {
+            if (CollectionUtils.isEmpty(authorityNodes)) {
                 result = odApplicationRepository.findByOdOrEnquiryOfficerAndStatus(principal, status);
             } else {
-                result = odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()), status);
+                result = odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostFieldGeoNodeUuidMap()), status);
             }
         } else {
-            if (CollectionUtils.isEmpty(fieldNodes)) {
+            if (CollectionUtils.isEmpty(authorityNodes)) {
                 result = odApplicationRepository.findByOdOrEnquiryOfficer(principal);
             } else {
-                result = odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()));
+                result = odApplicationRepository.findByFieldGeoNodeUuidIn(geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostFieldGeoNodeUuidMap()));
             }
         }
         return result.stream()
@@ -153,14 +153,14 @@ public class OdApplicationService {
     }
 
     public List<OdApplicationPayload> getReceiptList(User principal) {
-        List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
-        if (CollectionUtils.isEmpty(fieldNodes)) {
+        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostFieldGeoNodeUuidMap());
+        if (CollectionUtils.isEmpty(authorityNodes)) {
             return odApplicationRepository.findByOd(principal)
                     .stream()
                     .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                     .collect(Collectors.toList());
         }
-        return odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()))
+        return odApplicationRepository.findByFieldGeoNodeUuidIn(geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostFieldGeoNodeUuidMap()))
                 .stream()
                 .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                 .collect(Collectors.toList());

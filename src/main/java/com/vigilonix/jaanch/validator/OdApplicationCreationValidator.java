@@ -4,7 +4,7 @@ import com.vigilonix.jaanch.enums.ValidationError;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.pojo.OdApplicationPayload;
-import com.vigilonix.jaanch.service.FieldGeoService;
+import com.vigilonix.jaanch.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +17,19 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OdApplicationCreationValidator implements Validator<List<ValidationError>, ODApplicationValidationPayload> {
-    private final FieldGeoService fieldGeoService;
+    private final GeoHierarchyService geoHierarchyService;
     private final PDFValidator pdfValidator;
 
     @Override
     public List<ValidationError> validate(ODApplicationValidationPayload odApplicationValidationPayload) {
         List<ValidationError> errors = new ArrayList<>();
         OdApplicationPayload odRequest = odApplicationValidationPayload.getOdApplicationPayload();
-        if (!Objects.isNull(odRequest.getFieldGeoNodeUuid()) && Objects.isNull(fieldGeoService.getFieldGeoNode(odRequest.getFieldGeoNodeUuid()))) {
+        if (!Objects.isNull(odRequest.getFieldGeoNodeUuid()) && Objects.isNull(geoHierarchyService.getNodeById(odRequest.getFieldGeoNodeUuid()))) {
             errors.add(ValidationErrorEnum.INVALID_GEONODE_UUID);
         }
 
-        if (!Objects.isNull(odRequest.getFieldGeoNodeUuid()) && !Objects.isNull(fieldGeoService.getFieldGeoNode(odRequest.getFieldGeoNodeUuid())) &&
-                !fieldGeoService.getAllGeoUuids(odApplicationValidationPayload.getPrincipalUser().getPostFieldGeoNodeUuidMap())
+        if (!Objects.isNull(odRequest.getFieldGeoNodeUuid()) && !Objects.isNull(geoHierarchyService.getNodeById(odRequest.getFieldGeoNodeUuid())) &&
+                !geoHierarchyService.getAllLevelNodes(odApplicationValidationPayload.getPrincipalUser().getPostFieldGeoNodeUuidMap())
                         .contains(odRequest.getFieldGeoNodeUuid())) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);
         }

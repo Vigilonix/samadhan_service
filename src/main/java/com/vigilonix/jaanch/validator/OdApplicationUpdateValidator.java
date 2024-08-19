@@ -7,7 +7,7 @@ import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.ODApplicationStatus;
 import com.vigilonix.jaanch.pojo.OdApplicationPayload;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
-import com.vigilonix.jaanch.service.FieldGeoService;
+import com.vigilonix.jaanch.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OdApplicationUpdateValidator implements Validator<List<ValidationError>, ODApplicationValidationPayload> {
-    private final FieldGeoService fieldGeoService;
+    private final GeoHierarchyService geoHierarchyService;
     private final PDFValidator pdfValidator;
     private final OdApplicationCreationValidator odApplicationCreationValidator;
     @Override
@@ -41,7 +41,7 @@ public class OdApplicationUpdateValidator implements Validator<List<ValidationEr
         if((!Objects.isNull(odApplicationValidationPayload.getEnquiryUser()) ||
                 Sets.newHashSet(ODApplicationStatus.REVIEW)
                     .contains(odApplicationValidationPayload.getOdApplication().getStatus()))
-                && !fieldGeoService.hasGeoAuthority(odApplicationValidationPayload.getOdApplication().getFieldGeoNodeUuid(),principal)) {
+                && !geoHierarchyService.hasAuthority(odApplicationValidationPayload.getOdApplication().getFieldGeoNodeUuid(),principal.getPostFieldGeoNodeUuidMap())) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);
         }
 

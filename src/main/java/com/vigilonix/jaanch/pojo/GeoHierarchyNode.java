@@ -11,10 +11,10 @@ import java.util.UUID;
 @Getter
 @ToString
 @Builder
-public class FieldGeoNode {
+public class GeoHierarchyNode {
     private String name;
     private GeoHierarchyType type;
     private UUID uuid;
     List<LatLong> geofence;
-    List<FieldGeoNode> children;
+    List<GeoHierarchyNode> children;
 }

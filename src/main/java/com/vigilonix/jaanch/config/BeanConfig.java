@@ -1,8 +1,7 @@
 package com.vigilonix.jaanch.config;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vigilonix.jaanch.pojo.FieldGeoNode;
+import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
@@ -31,8 +30,6 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -123,10 +120,10 @@ public class BeanConfig {
 
     @Bean
     @Qualifier("ROOT_NODE")
-    public FieldGeoNode parseFieldGeoNodes(@Autowired ResourceLoader resourceLoader,@Autowired ObjectMapper objectMapper) {
+    public GeoHierarchyNode parseFieldGeoNodes(@Autowired ResourceLoader resourceLoader, @Autowired ObjectMapper objectMapper) {
         Resource resource = resourceLoader.getResource(Constant.GEOFENCE_HIERARCHY);
         try (InputStream inputStream = resource.getInputStream()) {
-            return objectMapper.readValue(inputStream, FieldGeoNode.class);
+            return objectMapper.readValue(inputStream, GeoHierarchyNode.class);
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to parse geofence_hierarchy.json file", e);
         }

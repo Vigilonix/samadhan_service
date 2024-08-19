@@ -52,7 +52,7 @@ public class UserService {
     private final ValidationService<AuthRequest> clientValidator;
     private final UserRepository userRepository;
     private final ChangeDetector changeDetector;
-    private final FieldGeoService fieldGeoService;
+    private final GeoHierarchyService geoHierarchyService;
 
     private static String toHexString(byte[] bytes) {
         Formatter formatter = new Formatter();
@@ -140,8 +140,8 @@ public class UserService {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.DISABLED_USER));
         }
         if (MapUtils.isNotEmpty(userRequest.getPostFieldGeoNodeUuidMap())) {
-            fieldGeoService.getAllFieldGeoNode(userRequest.getPostFieldGeoNodeUuidMap()).forEach(uuid -> {
-                        if (fieldGeoService.getFieldGeoNode(uuid) == null) {
+            geoHierarchyService.getFirstLevelNodes(userRequest.getPostFieldGeoNodeUuidMap()).forEach(uuid -> {
+                        if (geoHierarchyService.getNodeById(uuid) == null) {
                             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
                         }
                     }
@@ -226,7 +226,6 @@ public class UserService {
     }
 
     public List<UserResponse> getAllUsersFromSameGeoFence(User principal, String prefixName) {
-        List<UUID> geoNodes = fieldGeoService.getSameOrBelowGeoNodeUuids(principal);
         List<User> users = userRepository.findByNameStartingWith(prefixName);
         return users.stream().map(searchUserResponseTransformer::transform).collect(Collectors.toList());
 
