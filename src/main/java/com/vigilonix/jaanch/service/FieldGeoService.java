@@ -42,7 +42,7 @@ public class FieldGeoService {
         return Optional.empty();
     }
 
-    public List<FieldGeoNode> getAllChildren(FieldGeoNode queryNode) {
+    public List<FieldGeoNode> getAllReachableNodes(FieldGeoNode queryNode) {
         List<FieldGeoNode> children = new ArrayList<>();
         Queue<FieldGeoNode> bfsQueue = new LinkedList<>();
         bfsQueue.offer(queryNode);
@@ -73,17 +73,17 @@ public class FieldGeoService {
 
     public List<UUID> getAllOwnershipChildren(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
         return getOwnershipGeoNodes(postFieldGeoNodeUuidMap).stream()
-                .flatMap(f-> getAllChildren(f).stream())
+                .flatMap(f-> getAllReachableNodes(f).stream())
                 .filter(Objects::nonNull)
                 .map(FieldGeoNode::getUuid)
                 .collect(Collectors.toList());
     }
 
-    public List<UUID> getAllGeoChildren(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
+    public List<UUID> getAllGeoUuids(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
         return postFieldGeoNodeUuidMap.entrySet().stream()
                 .flatMap(e->e.getValue().stream())
                 .map(fieldGeoNodeIndexByUuid::get)
-                .flatMap(f-> getAllChildren(f).stream())
+                .flatMap(f-> getAllReachableNodes(f).stream())
                 .filter(Objects::nonNull)
                 .map(FieldGeoNode::getUuid)
                 .distinct()
@@ -107,7 +107,7 @@ public class FieldGeoService {
     }
 
     List<UUID> getSameOrBelowGeoNodeUuids(User principal) {
-        List<UUID> fieldGeoNodes = getAllGeoChildren(principal.getPostFieldGeoNodeUuidMap());
+        List<UUID> fieldGeoNodes = getAllGeoUuids(principal.getPostFieldGeoNodeUuidMap());
         List<UUID> allFeildNode = getAllFieldGeoNode(principal.getPostFieldGeoNodeUuidMap());
         Set<UUID> sameOrBelowGeoNodes = new HashSet<>();
         sameOrBelowGeoNodes.addAll(fieldGeoNodes);

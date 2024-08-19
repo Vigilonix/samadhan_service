@@ -1,9 +1,8 @@
 package com.vigilonix.jaanch.service;
 
-import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.model.OdApplication;
-import com.vigilonix.jaanch.pojo.*;
 import com.vigilonix.jaanch.model.User;
+import com.vigilonix.jaanch.pojo.*;
 import com.vigilonix.jaanch.repository.OdApplicationRepository;
 import com.vigilonix.jaanch.repository.UserRepository;
 import com.vigilonix.jaanch.transformer.OdApplicationTransformer;
@@ -54,7 +53,9 @@ public class OdApplicationService {
         odCreateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
 
         Long epoch = System.currentTimeMillis();
-        FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(principal.getPostFieldGeoNodeUuidMap());
+        FieldGeoNode fieldGeoNode = Objects.isNull(odApplicationPayload.getFieldGeoNodeUuid())
+                ? fieldGeoService.resolveFieldGeoNode(principal.getPostFieldGeoNodeUuidMap())
+                : fieldGeoService.getFieldGeoNode(odApplicationPayload.getFieldGeoNodeUuid());
         Optional<Integer> maxBucketNo = odApplicationRepository.findMaxReceiptBucketNumberForCurrentMonth(fieldGeoNode.getUuid());
         int bucketNo = maxBucketNo.map(integer -> integer + 1).orElse(1);
 
@@ -77,25 +78,25 @@ public class OdApplicationService {
     }
 
     private String generateReceiptNumber(FieldGeoNode fieldGeoNode, int bucketNo) {
-      String jurisdictionName = fieldGeoNode.getName().replace("  "," ")
-              .replace(" ","_");
+        String jurisdictionName = fieldGeoNode.getName().replace("  ", " ")
+                .replace(" ", "_");
         // Get the current date
         LocalDate currentDate = LocalDate.now();
         // Define the date formatter with the desired pattern
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
         // Format the current date
         String formattedDate = currentDate.format(formatter);
-      return String.format("%s_%s_%s", jurisdictionName, formattedDate, bucketNo);
+        return String.format("%s_%s_%s", jurisdictionName, formattedDate, bucketNo);
     }
 
     public OdApplicationPayload update(UUID uuid, OdApplicationPayload odApplicationPayload, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(uuid);
         odUpdateValidationService.validate(ODApplicationValidationPayload.builder()
                 .odApplicationPayload(odApplicationPayload)
-                        .odApplication(odApplication)
-                        .enquiryUser(userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid()))
+                .odApplication(odApplication)
+                .enquiryUser(userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid()))
                 .principalUser(principal).build());
-        if(!Objects.isNull(odApplicationPayload.getEnquiryOfficerUuid())) {
+        if (!Objects.isNull(odApplicationPayload.getEnquiryOfficerUuid())) {
             User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
             FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(enquiryOfficer.getPostFieldGeoNodeUuidMap());
             odApplication.setEnquiryOfficer(enquiryOfficer);
@@ -103,14 +104,14 @@ public class OdApplicationService {
             odApplication.setEnquirySubmittedAt(System.currentTimeMillis());
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
-        if(StringUtils.isNotEmpty(odApplicationPayload.getEnquiryFilePath()) ) {
+        if (StringUtils.isNotEmpty(odApplicationPayload.getEnquiryFilePath())) {
             odApplication.setEnquiryFilePath(odApplicationPayload.getEnquiryFilePath());
             odApplication.setStatus(ODApplicationStatus.REVIEW);
         }
-        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
+        if (ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(ODApplicationStatus.ENQUIRY);
         }
-        if(ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
+        if (ODApplicationStatus.REVIEW.equals(odApplication.getStatus()) && ODApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(ODApplicationStatus.CLOSED);
         }
 
@@ -127,25 +128,25 @@ public class OdApplicationService {
 
     public List<OdApplicationPayload> getList(String odApplicationStatus, User principal) {
         ODApplicationStatus status = null;
-        if(StringUtils.isNotEmpty(odApplicationStatus)) {
+        if (StringUtils.isNotEmpty(odApplicationStatus)) {
             status = ODApplicationStatus.valueOf(odApplicationStatus);
         }
         List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
         List<OdApplication> result = new ArrayList<>();
-        if(status!= null) {
+        if (status != null) {
             if (CollectionUtils.isEmpty(fieldNodes)) {
                 result = odApplicationRepository.findByOdOrEnquiryOfficerAndStatus(principal, status);
             } else {
                 result = odApplicationRepository.findByFieldGeoNodeUuidInAndStatus(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()), status);
             }
-        }else {
+        } else {
             if (CollectionUtils.isEmpty(fieldNodes)) {
                 result = odApplicationRepository.findByOdOrEnquiryOfficer(principal);
             } else {
                 result = odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()));
             }
         }
-        return  result.stream()
+        return result.stream()
                 .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                 .collect(Collectors.toList());
 
@@ -153,13 +154,13 @@ public class OdApplicationService {
 
     public List<OdApplicationPayload> getReceiptList(User principal) {
         List<FieldGeoNode> fieldNodes = fieldGeoService.getOwnershipGeoNodes(principal.getPostFieldGeoNodeUuidMap());
-        if(CollectionUtils.isEmpty(fieldNodes)){
-            return  odApplicationRepository.findByOd(principal)
+        if (CollectionUtils.isEmpty(fieldNodes)) {
+            return odApplicationRepository.findByOd(principal)
                     .stream()
                     .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                     .collect(Collectors.toList());
         }
-        return  odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()))
+        return odApplicationRepository.findByFieldGeoNodeUuidIn(fieldGeoService.getAllOwnershipChildren(principal.getPostFieldGeoNodeUuidMap()))
                 .stream()
                 .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                 .collect(Collectors.toList());
