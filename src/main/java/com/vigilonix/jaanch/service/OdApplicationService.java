@@ -1,9 +1,6 @@
 package com.vigilonix.jaanch.service;
 
-import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.enums.Post;
-import com.vigilonix.jaanch.enums.ValidationErrorEnum;
-import com.vigilonix.jaanch.exception.ValidationRuntimeException;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.pojo.*;
 import com.vigilonix.jaanch.model.User;
@@ -34,6 +31,7 @@ public class OdApplicationService {
     private final FieldGeoService fieldGeoService;
     private final ValidationService<ODApplicationValidationPayload> odUpdateValidationService;
     private final ValidationService<ODApplicationValidationPayload> odCreateValidationService;
+    private final NotificationService notificationService;
 
     @Autowired
     public OdApplicationService(
@@ -42,13 +40,14 @@ public class OdApplicationService {
             UserRepository userRepository,
             FieldGeoService fieldGeoService,
             @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
-            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService) {
+            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService) {
         this.odApplicationRepository = odApplicationRepository;
         this.odApplicationTransformer = odApplicationTransformer;
         this.userRepository = userRepository;
         this.fieldGeoService = fieldGeoService;
         this.odUpdateValidationService = odUpdateValidationService;
         this.odCreateValidationService = odCreateValidationService;
+        this.notificationService = notificationService;
     }
 
     public OdApplicationPayload create(OdApplicationPayload odApplicationPayload, User principal) {

@@ -43,10 +43,11 @@ public class AuthFilter implements Filter {
                     || httpServletRequest.getRequestURI().startsWith(V_3_API_DOCS)
                     || httpServletRequest.getRequestURI().startsWith(SWAGGER_UI)
                     || httpServletRequest.getRequestURI().startsWith(V_1_ANON))) {
-                String token = httpServletRequest.getHeader(AUTH_HEADER);
+                String token = httpServletRequest.getHeader(AUTH_HEADER);;
                 if (StringUtils.isNotEmpty(token) && token.length() > 7) {
                     OAuthToken oauthToken = tokenService.validateToken(token.substring(7));
                     if (oauthToken == null) {
+                        log.error("invalid request for token {}", token);
                         ((HttpServletResponse) response).sendError(HttpServletResponse.SC_UNAUTHORIZED, objectMapper.writeValueAsString(Collections.singletonList(ValidationErrorEnum.INVALID_TOKEN)));
                         return;
                     }

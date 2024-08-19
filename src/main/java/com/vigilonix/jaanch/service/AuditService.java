@@ -3,7 +3,9 @@ package com.vigilonix.jaanch.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vigilonix.jaanch.model.User;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 @Component
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuditService {
     public static final String REQUEST_BY_USER_ID = "request by userId: {} uri: {} payload: {}";
     public static final String FAILED_TO_AUDIT_REQUEST_FOR_TOKEN_FOR_USER_REQUEST = "failed to audit request for userId: {} uri: {} body: {}";
