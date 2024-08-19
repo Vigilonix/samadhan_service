@@ -52,7 +52,12 @@ public class OdApplicationService {
 
     public OdApplicationPayload create(OdApplicationPayload odApplicationPayload, User principal) {
         odCreateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
+
+        Long epoch = System.currentTimeMillis();
         FieldGeoNode fieldGeoNode = fieldGeoService.resolveFieldGeoNode(principal.getPostFieldGeoNodeUuidMap());
+        Optional<Integer> maxBucketNo = odApplicationRepository.findMaxReceiptBucketNumberForCurrentMonth(fieldGeoNode.getUuid());
+        int bucketNo = maxBucketNo.map(integer -> integer + 1).orElse(1);
+
         OdApplication odApplication = OdApplication.builder()
                 .fieldGeoNodeUuid(fieldGeoNode.getUuid())
                 .uuid(UUID.randomUUID())
@@ -60,18 +65,18 @@ public class OdApplicationService {
                 .applicantName(odApplicationPayload.getApplicantName())
                 .applicationFilePath(odApplicationPayload.getApplicationFilePath())
                 .applicantPhoneNumber(odApplicationPayload.getApplicantPhoneNumber())
-                .receiptNo(generateReceiptNumber(principal.getPostFieldGeoNodeUuidMap()))
-                .fieldGeoNodeUuid(fieldGeoService.highestPostGeoNode(principal.getPostFieldGeoNodeUuidMap()).getUuid())
-                .createdAt(System.currentTimeMillis())
-                .modifiedAt(System.currentTimeMillis())
+                .receiptNo(generateReceiptNumber(fieldGeoNode, bucketNo))
+                .receiptBucketNumber(bucketNo)
+                .fieldGeoNodeUuid(fieldGeoNode.getUuid())
+                .createdAt(epoch)
+                .modifiedAt(epoch)
                 .status(ODApplicationStatus.OPEN)
                 .build();
         odApplicationRepository.save(odApplication);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
-    private String generateReceiptNumber(Map<Post, List<UUID>> postFieldGeoNodeUuidMap) {
-      FieldGeoNode fieldGeoNode=  fieldGeoService.highestPostGeoNode(postFieldGeoNodeUuidMap);
+    private String generateReceiptNumber(FieldGeoNode fieldGeoNode, int bucketNo) {
       String jurisdictionName = fieldGeoNode.getName().replace("  "," ")
               .replace(" ","_");
         // Get the current date
@@ -80,7 +85,7 @@ public class OdApplicationService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
         // Format the current date
         String formattedDate = currentDate.format(formatter);
-      return String.format("%s_%s_%s", jurisdictionName, formattedDate, System.currentTimeMillis()/1000);
+      return String.format("%s_%s_%s", jurisdictionName, formattedDate, bucketNo);
     }
 
     public OdApplicationPayload update(UUID uuid, OdApplicationPayload odApplicationPayload, User principal) {

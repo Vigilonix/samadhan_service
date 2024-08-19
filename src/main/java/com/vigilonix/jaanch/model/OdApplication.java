@@ -38,6 +38,8 @@ public class OdApplication {
     @Column
     private String receiptNo;
     @Column
+    private int receiptBucketNumber;
+    @Column
     private Long createdAt;
     @Column
     private Long modifiedAt;
