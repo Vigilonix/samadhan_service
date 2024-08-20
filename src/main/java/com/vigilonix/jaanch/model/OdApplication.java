@@ -38,7 +38,7 @@ public class OdApplication {
     @Column
     private String receiptNo;
     @Column
-    private int receiptBucketNumber;
+    private Integer receiptBucketNumber;
     @Column
     private Long createdAt;
     @Column
