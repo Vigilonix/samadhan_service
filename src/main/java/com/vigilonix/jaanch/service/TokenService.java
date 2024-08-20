@@ -56,7 +56,7 @@ public class TokenService {
     public OAuthToken refreshStaleToken(RefreshTokenRequest refreshTokenRequest) {
         OAuthToken token = OAuthTokenRepository.
                 findByTokenAndRefreshToken(refreshTokenRequest.getAuthToken(), refreshTokenRequest.getRefreshToken());
-        if (token == null) {
+        if (token == null || System.currentTimeMillis()>token.getExpireTime()) {
             log.error(FAILED_TO_FIND_TOKEN_FOR_REFRESH_TOKEN_REQUEST, refreshTokenRequest);
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_TOKEN));
         }
@@ -71,7 +71,7 @@ public class TokenService {
                 .refreshToken(UUID.randomUUID().toString())
                 .token(token.getUser().getUuid().toString())
                 .build();
-        OAuthTokenRepository.delete(token);
+        OAuthTokenRepository.deleteByUser(token.getUser());
         OAuthTokenRepository.save(newToken);
         return newToken;
     }
