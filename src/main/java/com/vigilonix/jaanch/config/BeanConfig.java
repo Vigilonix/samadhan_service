@@ -3,7 +3,7 @@ package com.vigilonix.jaanch.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vigilonix.jaanch.enums.NotificationMethod;
 import com.vigilonix.jaanch.helper.INotificationWorker;
-import com.vigilonix.jaanch.helper.WhatsappNotificationWorker;
+import com.vigilonix.jaanch.helper.CherrioWhatsappNotificationWorker;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
@@ -38,9 +38,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -140,16 +138,21 @@ public class BeanConfig {
     }
 
     @Bean
-    public Map<OdApplicationStatus, Transformer<OdApplication, NotificationPayload>> getNotificationPayloadTransformer(ApplicantApplicationCreationNotificationTransformer applicantApplicationCreationNotificationTransformer) {
-        Map<OdApplicationStatus, Transformer<OdApplication, NotificationPayload>> templateTransformerMap = new HashMap<>();
+    public Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> getNotificationPayloadTransformer(ApplicantApplicationCreationNotificationTransformer applicantApplicationCreationNotificationTransformer) {
+        Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> templateTransformerMap = new HashMap<>();
         templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationNotificationTransformer);
         return templateTransformerMap;
     }
 
     @Bean
-    public Map<NotificationMethod, INotificationWorker> getNotificationWorkerMap(WhatsappNotificationWorker whatsappNotificationWorker) {
-        Map<NotificationMethod, INotificationWorker> notificationWorkerMap = new HashMap<>();
-        notificationWorkerMap.put(NotificationMethod.WHATSAPP, whatsappNotificationWorker);
+    public Map<NotificationMethod, NavigableSet<INotificationWorker>> getNotificationWorkerMap(CherrioWhatsappNotificationWorker cherrioWhatsappNotificationWorker) {
+        Map<NotificationMethod, NavigableSet<INotificationWorker>> notificationWorkerMap = new HashMap<>();
+        NavigableSet<INotificationWorker> whatsappWorkers = new TreeSet<>(Comparator.comparingInt(INotificationWorker::getPriority).reversed());
+        whatsappWorkers.add(cherrioWhatsappNotificationWorker);
+
+        // Put the TreeSet into the map
+        notificationWorkerMap.put(NotificationMethod.WHATSAPP, whatsappWorkers);
+
         return notificationWorkerMap;
     }
 }

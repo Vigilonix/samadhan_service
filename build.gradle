@@ -52,6 +52,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5
     implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-text
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.12.0'
+
 }
 
 test {

@@ -7,9 +7,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class WhatsappNotificationWorker implements INotificationWorker {
+public class CherrioWhatsappNotificationWorker implements INotificationWorker {
     @Override
-    public boolean notify(NotificationPayload notificationPayload) {
+    public boolean work(NotificationPayload notificationPayload) {
         return false;
+    }
+
+    @Override
+    public int getPriority() {
+        return 0;
     }
 }

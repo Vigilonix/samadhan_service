@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,9 +20,9 @@ public class NotificationService {
     private final NotificationWorkerFactory notificationWorkerFactory;
 
     public boolean sendNotification(OdApplication odApplication) {
-        Optional<NotificationPayload> notificationPayload = notificationPayloadTransformerFactory.transform(odApplication);
-        if(notificationPayload.isPresent()) {
-            return notificationWorkerFactory.notify(notificationPayload.get());
+        List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
+        for(NotificationPayload notificationPayload: notificationPayloads){
+            if(notificationWorkerFactory.notify(notificationPayload)) return true;
         }
         return false;
     }
