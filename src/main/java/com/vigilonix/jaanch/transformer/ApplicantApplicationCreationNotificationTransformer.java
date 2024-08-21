@@ -11,6 +11,10 @@ import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +30,7 @@ public class ApplicantApplicationCreationNotificationTransformer implements Tran
                 "receiptNo", odApplication.getReceiptNo(),
                 "odName", odApplication.getOd().getName(),
                 "geoName", geoHierarchyService.getNodeById(odApplication.getFieldGeoNodeUuid()).getName(),
-                "date", odApplication.getCreatedAt().toString());
+                "date", dateFormatterddMMYYY(odApplication.getCreatedAt()));
         StringSubstitutor sub = new StringSubstitutor(params);
         String payload = sub.replace(NotificationTemplate.OD_APPLICATION_CREATED_ENGLISH.getTemplate());
         return Arrays.asList(NotificationPayload.builder()
@@ -44,5 +48,12 @@ public class ApplicantApplicationCreationNotificationTransformer implements Tran
                         .toPhoneCountryCode("+91")
                         .toPhoneNumber(odApplication.getApplicantPhoneNumber())
                         .notificationMethod(NotificationMethod.SMS).build());
+    }
+
+    private String dateFormatterddMMYYY(Long epoch) {
+        ZoneId istZone = ZoneId.of("Asia/Kolkata");
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(epoch), istZone);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return dateTime.format(formatter);
     }
 }
