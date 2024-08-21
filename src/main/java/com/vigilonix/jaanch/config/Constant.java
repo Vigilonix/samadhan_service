@@ -32,7 +32,4 @@ public class Constant {
     public static final String TYPE = "TYPE";
     public static final String DUMMY_IMAGE = "https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255532-stock-illustration-profile-placeholder-male-default-profile.jpg";
     public static final String GEOFENCE_HIERARCHY = "classpath:geofence_hierarchy.json";
-    @Getter
-    @Value("${cherrio.apiKey}")
-    private static String CherrioApiKey;
 }

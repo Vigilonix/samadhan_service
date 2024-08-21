@@ -2,6 +2,7 @@ package com.vigilonix.jaanch.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vigilonix.jaanch.config.Constant;
+import com.vigilonix.jaanch.config.WhatsappConfig;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
 import com.vigilonix.jaanch.pojo.WhatsappDirectSendRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.net.http.HttpResponse;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CherrioWhatsappNotificationWorker implements INotificationWorker {
+    private final WhatsappConfig whatsappConfig;
 
     private static final String API_URL = "https://pre-prod.cheerio.in:3443/direct-apis/v1/whatsapp/direct/send"; // Replace with actual URL
 
@@ -40,7 +42,7 @@ public class CherrioWhatsappNotificationWorker implements INotificationWorker {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(API_URL))
                     .header("Content-Type", "application/json")
-                    .header("x-api-key", Constant.getCherrioApiKey())
+                    .header("x-api-key", whatsappConfig.getCherrioApiKey())
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
@@ -48,8 +50,8 @@ public class CherrioWhatsappNotificationWorker implements INotificationWorker {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             // Log the response
-            log.debug("Response code: {}", response.statusCode());
-            log.debug("Response body: {}", response.body());
+            log.info("Response code: {}", response.statusCode());
+            log.info("Response body: {}", response.body());
 
             // Return true if the response is successful (status code 200-299)
             return response.statusCode() >= 200 && response.statusCode() < 300;
