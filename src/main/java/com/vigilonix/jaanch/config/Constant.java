@@ -1,5 +1,10 @@
 package com.vigilonix.jaanch.config;
 
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class Constant {
     public final static String PRINCIPAL = "principal";
     public final static long TOKEN_EXPIRE_TIME_IN_MS = 30 * 24 * 3600 * 1000L;
@@ -27,4 +32,7 @@ public class Constant {
     public static final String TYPE = "TYPE";
     public static final String DUMMY_IMAGE = "https://st3.depositphotos.com/4111759/13425/v/600/depositphotos_134255532-stock-illustration-profile-placeholder-male-default-profile.jpg";
     public static final String GEOFENCE_HIERARCHY = "classpath:geofence_hierarchy.json";
+    @Getter
+    @Value("${cherrio.apiKey}")
+    private static String CherrioApiKey;
 }

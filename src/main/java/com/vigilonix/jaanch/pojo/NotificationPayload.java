@@ -14,14 +14,6 @@ import java.util.List;
 @Builder
 @ToString
 public class NotificationPayload {
-    private final String toEmail;
-    private final String fromEmail;
-    private final String header;
-    private final String footer;
-    private final String payload;
-    private final String toPhoneNumber;
-    private final String toPhoneCountryCode;
-    private final String fromPhoneNumber;
-    private final String fromPhoneCountryCode;
+    private final INotificationRequest request;
     private final NotificationMethod notificationMethod;
 }

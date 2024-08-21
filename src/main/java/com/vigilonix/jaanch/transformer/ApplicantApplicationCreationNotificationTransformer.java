@@ -3,7 +3,7 @@ package com.vigilonix.jaanch.transformer;
 import com.vigilonix.jaanch.enums.NotificationMethod;
 import com.vigilonix.jaanch.enums.NotificationTemplate;
 import com.vigilonix.jaanch.model.OdApplication;
-import com.vigilonix.jaanch.pojo.NotificationPayload;
+import com.vigilonix.jaanch.pojo.*;
 import com.vigilonix.jaanch.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.Transformer;
@@ -32,22 +32,47 @@ public class ApplicantApplicationCreationNotificationTransformer implements Tran
                 "geoName", geoHierarchyService.getNodeById(odApplication.getFieldGeoNodeUuid()).getName(),
                 "date", dateFormatterddMMYYY(odApplication.getCreatedAt()));
         StringSubstitutor sub = new StringSubstitutor(params);
-        String payload = sub.replace(NotificationTemplate.OD_APPLICATION_CREATED_ENGLISH.getTemplate());
-        return Arrays.asList(NotificationPayload.builder()
-                        .payload(payload)
-                        .fromPhoneCountryCode("+91")
-                        .fromPhoneNumber("8986139192")
-                        .toPhoneCountryCode("+91")
-                        .toPhoneNumber(odApplication.getApplicantPhoneNumber())
-                        .notificationMethod(NotificationMethod.WHATSAPP).build(),
+        String body = sub.replace(NotificationTemplate.OD_APPLICATION_CREATED_ENGLISH.getTemplate());
 
-                NotificationPayload.builder()
-                        .payload(payload)
-                        .fromPhoneCountryCode("+91")
-                        .fromPhoneNumber("8986139192")
-                        .toPhoneCountryCode("+91")
-                        .toPhoneNumber(odApplication.getApplicantPhoneNumber())
-                        .notificationMethod(NotificationMethod.SMS).build());
+
+        WhatsappDirectSendRequest requestPayload = WhatsappDirectSendRequest.builder()
+                .recipientType("individual")
+                .to("91"+odApplication.getApplicantPhoneNumber())
+                .type("interactive")
+                .interactive(
+                        WhatsappInteractive.builder()
+                                .type("button")
+                                .body(WhatsappBody.builder().text(body).build())
+//                                .footer(WhatsappFooter.builder().text("your-text-footer-content").build())
+//                                .action(
+//                                        WhatsappAction.builder()
+//                                                .buttons(List.of(
+//                                                        WhatsappButton.builder()
+//                                                                .type("reply")
+//                                                                .reply(WhatsappReply.builder()
+//                                                                        .id("unique-postback-id")
+//                                                                        .title("First Button")
+//                                                                        .build())
+//                                                                .build(),
+//                                                        WhatsappButton.builder()
+//                                                                .type("reply")
+//                                                                .reply(WhatsappReply.builder()
+//                                                                        .id("unique-postback-id1")
+//                                                                        .title("Second Button")
+//                                                                        .build())
+//                                                                .build()
+//                                                ))
+//                                                .build()
+//                                )
+                                .build()
+                )
+                .build();
+
+
+        return Arrays.asList(NotificationPayload.builder()
+                .request(requestPayload)
+                .notificationMethod(NotificationMethod.WHATSAPP).build());
+
     }
 
     private String dateFormatterddMMYYY(Long epoch) {
