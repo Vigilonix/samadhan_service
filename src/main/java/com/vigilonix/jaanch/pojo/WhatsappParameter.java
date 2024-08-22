@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WhatsappFooter {
-    private final String text;
+public class WhatsappParameter {
+    private String type;
+    private WhatsappImage image;
+    private String text;
 }

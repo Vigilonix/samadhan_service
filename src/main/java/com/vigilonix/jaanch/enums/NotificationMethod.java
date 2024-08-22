@@ -2,5 +2,6 @@ package com.vigilonix.jaanch.enums;
 
 public enum NotificationMethod {
     SMS,
-    WHATSAPP
+    WHATSAPP_DIRECT,
+    WHATSAPP_TEMPLATE
 }

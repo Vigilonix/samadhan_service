@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ApplicantApplicationCreationNotificationTransformer implements Transformer<OdApplication, List<NotificationPayload>> {
+public class ApplicantApplicationCreationWhatasappDirectTransformer implements Transformer<OdApplication, List<NotificationPayload>> {
     private final GeoHierarchyService geoHierarchyService;
 
     @Override
@@ -71,7 +71,7 @@ public class ApplicantApplicationCreationNotificationTransformer implements Tran
 
         return Arrays.asList(NotificationPayload.builder()
                 .request(requestPayload)
-                .notificationMethod(NotificationMethod.WHATSAPP).build());
+                .notificationMethod(NotificationMethod.WHATSAPP_DIRECT).build());
 
     }
 

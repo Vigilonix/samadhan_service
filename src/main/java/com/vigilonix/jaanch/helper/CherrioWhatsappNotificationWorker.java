@@ -3,6 +3,7 @@ package com.vigilonix.jaanch.helper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vigilonix.jaanch.config.Constant;
 import com.vigilonix.jaanch.config.WhatsappConfig;
+import com.vigilonix.jaanch.pojo.INotificationRequest;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
 import com.vigilonix.jaanch.pojo.WhatsappDirectSendRequest;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import java.net.http.HttpResponse;
 public class CherrioWhatsappNotificationWorker implements INotificationWorker {
     private final WhatsappConfig whatsappConfig;
 
-    private static final String API_URL = "https://pre-prod.cheerio.in:3443/direct-apis/v1/whatsapp/direct/send"; // Replace with actual URL
+    private static final String API_URL = "https://graph.facebook.com/v17.0//messages"; // Replace with actual URL
 
     @Override
     public boolean work(NotificationPayload notificationPayload) {
@@ -30,7 +31,7 @@ public class CherrioWhatsappNotificationWorker implements INotificationWorker {
         // Extract WhatsappDirectSendRequest from NotificationPayload
 
         try {
-            WhatsappDirectSendRequest requestPayload = (WhatsappDirectSendRequest) notificationPayload.getRequest();
+            INotificationRequest requestPayload = notificationPayload.getRequest();
             // Convert the request object to JSON
             ObjectMapper objectMapper = new ObjectMapper();
             String requestBody = objectMapper.writeValueAsString(requestPayload);
@@ -52,7 +53,6 @@ public class CherrioWhatsappNotificationWorker implements INotificationWorker {
             // Log the response
             log.info("Response code: {}", response.statusCode());
             log.info("Response body: {}", response.body());
-
             // Return true if the response is successful (status code 200-299)
             return response.statusCode() >= 200 && response.statusCode() < 300;
 

@@ -11,7 +11,8 @@ import com.vigilonix.jaanch.pojo.OdApplicationStatus;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
-import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationNotificationTransformer;
+import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappDirectTransformer;
+import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappTemplateTransformer;
 import com.vigilonix.jaanch.validator.*;
 import jakarta.servlet.MultipartConfigElement;
 import org.apache.commons.collections4.Transformer;
@@ -138,9 +139,11 @@ public class BeanConfig {
     }
 
     @Bean
-    public Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> getNotificationPayloadTransformer(ApplicantApplicationCreationNotificationTransformer applicantApplicationCreationNotificationTransformer) {
+    public Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> getNotificationPayloadTransformer(ApplicantApplicationCreationWhatasappDirectTransformer applicantApplicationCreationWhatasappDirectTransformer,
+                                                                                                                             ApplicantApplicationCreationWhatasappTemplateTransformer applicantApplicationCreationWhatasappTemplateTransformer) {
         Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> templateTransformerMap = new HashMap<>();
-        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationNotificationTransformer);
+//        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappDirectTransformer);
+        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappTemplateTransformer);
         return templateTransformerMap;
     }
 
@@ -151,7 +154,7 @@ public class BeanConfig {
         whatsappWorkers.add(cherrioWhatsappNotificationWorker);
 
         // Put the TreeSet into the map
-        notificationWorkerMap.put(NotificationMethod.WHATSAPP, whatsappWorkers);
+        notificationWorkerMap.put(NotificationMethod.WHATSAPP_TEMPLATE, whatsappWorkers);
 
         return notificationWorkerMap;
     }
