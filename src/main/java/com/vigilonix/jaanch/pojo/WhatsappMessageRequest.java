@@ -11,6 +11,6 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WhatsappMessageRequest implements INotificationRequest{
     private String to;
-    private String type;
-    private WhatsappTemplate template;
+//    private String type;
+    private WhatsappTemplate data;
 }

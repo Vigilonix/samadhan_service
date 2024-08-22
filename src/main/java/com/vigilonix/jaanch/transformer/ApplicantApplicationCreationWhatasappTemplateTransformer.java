@@ -37,8 +37,8 @@ public class ApplicantApplicationCreationWhatasappTemplateTransformer implements
 
         WhatsappMessageRequest sendRequest = WhatsappMessageRequest.builder()
                 .to("919916488861")
-                .type("template")
-                .template(WhatsappTemplate.builder()
+//                .type("template")
+                .data(WhatsappTemplate.builder()
                         .name("update_message")
                         .language(Language.builder()
                                 .code("en")
@@ -49,7 +49,7 @@ public class ApplicantApplicationCreationWhatasappTemplateTransformer implements
                                         .parameters(Arrays.asList(
                                                 WhatsappParameter.builder()
                                                         .type("text")
-                                                        .text(odApplication.getOd().getName())
+                                                        .text(odApplication.getApplicantName())
                                                         .build(),
                                                 WhatsappParameter.builder()
                                                         .type("text")

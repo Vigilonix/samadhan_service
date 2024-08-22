@@ -22,7 +22,7 @@ import java.net.http.HttpResponse;
 public class CherrioWhatsappNotificationWorker implements INotificationWorker {
     private final WhatsappConfig whatsappConfig;
 
-    private static final String API_URL = "https://graph.facebook.com/v17.0//messages"; // Replace with actual URL
+    private static final String API_URL = "https://pre-prod.cheerio.in/direct-apis/v1/whatsapp/template/send"; // Replace with actual URL
 
     @Override
     public boolean work(NotificationPayload notificationPayload) {
