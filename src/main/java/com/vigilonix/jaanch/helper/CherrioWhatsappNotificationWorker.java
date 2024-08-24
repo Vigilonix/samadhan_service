@@ -35,7 +35,6 @@ public class CherrioWhatsappNotificationWorker implements INotificationWorker {
             // Convert the request object to JSON
             ObjectMapper objectMapper = new ObjectMapper();
             String requestBody = objectMapper.writeValueAsString(requestPayload);
-
             // Create the HttpClient
             HttpClient client = HttpClient.newHttpClient();
 

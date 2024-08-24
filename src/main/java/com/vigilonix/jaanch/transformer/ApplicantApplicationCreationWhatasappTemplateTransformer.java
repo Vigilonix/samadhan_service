@@ -36,7 +36,7 @@ public class ApplicantApplicationCreationWhatasappTemplateTransformer implements
 
 
         WhatsappMessageRequest sendRequest = WhatsappMessageRequest.builder()
-                .to("919916488861")
+                .to("91"+odApplication.getApplicantPhoneNumber())
 //                .type("template")
                 .data(WhatsappTemplate.builder()
                         .name("update_message")
