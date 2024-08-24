@@ -2,6 +2,7 @@ package com.vigilonix.jaanch.service;
 
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,14 @@ public class GeoHierarchyService {
     private final GeoHierarchyNode rootNode;
     private final Map<UUID, GeoHierarchyNode> nodeByUuid;
     private final Map<GeoHierarchyNode, GeoHierarchyNode> parentMap;
+    private final Set<UUID> testNodes;
 
     @Autowired
     public GeoHierarchyService(GeoHierarchyNode rootNode) {
         this.rootNode = rootNode;
         this.nodeByUuid = new HashMap<>();
         this.parentMap = new HashMap<>();
+        testNodes = new HashSet<>();
 
         // Initialize the index and parent-child relationships
         initializeFieldGeoNodeMaps();
@@ -33,6 +36,10 @@ public class GeoHierarchyService {
             nodeByUuid.put(currentNode.getUuid(), currentNode);
             currentNode.getChildren().forEach(child -> {
                 parentMap.put(child, currentNode);
+                if(BooleanUtils.isTrue(currentNode.getIsTest()) || testNodes.contains(currentNode.getUuid())) {
+                    testNodes.add(child.getUuid());
+                    testNodes.add(currentNode.getUuid());
+                }
                 bfsQueue.offer(child);
             });
         }
@@ -113,5 +120,9 @@ public class GeoHierarchyService {
                 .geofence(node.getGeofence())
                 .type(node.getType())
                 .build();
+    }
+
+    public boolean isTestNode(UUID fieldGeoNodeUuid) {
+        return testNodes.contains(fieldGeoNodeUuid);
     }
 }

@@ -20,9 +20,14 @@ import java.util.Optional;
 public class NotificationService {
     private final NotificationPayloadTransformerFactory notificationPayloadTransformerFactory;
     private final NotificationWorkerFactory notificationWorkerFactory;
+    private final GeoHierarchyService geoHierarchyService;
 
     public boolean sendNotification(OdApplication odApplication) {
         log.debug("going to send notification for {}", odApplication);
+        if(geoHierarchyService.isTestNode(odApplication.getFieldGeoNodeUuid())) {
+            log.info("test geonode skipping notification {}", odApplication);
+            return false;
+        }
         List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
         log.debug("transformed payload {} for odApplication {}", notificationPayloads, odApplication);
         for(NotificationPayload notificationPayload: notificationPayloads){

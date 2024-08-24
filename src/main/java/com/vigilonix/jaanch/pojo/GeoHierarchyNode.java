@@ -1,5 +1,7 @@
 package com.vigilonix.jaanch.pojo;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vigilonix.jaanch.enums.GeoHierarchyType;
 import lombok.*;
 
@@ -11,10 +13,13 @@ import java.util.UUID;
 @Getter
 @ToString
 @Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class GeoHierarchyNode {
     private String name;
     private GeoHierarchyType type;
     private UUID uuid;
-    List<LatLong> geofence;
-    List<GeoHierarchyNode> children;
+    private List<LatLong> geofence;
+    private List<GeoHierarchyNode> children;
+    private Boolean isTest;
+
 }
