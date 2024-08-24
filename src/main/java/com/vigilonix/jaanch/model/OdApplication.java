@@ -8,8 +8,8 @@ import java.util.UUID;
 
 @Entity(name = "od_application")
 @Table(indexes = {
-        @Index(name = "status_index", columnList = "status"),
-        @Index(name = "geo_hierarchy_node_uuid_index", columnList = "geoHierarchyNodeUuid"),
+        @Index(name = "status_od_index", columnList = "status, od_id"),
+        @Index(name = "geo_hierarchy_node_uuid_status_index", columnList = "geoHierarchyNodeUuid, status"),
 })
 @Getter
 @AllArgsConstructor
