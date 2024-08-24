@@ -20,9 +20,9 @@ public class OdApplicationPayload {
     private UUID odUuid;
     private String odName;
     private String applicationFilePath;
-    @JsonProperty("field_geo_node_uuid")
+//    @JsonProperty("field_geo_node_uuid")
     private UUID geoHierarchyNodeUuid;
-    @JsonProperty("field_geo_node_name")
+//    @JsonProperty("field_geo_node_name")
     private String geoHierarchyNodeName;
     private UUID enquiryOfficerUuid;
     private String enquiryOfficerName;
