@@ -37,13 +37,13 @@ public class UserResponseTransformer implements Transformer<User, UserResponse> 
                 .lastLive(principal.getLastLive())
                 .latitude(principal.getLatitude())
                 .longitude(principal.getLongitude())
-                .postFieldGeoNodeUuidMap(principal.getPostFieldGeoNodeUuidMap().entrySet().stream().collect(Collectors.toMap(
+                .postGeoHierarchyNodeUuidMap(principal.getPostGeoHierarchyNodeUuidMap().entrySet().stream().collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> entry.getValue().stream()
                                 .map(uuid -> geoHierarchyService.transformWithoutChildren(geoHierarchyService.getNodeById(uuid)))
                                 .collect(Collectors.toList())
                 )))
-                .highestPost(geoHierarchyService.findHighestPost(principal.getPostFieldGeoNodeUuidMap()))
+                .highestPost(geoHierarchyService.findHighestPost(principal.getPostGeoHierarchyNodeUuidMap()))
                 .build();
     }
 }

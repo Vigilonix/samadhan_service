@@ -41,7 +41,7 @@ public class OdApplicationUpdateValidator implements Validator<List<ValidationEr
         if((!Objects.isNull(odApplicationValidationPayload.getEnquiryUser()) ||
                 Sets.newHashSet(OdApplicationStatus.REVIEW)
                     .contains(odApplicationValidationPayload.getOdApplication().getStatus()))
-                && !geoHierarchyService.hasAuthority(odApplicationValidationPayload.getOdApplication().getFieldGeoNodeUuid(),principal.getPostFieldGeoNodeUuidMap())) {
+                && !geoHierarchyService.hasAuthority(odApplicationValidationPayload.getOdApplication().getGeoHierarchyNodeUuid(),principal.getPostGeoHierarchyNodeUuidMap())) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);
         }
 

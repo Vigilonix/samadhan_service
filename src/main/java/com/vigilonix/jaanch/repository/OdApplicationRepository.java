@@ -17,11 +17,11 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     List<OdApplication> findByOd(User uuid);
 
-    List<OdApplication> findByFieldGeoNodeUuidIn(List<UUID> uuids);
+    List<OdApplication> findByGeoHierarchyNodeUuidIn(List<UUID> uuids);
 
     List<OdApplication> findByOdAndStatus(User od, OdApplicationStatus status);
 
-    List<OdApplication> findByFieldGeoNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
+    List<OdApplication> findByGeoHierarchyNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
 
     @Query("SELECT o FROM od_application o WHERE (o.od = :user OR o.enquiryOfficer = :user)")
     List<OdApplication> findByOdOrEnquiryOfficer(User user);
@@ -33,8 +33,8 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     @Query(value = "SELECT MAX(receipt_bucket_number) " +
             "FROM od_application " +
-            "WHERE field_geo_node_uuid = :fieldGeoNodeUuid " +
+            "WHERE geo_hierarchy_node_uuid = :geoHierarchyNodeUuid " +
             "AND DATE_TRUNC('month', TO_TIMESTAMP(created_at / 1000)) = DATE_TRUNC('month', CURRENT_DATE)",
             nativeQuery = true)
-    Optional<Integer> findMaxReceiptBucketNumberForCurrentMonth(@Param("fieldGeoNodeUuid") UUID fieldGeoNodeUuid);
+    Optional<Integer> findMaxReceiptBucketNumberForCurrentMonth(@Param("geoHierarchyNodeUuid") UUID geoHierarchyNodeUuid);
 }

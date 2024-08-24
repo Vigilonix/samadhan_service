@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -19,8 +20,10 @@ public class OdApplicationPayload {
     private UUID odUuid;
     private String odName;
     private String applicationFilePath;
-    private UUID fieldGeoNodeUuid;
-    private String fieldGeoNodeName;
+    @JsonProperty("field_geo_node_uuid")
+    private UUID geoHierarchyNodeUuid;
+    @JsonProperty("field_geo_node_name")
+    private String geoHierarchyNodeName;
     private UUID enquiryOfficerUuid;
     private String enquiryOfficerName;
     private String enquiryFilePath;

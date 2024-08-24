@@ -7,6 +7,10 @@ import lombok.*;
 import java.util.UUID;
 
 @Entity(name = "od_application")
+@Table(indexes = {
+        @Index(name = "status_index", columnList = "status"),
+        @Index(name = "geo_hierarchy_node_uuid_index", columnList = "geoHierarchyNodeUuid"),
+})
 @Getter
 @AllArgsConstructor
 @Builder
@@ -26,7 +30,7 @@ public class OdApplication {
     @Column
     private String applicationFilePath;
     @Column
-    private UUID fieldGeoNodeUuid;
+    private UUID geoHierarchyNodeUuid;
     @ManyToOne
     private User enquiryOfficer;
     @Column

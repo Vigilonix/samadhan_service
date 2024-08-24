@@ -24,11 +24,11 @@ public class GeoHierarchyService {
         testNodes = new HashSet<>();
 
         // Initialize the index and parent-child relationships
-        initializeFieldGeoNodeMaps();
+        initializeGeoHierarchyNodeMaps();
     }
 
     // Initialization methods
-    private void initializeFieldGeoNodeMaps() {
+    private void initializeGeoHierarchyNodeMaps() {
         Queue<GeoHierarchyNode> bfsQueue = new LinkedList<>();
         bfsQueue.offer(rootNode);
         while (!bfsQueue.isEmpty()) {
@@ -108,8 +108,8 @@ public class GeoHierarchyService {
     }
 
     // Authorization methods
-    public boolean hasAuthority(UUID fieldGeoNodeUuid, Map<Post, List<UUID>> principalPostMap) {
-        return getAllLevelNodesOfAuthorityPost(principalPostMap).contains(fieldGeoNodeUuid);
+    public boolean hasAuthority(UUID geoHierarchyNodeUuid, Map<Post, List<UUID>> principalPostMap) {
+        return getAllLevelNodesOfAuthorityPost(principalPostMap).contains(geoHierarchyNodeUuid);
     }
 
     // Utility methods
@@ -122,7 +122,7 @@ public class GeoHierarchyService {
                 .build();
     }
 
-    public boolean isTestNode(UUID fieldGeoNodeUuid) {
-        return testNodes.contains(fieldGeoNodeUuid);
+    public boolean isTestNode(UUID geoHierarchyNodeUuid) {
+        return testNodes.contains(geoHierarchyNodeUuid);
     }
 }

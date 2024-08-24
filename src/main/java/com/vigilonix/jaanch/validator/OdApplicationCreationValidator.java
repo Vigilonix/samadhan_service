@@ -24,13 +24,13 @@ public class OdApplicationCreationValidator implements Validator<List<Validation
     public List<ValidationError> validate(ODApplicationValidationPayload odApplicationValidationPayload) {
         List<ValidationError> errors = new ArrayList<>();
         OdApplicationPayload odRequest = odApplicationValidationPayload.getOdApplicationPayload();
-        if (!Objects.isNull(odRequest.getFieldGeoNodeUuid()) && Objects.isNull(geoHierarchyService.getNodeById(odRequest.getFieldGeoNodeUuid()))) {
+        if (!Objects.isNull(odRequest.getGeoHierarchyNodeUuid()) && Objects.isNull(geoHierarchyService.getNodeById(odRequest.getGeoHierarchyNodeUuid()))) {
             errors.add(ValidationErrorEnum.INVALID_GEONODE_UUID);
         }
 
-        if (!Objects.isNull(odRequest.getFieldGeoNodeUuid()) && !Objects.isNull(geoHierarchyService.getNodeById(odRequest.getFieldGeoNodeUuid())) &&
-                !geoHierarchyService.getAllLevelNodes(odApplicationValidationPayload.getPrincipalUser().getPostFieldGeoNodeUuidMap())
-                        .contains(odRequest.getFieldGeoNodeUuid())) {
+        if (!Objects.isNull(odRequest.getGeoHierarchyNodeUuid()) && !Objects.isNull(geoHierarchyService.getNodeById(odRequest.getGeoHierarchyNodeUuid())) &&
+                !geoHierarchyService.getAllLevelNodes(odApplicationValidationPayload.getPrincipalUser().getPostGeoHierarchyNodeUuidMap())
+                        .contains(odRequest.getGeoHierarchyNodeUuid())) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);
         }
         if (StringUtils.isEmpty(odRequest.getApplicantName()) || odRequest.getApplicantName().length() > 64) {

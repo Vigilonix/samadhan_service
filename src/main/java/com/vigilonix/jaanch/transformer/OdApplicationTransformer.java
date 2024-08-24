@@ -28,8 +28,8 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .odUuid(odApplication.getOd().getUuid())
                 .odName(odApplication.getOd().getName())
                 .applicationFilePath(odApplication.getApplicationFilePath())
-                .fieldGeoNodeUuid(odApplication.getFieldGeoNodeUuid())
-                .fieldGeoNodeName(geoHierarchyService.getNodeById(odApplication.getFieldGeoNodeUuid()).getName())
+                .geoHierarchyNodeUuid(odApplication.getGeoHierarchyNodeUuid())
+                .geoHierarchyNodeName(geoHierarchyService.getNodeById(odApplication.getGeoHierarchyNodeUuid()).getName())
                 .enquiryOfficerUuid(odApplication.getEnquiryOfficer()!=null?odApplication.getEnquiryOfficer().getUuid():null)
                 .enquiryOfficerName(odApplication.getEnquiryOfficer()!=null?odApplication.getEnquiryOfficer().getName():null)
                 .enquiryFilePath(odApplication.getEnquiryFilePath())
@@ -37,11 +37,11 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .receiptNo(odApplication.getReceiptNo())
                 .createdAt(odApplication.getCreatedAt())
                 .modifiedAt(odApplication.getModifiedAt())
-                .hasAuthorityOnReviewStatus(OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
+                .hasAuthorityOnReviewStatus(OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .hasAuthorityOnEnquiryStatus(OdApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid())))
-                .hasAuthorityOnOpenStatus(OdApplicationStatus.OPEN.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
-                .hasAuthorityOnClosedStatus(OdApplicationStatus.CLOSED.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
-                .hasAuthorityToReassign(Arrays.asList(OdApplicationStatus.ENQUIRY, OdApplicationStatus.REVIEW).contains(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getFieldGeoNodeUuid(), principalUser.getPostFieldGeoNodeUuidMap()))
+                .hasAuthorityOnOpenStatus(OdApplicationStatus.OPEN.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
+                .hasAuthorityOnClosedStatus(OdApplicationStatus.CLOSED.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
+                .hasAuthorityToReassign(Arrays.asList(OdApplicationStatus.ENQUIRY, OdApplicationStatus.REVIEW).contains(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .build();
     }
 }

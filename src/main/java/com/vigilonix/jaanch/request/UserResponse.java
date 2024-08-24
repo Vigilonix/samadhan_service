@@ -46,6 +46,6 @@ public class UserResponse {
     private Double latitude;
     private Double longitude;
     @JsonProperty("post_field_map")
-    private Map<Post, List<GeoHierarchyNode>> postFieldGeoNodeUuidMap;
+    private Map<Post, List<GeoHierarchyNode>> postGeoHierarchyNodeUuidMap;
     private Post highestPost;
 }

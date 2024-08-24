@@ -10,7 +10,6 @@ import lombok.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -40,5 +39,5 @@ public class UserRequest {
     @JsonProperty("location_range")
     private Integer locationRangeInMeters;
     @JsonProperty("post_field_map")
-    private Map<Post, List<UUID>> postFieldGeoNodeUuidMap;
+    private Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap;
 }

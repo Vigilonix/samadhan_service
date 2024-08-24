@@ -29,7 +29,7 @@ public class ApplicantApplicationCreationWhatasappTemplateTransformer implements
         Map<String, String> params = Map.of("name", odApplication.getApplicantName(),
                 "receiptNo", odApplication.getReceiptNo(),
                 "odName", odApplication.getOd().getName(),
-                "geoName", geoHierarchyService.getNodeById(odApplication.getFieldGeoNodeUuid()).getName(),
+                "geoName", geoHierarchyService.getNodeById(odApplication.getGeoHierarchyNodeUuid()).getName(),
                 "date", dateFormatterddMMYYY(odApplication.getCreatedAt()));
         StringSubstitutor sub = new StringSubstitutor(params);
         String body = sub.replace(NotificationTemplate.OD_APPLICATION_CREATED_ENGLISH.getTemplate());
@@ -61,7 +61,7 @@ public class ApplicantApplicationCreationWhatasappTemplateTransformer implements
                                                         .build(),
                                                 WhatsappParameter.builder()
                                                         .type("text")
-                                                        .text(geoHierarchyService.getNodeById(odApplication.getFieldGeoNodeUuid()).getName())
+                                                        .text(geoHierarchyService.getNodeById(odApplication.getGeoHierarchyNodeUuid()).getName())
                                                         .build(),
                                                 WhatsappParameter.builder()
                                                         .type("text")

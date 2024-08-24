@@ -25,10 +25,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -88,7 +84,7 @@ public class UserService {
                 .uuid(UUID.randomUUID())
                 .role(Role.NORMAL)
                 .phoneNumber(userRequest.getPhoneNumber())
-                .postFieldGeoNodeUuidMap(userRequest.getPostFieldGeoNodeUuidMap())
+                .postGeoHierarchyNodeUuidMap(userRequest.getPostGeoHierarchyNodeUuidMap())
                 .build();
         userRepository.save(user);
         return user;
@@ -124,14 +120,14 @@ public class UserService {
         if (State.DISABLED.equals(principal.getState())) {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.DISABLED_USER));
         }
-        if (MapUtils.isNotEmpty(userRequest.getPostFieldGeoNodeUuidMap())) {
-            geoHierarchyService.getFirstLevelNodes(userRequest.getPostFieldGeoNodeUuidMap()).forEach(uuid -> {
+        if (MapUtils.isNotEmpty(userRequest.getPostGeoHierarchyNodeUuidMap())) {
+            geoHierarchyService.getFirstLevelNodes(userRequest.getPostGeoHierarchyNodeUuidMap()).forEach(uuid -> {
                         if (geoHierarchyService.getNodeById(uuid) == null) {
                             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
                         }
                     }
             );
-            principal.setPostFieldGeoNodeUuidMap(userRequest.getPostFieldGeoNodeUuidMap());
+            principal.setPostGeoHierarchyNodeUuidMap(userRequest.getPostGeoHierarchyNodeUuidMap());
         }
 
 

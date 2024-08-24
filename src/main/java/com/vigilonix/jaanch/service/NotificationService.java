@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Component
@@ -24,7 +23,7 @@ public class NotificationService {
 
     public boolean sendNotification(OdApplication odApplication) {
         log.debug("going to send notification for {}", odApplication);
-        if(geoHierarchyService.isTestNode(odApplication.getFieldGeoNodeUuid())) {
+        if(geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
             log.info("test geonode skipping notification {}", odApplication);
             return false;
         }

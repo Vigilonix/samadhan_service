@@ -5,8 +5,6 @@ import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.Rank;
 import com.vigilonix.jaanch.enums.Role;
 import com.vigilonix.jaanch.enums.State;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import io.hypersistence.utils.hibernate.type.json.JsonStringType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -67,5 +65,5 @@ public class User {
     private Double longitude;
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private Map<Post, List<UUID>> postFieldGeoNodeUuidMap;
+    private Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap;
 }

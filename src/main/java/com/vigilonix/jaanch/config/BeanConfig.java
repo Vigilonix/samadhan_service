@@ -129,7 +129,7 @@ public class BeanConfig {
 
     @Bean
     @Qualifier("ROOT_NODE")
-    public GeoHierarchyNode parseFieldGeoNodes(@Autowired ResourceLoader resourceLoader, @Autowired ObjectMapper objectMapper) {
+    public GeoHierarchyNode parseGeoHierarchyNodes(@Autowired ResourceLoader resourceLoader, @Autowired ObjectMapper objectMapper) {
         Resource resource = resourceLoader.getResource(Constant.GEOFENCE_HIERARCHY);
         try (InputStream inputStream = resource.getInputStream()) {
             return objectMapper.readValue(inputStream, GeoHierarchyNode.class);
