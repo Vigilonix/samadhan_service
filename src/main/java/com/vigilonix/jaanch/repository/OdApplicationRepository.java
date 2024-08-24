@@ -19,8 +19,6 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     List<OdApplication> findByGeoHierarchyNodeUuidIn(List<UUID> uuids);
 
-    List<OdApplication> findByOdAndStatus(User od, OdApplicationStatus status);
-
     List<OdApplication> findByGeoHierarchyNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
 
     @Query("SELECT o FROM od_application o WHERE (o.od = :user OR o.enquiryOfficer = :user)")
