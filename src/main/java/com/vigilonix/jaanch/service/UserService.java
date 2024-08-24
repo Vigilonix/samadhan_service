@@ -61,6 +61,7 @@ public class UserService {
             user = null;
         }
         if (user == null) {
+            log.error("invalid request {}", authRequest);
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_GRANT));
         }
         if (DEACTIVATED_STATES.contains(user.getState())) {
