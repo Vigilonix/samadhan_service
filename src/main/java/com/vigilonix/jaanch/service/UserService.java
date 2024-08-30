@@ -10,6 +10,7 @@ import com.vigilonix.jaanch.helper.ChangeDetector;
 import com.vigilonix.jaanch.model.OAuthToken;
 import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.repository.UserRepository;
+import com.vigilonix.jaanch.repository.UserRepositoryCustom;
 import com.vigilonix.jaanch.request.*;
 import com.vigilonix.jaanch.transformer.AuthTokenTransformer;
 import com.vigilonix.jaanch.transformer.SearchUserResponseTransformer;
@@ -49,6 +50,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ChangeDetector changeDetector;
     private final GeoHierarchyService geoHierarchyService;
+    private final UserRepositoryCustom userRepositoryCustom;
 
     public OAuth2Response login(AuthRequest authRequest) {
         clientValidator.validate(authRequest);
@@ -207,7 +209,14 @@ public class UserService {
     }
 
     public List<UserResponse> getAllUsersFromSameGeoFence(User principal, String prefixName) {
-        List<User> users = userRepository.findByPrefixNameAndGeoNodeIn(StringUtils.lowerCase(prefixName), geoHierarchyService.getAllLevelNodes(principal.getPostGeoHierarchyNodeUuidMap()));
+
+        List<UUID> geoHierarchyUuid = geoHierarchyService.getAllLevelNodes(principal.getPostGeoHierarchyNodeUuidMap());
+
+        String uuidString = geoHierarchyUuid.stream()
+                .map(UUID::toString)
+                .collect(Collectors.joining("','", "'", "'"));
+        List<User> users = userRepositoryCustom.findByPrefixNameAndGeoNodeIn(StringUtils.lowerCase(prefixName), geoHierarchyUuid);
+//        List<User> users = userRepository.findByNameStartingWith(StringUtils.lowerCase(prefixName));
         return users.stream().map(searchUserResponseTransformer::transform).collect(Collectors.toList());
 
     }
