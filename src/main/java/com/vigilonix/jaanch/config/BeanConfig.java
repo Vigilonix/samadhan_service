@@ -143,7 +143,7 @@ public class BeanConfig {
                                                                                                                              ApplicantApplicationCreationWhatasappTemplateTransformer applicantApplicationCreationWhatasappTemplateTransformer) {
         Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> templateTransformerMap = new HashMap<>();
 //        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappDirectTransformer);
-        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappTemplateTransformer);
+//        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappTemplateTransformer);
         return templateTransformerMap;
     }
 
