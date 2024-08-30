@@ -207,7 +207,7 @@ public class UserService {
     }
 
     public List<UserResponse> getAllUsersFromSameGeoFence(User principal, String prefixName) {
-        List<User> users = userRepository.findByNameStartingWith(prefixName);
+        List<User> users = userRepository.findByPrefixNameAndGeoNodeIn(StringUtils.lowerCase(prefixName), geoHierarchyService.getAllLevelNodes(principal.getPostGeoHierarchyNodeUuidMap()));
         return users.stream().map(searchUserResponseTransformer::transform).collect(Collectors.toList());
 
     }

@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUsername(String username);
 
-    @Query(value = "SELECT * FROM users u WHERE u.name LIKE :prefixName% AND EXISTS (SELECT 1 FROM jsonb_each_text(u.post_geo_hierarchy_node_uuid_map) as elem WHERE elem.value::uuid IN :geoNodes)", nativeQuery = true)
+    @Query(value = "SELECT * FROM users u WHERE lower(u.name) LIKE :prefixName% AND EXISTS (SELECT 1 FROM jsonb_each_text(u.post_geo_hierarchy_node_uuid_map) as elem WHERE elem.value::uuid IN :geoNodes)", nativeQuery = true)
     List<User> findByPrefixNameAndGeoNodeIn(@Param("prefixName") String prefixName, @Param("geoNodes") List<UUID> geoNodes);
 
     List<User> findByNameStartingWith(String prefixName);
