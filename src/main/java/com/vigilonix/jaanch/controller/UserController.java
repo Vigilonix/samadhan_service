@@ -26,6 +26,11 @@ public class UserController {
         return userService.signUpViaUserPass(userRequest, authHelper.getPrincipal());
     }
 
+    @PostMapping(value = "/bulk", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void bulkSignup(@RequestBody List<UserRequest> userRequests) {
+        userService.signUpViaUserPassBulk(userRequests, authHelper.getPrincipal());
+    }
+
     @LogPayload
     @PutMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserResponse updateUser(@RequestBody UserRequest userRequest) {

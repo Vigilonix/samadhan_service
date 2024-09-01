@@ -220,4 +220,10 @@ public class UserService {
         return users.stream().map(searchUserResponseTransformer::transform).collect(Collectors.toList());
 
     }
+
+    public void signUpViaUserPassBulk(List<UserRequest> userRequests, User principal) {
+        for(UserRequest userRequest: userRequests) {
+            signUpViaUserPass(userRequest, principal);
+        }
+    }
 }
