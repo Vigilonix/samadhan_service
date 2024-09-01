@@ -1,8 +1,8 @@
 package com.vigilonix.jaanch.controller;
 
-import com.vigilonix.jaanch.aop.Allowed;
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.helper.AuthHelper;
+import com.vigilonix.jaanch.pojo.AnalyticalResponse;
 import com.vigilonix.jaanch.pojo.OdApplicationPayload;
 import com.vigilonix.jaanch.service.OdApplicationService;
 import lombok.RequiredArgsConstructor;
@@ -48,5 +48,10 @@ public class OdApplicationController {
     @GetMapping(path = "/receipt", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<OdApplicationPayload> getOdApplication() {
         return odApplicationService.getReceiptList(authHelper.getPrincipal());
+    }
+
+    @GetMapping(path = "/analytics", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public AnalyticalResponse getDashboardAnalytics() {
+        return odApplicationService.getDashboardAnalytics(authHelper.getPrincipal());
     }
 }

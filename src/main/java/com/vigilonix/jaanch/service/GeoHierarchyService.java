@@ -125,4 +125,8 @@ public class GeoHierarchyService {
     public boolean isTestNode(UUID geoHierarchyNodeUuid) {
         return testNodes.contains(geoHierarchyNodeUuid);
     }
+
+    public List<GeoHierarchyNode> getAllLevelNodes(UUID geoHierarchyNodeUuid) {
+        return getAllLevelNodes(nodeByUuid.get(geoHierarchyNodeUuid));
+    }
 }

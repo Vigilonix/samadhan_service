@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,4 +36,11 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
             "AND DATE_TRUNC('month', TO_TIMESTAMP(created_at / 1000)) = DATE_TRUNC('month', CURRENT_DATE)",
             nativeQuery = true)
     Optional<Integer> findMaxReceiptBucketNumberForCurrentMonth(@Param("geoHierarchyNodeUuid") UUID geoHierarchyNodeUuid);
+
+
+    @Query("SELECT o.status, COUNT(o) FROM od_application o WHERE o.geoHierarchyNodeUuid IN :geoNodeUuids GROUP BY o.status")
+    List<Object[]> countByStatusForGeoNodes(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
+
+    @Query("SELECT o.status, COUNT(o) FROM od_application o WHERE o.enquiryOfficer = :user  GROUP BY o.status")
+    List<Object[]>  countByStatusForOdOfficer(User user);
 }
