@@ -1,11 +1,10 @@
 package com.vigilonix.jaanch.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vigilonix.jaanch.config.Constant;
 import com.vigilonix.jaanch.config.WhatsappConfig;
 import com.vigilonix.jaanch.pojo.INotificationRequest;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
-import com.vigilonix.jaanch.pojo.WhatsappDirectSendRequest;
+import com.vigilonix.jaanch.pojo.NotificationWorkerResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +20,12 @@ import java.net.http.HttpResponse;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CherrioWhatsappNotificationWorker implements INotificationWorker {
     private final WhatsappConfig whatsappConfig;
+    private final CherrioWhatsappDocumentUpload cherrioWhatsappDocumentUpload;
 
     private static final String API_URL = "https://pre-prod.cheerio.in/direct-apis/v1/whatsapp/template/send"; // Replace with actual URL
 
     @Override
-    public boolean work(NotificationPayload notificationPayload) {
+    public NotificationWorkerResponse work(NotificationPayload notificationPayload) {
         log.debug("received work {}", notificationPayload);
 
         // Extract WhatsappDirectSendRequest from NotificationPayload
@@ -53,12 +53,11 @@ public class CherrioWhatsappNotificationWorker implements INotificationWorker {
             log.info("Response code: {}", response.statusCode());
             log.info("Response body: {}", response.body());
             // Return true if the response is successful (status code 200-299)
-            return response.statusCode() >= 200 && response.statusCode() < 300;
-
         } catch (Exception e) {
             log.error("Failed to send WhatsApp notification", e);
-            return false;
+            return NotificationWorkerResponse.builder().success(false).build();
         }
+        return NotificationWorkerResponse.builder().success(true).build();
     }
 
 

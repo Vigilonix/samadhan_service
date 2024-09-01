@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ApplicantApplicationCreationWhatasappTemplateTransformer implements Transformer<OdApplication, List<NotificationPayload>> {
+public class ApplicantApplicationCreationWhatasappTextTemplateTransformer implements Transformer<OdApplication, List<NotificationPayload>> {
     private final GeoHierarchyService geoHierarchyService;
 
     @Override
@@ -39,7 +39,7 @@ public class ApplicantApplicationCreationWhatasappTemplateTransformer implements
                 .to("91"+odApplication.getApplicantPhoneNumber())
 //                .type("template")
                 .data(WhatsappTemplate.builder()
-                        .name("update_message")
+                        .name("update_message_copy_copy")
                         .language(Language.builder()
                                 .code("en")
                                 .build())

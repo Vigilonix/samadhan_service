@@ -53,4 +53,5 @@ public class UserController {
         return userService.getAllUsersFromSameGeoFence(authHelper.getPrincipal(), prefixName);
     }
 
+
 }

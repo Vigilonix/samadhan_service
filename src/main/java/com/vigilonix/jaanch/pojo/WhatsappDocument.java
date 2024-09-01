@@ -9,9 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WhatsappParameter {
-    private String type;
-    private WhatsappImage image;
-    private WhatsappDocument document;
-    private String text;
+public class WhatsappDocument {
+    private String id;
+    private String filename;
 }

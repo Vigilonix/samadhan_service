@@ -23,14 +23,19 @@ public class NotificationService {
 
     public boolean sendNotification(OdApplication odApplication) {
         log.debug("going to send notification for {}", odApplication);
-        if(geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
+        if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
             log.info("test geonode skipping notification {}", odApplication);
             return false;
         }
-        List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
-        log.debug("transformed payload {} for odApplication {}", notificationPayloads, odApplication);
-        for(NotificationPayload notificationPayload: notificationPayloads){
-            if(notificationWorkerFactory.notify(notificationPayload)) return true;
+        try {
+            List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
+            log.debug("transformed payload {} for odApplication {}", notificationPayloads, odApplication);
+            for (NotificationPayload notificationPayload : notificationPayloads) {
+                return notificationWorkerFactory.notify(notificationPayload).isSuccess();
+            }
+            return false;
+        }catch (Exception e) {
+            log.error("failed to notify {}", odApplication, e);
         }
         return false;
     }
