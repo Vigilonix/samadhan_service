@@ -190,6 +190,43 @@
           "geofence": [],
           "children": [
             {
+              "name": "Patna Sadar 1",
+              "type": "SUB_DIVISION",
+              "uuid": "ea73b95a-ce55-4483-93be-15e5bb7dd4e0",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Chitragupta Nagar",
+                  "type": "THANA",
+                  "uuid": "873e2e3b-e542-4183-950d-4dea50c1d223",
+                  "geofence": [],
+                  "children": []
+                },
+                {
+                  "name": "Kankarbagh",
+                  "type": "THANA",
+                  "uuid": "4352338b-d89f-4397-b520-11d2860d3bb0",
+                  "geofence": [],
+                  "children": []
+                },
+                {
+                  "name": "Jakkanpur",
+                  "type": "THANA",
+                  "uuid": "5cb80186-7458-46e8-9c16-37c0bee384d6",
+                  "geofence": [],
+                  "children": []
+                },
+                {
+                  "name": "Patrakar Nagar",
+                  "type": "THANA",
+                  "uuid": "ad18b372-3756-44c6-9adf-1b1e0441d2ac",
+                  "geofence": [],
+                  "children": []
+                }
+              ]
+
+            },
+            {
               "name": "Patna Sadar",
               "type": "SUB_DIVISION",
               "uuid": "4f3b7332-b267-4210-9d85-dc89b0265150",

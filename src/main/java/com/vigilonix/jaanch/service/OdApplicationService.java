@@ -173,13 +173,21 @@ public class OdApplicationService {
 
         List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap());
         List<Object[]> allPostGeoAnalyticalRecord = new ArrayList<>();
+        List<Object[]> selfAllPostGeoAnalyticalRecord = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(authorityNodes)) {
             allPostGeoAnalyticalRecord = odApplicationRepository.countByStatusForGeoNodes(authorityNodes);
-        }else {
-            allPostGeoAnalyticalRecord = odApplicationRepository.countByStatusForOdOfficer(principal);
         }
+        selfAllPostGeoAnalyticalRecord= odApplicationRepository.countByStatusForOdOfficer(principal);
+
         return AnalyticalResponse.builder()
                 .statusCountMap(allPostGeoAnalyticalRecord.stream()
+                        .filter(record->!Objects.isNull(record[0]))
+                        .collect(Collectors.toMap(
+                                record -> (OdApplicationStatus) record[0],  // status, which might be null
+                                record -> (Long) record[1],                 // count
+                                Long::sum                                  // in case of duplicate keys, sum the values
+                        )))
+                .self_statusCountMap(selfAllPostGeoAnalyticalRecord.stream()
                         .filter(record->!Objects.isNull(record[0]))
                         .collect(Collectors.toMap(
                                 record -> (OdApplicationStatus) record[0],  // status, which might be null
