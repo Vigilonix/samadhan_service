@@ -6,21 +6,22 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Rank {
-    CONSTABLE(1),
-    HEAD(2),
-    HEAD_CONSTABLE(3),
-    PTC(4),
-    ASSISTANT_SUB_INSPECTOR(5),
-    SUB_INSPECTOR(6),
-    INSPECTOR_OF_POLICE(7),
-    DSP(8),
-    ASP(9),
-    SP(10),
-    SSP(11),
-    DIG(12),
-    IG(13),
-    ADG(14),
-    DGP(15),
-    DG(16);
+    CONSTABLE(100),
+    HEAD(200),
+    HEAD_CONSTABLE(300),
+    PTC(400),
+    ASSISTANT_SUB_INSPECTOR(500),
+    PROBATIONARY_SUB_INSPECTOR(600),
+    SUB_INSPECTOR(700),
+    INSPECTOR_OF_POLICE(800),
+    DSP(900),
+    ASP(1000),
+    SP(1100),
+    SSP(1200),
+    DIG(1300),
+    IG(1400),
+    ADG(1500),
+    DGP(1600),
+    DG(1700);
     private final int level;
 }
