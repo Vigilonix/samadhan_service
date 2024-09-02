@@ -11,6 +11,7 @@ import com.vigilonix.jaanch.pojo.OdApplicationStatus;
 import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
+import com.vigilonix.jaanch.transformer.ApplicantApplicationClosedWhatasappDocumentTemplateTransformer;
 import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappDirectTransformer;
 import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransformer;
 import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappTextTemplateTransformer;
@@ -142,10 +143,12 @@ public class BeanConfig {
     @Bean
     public Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> getNotificationPayloadTransformer(ApplicantApplicationCreationWhatasappDirectTransformer applicantApplicationCreationWhatasappDirectTransformer,
                                                                                                                              ApplicantApplicationCreationWhatasappTextTemplateTransformer applicantApplicationCreationWhatasappTextTemplateTransformer,
+                                                                                                                             ApplicantApplicationClosedWhatasappDocumentTemplateTransformer applicantApplicationClosedWhatasappDocumentTemplateTransformer,
                                                                                                                              ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransformer applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer) {
         Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> templateTransformerMap = new HashMap<>();
 //        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappDirectTransformer);
         templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer);
+        templateTransformerMap.put(OdApplicationStatus.CLOSED,  applicantApplicationClosedWhatasappDocumentTemplateTransformer);
         return templateTransformerMap;
     }
 
