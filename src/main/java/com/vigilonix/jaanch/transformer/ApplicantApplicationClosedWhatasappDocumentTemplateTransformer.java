@@ -49,7 +49,7 @@ public class ApplicantApplicationClosedWhatasappDocumentTemplateTransformer impl
 
         String body = sub.replace(NotificationTemplate.OD_APPLICATION_CREATED_ENGLISH.getTemplate());
 
-        NotificationWorkerResponse file = cherrioWhatsappDocumentUpload.work(NotificationPayload.builder().attachments(Arrays.asList(downloadFile(odApplication.getApplicationFilePath()))).build());
+        NotificationWorkerResponse file = cherrioWhatsappDocumentUpload.work(NotificationPayload.builder().attachments(Arrays.asList(downloadFile(odApplication.getEnquiryFilePath()))).build());
         if(!file.isSuccess()) return Collections.emptyList();
         WhatsappMessageRequest sendRequest = WhatsappMessageRequest.builder()
                 .to("91"+odApplication.getApplicantPhoneNumber())
