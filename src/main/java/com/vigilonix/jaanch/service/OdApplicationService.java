@@ -187,22 +187,26 @@ public class OdApplicationService {
             allPostGeoAnalyticalRecord = odApplicationRepository.countByStatusForGeoNodes(authorityNodes);
         }
         selfAllPostGeoAnalyticalRecord= odApplicationRepository.countByStatusForOdOfficer(principal);
-
+        Map<OdApplicationStatus, Long> geoStatusCountMap = allPostGeoAnalyticalRecord.stream()
+                .filter(record -> !Objects.isNull(record[0]))
+                .collect(Collectors.toMap(
+                        record -> (OdApplicationStatus) record[0],  // status, which might be null
+                        record -> (Long) record[1],                 // count
+                        Long::sum                                  // in case of duplicate keys, sum the values
+                ));
+        Map<OdApplicationStatus, Long> selfStatusCountMap = selfAllPostGeoAnalyticalRecord.stream()
+                .filter(record -> !Objects.isNull(record[0]))
+                .collect(Collectors.toMap(
+                        record -> (OdApplicationStatus) record[0],  // status, which might be null
+                        record -> (Long) record[1],                 // count
+                        Long::sum                                  // in case of duplicate keys, sum the values
+                ));
+        for(OdApplicationStatus odApplicationStatus: Arrays.asList(OdApplicationStatus.REVIEW, OdApplicationStatus.OPEN, OdApplicationStatus.CLOSED)) {
+            selfStatusCountMap.put(odApplicationStatus, geoStatusCountMap.getOrDefault(odApplicationStatus,0L));
+        }
         return AnalyticalResponse.builder()
-                .statusCountMap(allPostGeoAnalyticalRecord.stream()
-                        .filter(record->!Objects.isNull(record[0]))
-                        .collect(Collectors.toMap(
-                                record -> (OdApplicationStatus) record[0],  // status, which might be null
-                                record -> (Long) record[1],                 // count
-                                Long::sum                                  // in case of duplicate keys, sum the values
-                        )))
-                .self_statusCountMap(selfAllPostGeoAnalyticalRecord.stream()
-                        .filter(record->!Objects.isNull(record[0]))
-                        .collect(Collectors.toMap(
-                                record -> (OdApplicationStatus) record[0],  // status, which might be null
-                                record -> (Long) record[1],                 // count
-                                Long::sum                                  // in case of duplicate keys, sum the values
-                        )))
+                .statusCountMap(geoStatusCountMap)
+                .self_statusCountMap(selfStatusCountMap)
                 .build();
     }
 }
