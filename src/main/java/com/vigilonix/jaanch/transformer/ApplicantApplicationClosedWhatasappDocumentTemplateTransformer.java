@@ -49,8 +49,6 @@ public class ApplicantApplicationClosedWhatasappDocumentTemplateTransformer impl
 
         String body = sub.replace(NotificationTemplate.OD_APPLICATION_CREATED_ENGLISH.getTemplate());
 
-        NotificationWorkerResponse file = cherrioWhatsappDocumentUpload.work(NotificationPayload.builder().attachments(Arrays.asList(downloadFile(odApplication.getEnquiryFilePath()))).build());
-        if(!file.isSuccess()) return Collections.emptyList();
         WhatsappMessageRequest sendRequest = WhatsappMessageRequest.builder()
                 .to("91"+odApplication.getApplicantPhoneNumber())
 //                .type("template")
@@ -62,7 +60,7 @@ public class ApplicantApplicationClosedWhatasappDocumentTemplateTransformer impl
                         .components(Arrays.asList(
                                 WhatsappComponent.builder().type("header").parameters(Arrays.asList(WhatsappParameter.builder()
                                         .type("document")
-                                        .document(WhatsappDocument.builder().id(file.getResponse()).build())
+                                        .document(WhatsappDocument.builder().link(odApplication.getEnquiryFilePath()).filename(odApplication.getReceiptNo()+"_enquiry_report.pdf").build())
                                         .build())).build(),
                                 WhatsappComponent.builder()
                                         .type("body")

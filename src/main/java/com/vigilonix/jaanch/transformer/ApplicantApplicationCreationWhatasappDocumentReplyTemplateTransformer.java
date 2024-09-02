@@ -50,20 +50,20 @@ public class ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransform
 
         String body = sub.replace(NotificationTemplate.OD_APPLICATION_CREATED_ENGLISH.getTemplate());
 
-        NotificationWorkerResponse file = cherrioWhatsappDocumentUpload.work(NotificationPayload.builder().attachments(Arrays.asList(downloadFile(odApplication.getApplicationFilePath()))).build());
-        if(!file.isSuccess()) return Collections.emptyList();
+//        NotificationWorkerResponse file = cherrioWhatsappDocumentUpload.work(NotificationPayload.builder().attachments(Arrays.asList(downloadFile(odApplication.getApplicationFilePath()))).build());
+//        if(!file.isSuccess()) return Collections.emptyList();
         WhatsappMessageRequest sendRequest = WhatsappMessageRequest.builder()
                 .to("91"+odApplication.getApplicantPhoneNumber())
 //                .type("template")
                 .data(WhatsappTemplate.builder()
-                        .name("update_message_copy_copy")
+                        .name("notify_applicant_receipt_experience")
                         .language(Language.builder()
                                 .code("en")
                                 .build())
                         .components(Arrays.asList(
                                 WhatsappComponent.builder().type("header").parameters(Arrays.asList(WhatsappParameter.builder()
                                         .type("document")
-                                        .document(WhatsappDocument.builder().id(file.getResponse()).build())
+                                        .document(WhatsappDocument.builder().link(odApplication.getApplicationFilePath()).filename(odApplication.getReceiptNo()+".pdf").build())
                                         .build())).build(),
                                 WhatsappComponent.builder()
                                         .type("body")
@@ -89,6 +89,11 @@ public class ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransform
                                                         .text(dateFormatterddMMYYY(odApplication.getCreatedAt()))
                                                         .build()
                                         ))
+                                        .build(),
+                                WhatsappComponent.builder()
+                                        .type("button")
+                                        .subType("flow")
+                                        .index(0)
                                         .build()
                         ))
                         .build())
