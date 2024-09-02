@@ -102,15 +102,17 @@ public class OdApplicationService {
             GeoHierarchyNode geoHierarchyNode = geoHierarchyService.getHighestPostNode(enquiryOfficer.getPostGeoHierarchyNodeUuidMap());
             odApplication.setEnquiryOfficer(enquiryOfficer);
             odApplication.setGeoHierarchyNodeUuid(geoHierarchyNode.getUuid());
-            odApplication.setEnquirySubmittedAt(System.currentTimeMillis());
             odApplication.setStatus(OdApplicationStatus.ENQUIRY);
+            odApplication.setEnquiryFilePath(null);
         }
         if (StringUtils.isNotEmpty(odApplicationPayload.getEnquiryFilePath())) {
             odApplication.setEnquiryFilePath(odApplicationPayload.getEnquiryFilePath());
+            odApplication.setEnquirySubmittedAt(System.currentTimeMillis());
             odApplication.setStatus(OdApplicationStatus.REVIEW);
         }
         if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(OdApplicationStatus.ENQUIRY);
+            odApplication.setEnquiryFilePath(null);
         }
         if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(OdApplicationStatus.CLOSED);
