@@ -5,6 +5,7 @@ import com.vigilonix.jaanch.enums.NotificationTemplate;
 import com.vigilonix.jaanch.helper.CherrioWhatsappDocumentUpload;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.pojo.*;
+import com.vigilonix.jaanch.pojo.whatsapp.*;
 import com.vigilonix.jaanch.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.vigilonix.jaanch.pojo;
+package com.vigilonix.jaanch.pojo.whatsapp;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -11,6 +11,6 @@ import lombok.*;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class WhatsappBody {
+public class WhatsappFooter {
     private final String text;
 }

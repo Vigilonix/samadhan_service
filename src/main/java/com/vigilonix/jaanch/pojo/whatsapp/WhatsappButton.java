@@ -1,4 +1,4 @@
-package com.vigilonix.jaanch.pojo;
+package com.vigilonix.jaanch.pojo.whatsapp;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -6,14 +6,12 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 @Getter
-@ToString
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
+@ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class WhatsappDocument {
-    private String link;
-    private String id;
-    private String filename;
+public class WhatsappButton {
+        private final String type;
+        private final WhatsappReply reply;
 }

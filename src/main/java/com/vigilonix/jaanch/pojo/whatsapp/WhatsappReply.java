@@ -1,4 +1,4 @@
-package com.vigilonix.jaanch.pojo;
+package com.vigilonix.jaanch.pojo.whatsapp;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
