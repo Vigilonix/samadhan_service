@@ -6,10 +6,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Post {
-    SDPO(3),
-    SHO(2),
-    BEAT(1),
-    CITY_SP(4),
-    SP(5);
+    BEAT(100),
+    ASSISTANT_SHO(200),
+    SHO(300),
+    SDPO(400),
+    CITY_SP(500),
+    SP(600);
     private final int level;
 }
