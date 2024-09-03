@@ -13,10 +13,8 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -41,6 +39,12 @@ public class PDFValidator implements Validator<List<ValidationError>, String> {
             return Collections.singletonList(ValidationErrorEnum.INVALID_MEDIA_URI);
         }
 
+//        List<ValidationError> INVALID_MEDIA_URI = validateContentType(path);
+//        if (INVALID_MEDIA_URI != null) return INVALID_MEDIA_URI;
+        return Collections.emptyList();
+    }
+
+    private List<ValidationError> validateContentType(String path) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpHead request = new HttpHead(path); // Send a HEAD request to get headers only
             try (CloseableHttpResponse response = httpClient.execute(request)) {
@@ -53,6 +57,6 @@ public class PDFValidator implements Validator<List<ValidationError>, String> {
             log.error("failed to fetch head for pdf file path {} validation", path, e);
             return Collections.singletonList(ValidationErrorEnum.INVALID_MEDIA_URI);
         }
-        return Collections.emptyList();
+        return null;
     }
 }
