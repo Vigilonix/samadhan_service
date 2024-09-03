@@ -39,6 +39,7 @@ public class OdApplication {
     @Column
     private Long enquirySubmittedAt;
     @Column
+    @Enumerated(EnumType.STRING)
     private OdApplicationStatus status;
     @Column
     private String receiptNo;
