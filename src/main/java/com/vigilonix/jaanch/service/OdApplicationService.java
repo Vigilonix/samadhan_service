@@ -1,6 +1,7 @@
 package com.vigilonix.jaanch.service;
 
 import com.vigilonix.jaanch.aop.LogPayload;
+import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.*;
@@ -50,6 +51,7 @@ public class OdApplicationService {
         this.notificationService = notificationService;
     }
 
+    @Timed
     @LogPayload
     public OdApplicationPayload create(OdApplicationPayload odApplicationPayload, User principal) {
         odCreateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
@@ -81,18 +83,19 @@ public class OdApplicationService {
     }
 
     private String generateReceiptNumber(GeoHierarchyNode geoHierarchyNode, int bucketNo) {
-        String jurisdictionName = geoHierarchyNode.getName().replace("  ", " ")
+        String jurisdictionName = geoHierarchyNode.getName()
                 .replace(" ", "_");
         // Get the current date
         LocalDate currentDate = LocalDate.now();
         // Define the date formatter with the desired pattern
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yy");
         // Format the current date
         String formattedDate = currentDate.format(formatter);
         return String.format("%s_%s_%s", jurisdictionName, formattedDate, bucketNo);
     }
 
     @LogPayload
+    @Timed
     public OdApplicationPayload update(UUID uuid, OdApplicationPayload odApplicationPayload, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(uuid);
         odUpdateValidationService.validate(ODApplicationValidationPayload.builder()
@@ -129,12 +132,14 @@ public class OdApplicationService {
     }
 
     @LogPayload
+    @Timed
     public OdApplicationPayload get(UUID odUuid, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odUuid);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
     @LogPayload
+    @Timed
     public List<OdApplicationPayload> getList(String odApplicationStatus, User principal) {
         OdApplicationStatus status = null;
         if (StringUtils.isNotEmpty(odApplicationStatus)) {
@@ -162,6 +167,7 @@ public class OdApplicationService {
     }
 
     @LogPayload
+    @Timed
     public List<OdApplicationPayload> getReceiptList(User principal) {
         List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap());
         if (CollectionUtils.isEmpty(authorityNodes)) {
@@ -178,6 +184,7 @@ public class OdApplicationService {
     }
 
     @LogPayload
+    @Timed
     public AnalyticalResponse getDashboardAnalytics(User principal) {
 
         List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap());

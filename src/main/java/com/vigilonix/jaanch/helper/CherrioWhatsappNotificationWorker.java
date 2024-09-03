@@ -1,6 +1,7 @@
 package com.vigilonix.jaanch.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.config.WhatsappConfig;
 import com.vigilonix.jaanch.pojo.INotificationRequest;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
@@ -25,6 +26,7 @@ public class CherrioWhatsappNotificationWorker implements INotificationWorker {
     private static final String API_URL = "https://pre-prod.cheerio.in/direct-apis/v1/whatsapp/template/send"; // Replace with actual URL
 
     @Override
+    @Timed
     public NotificationWorkerResponse work(NotificationPayload notificationPayload) {
         log.debug("received work {}", notificationPayload);
 

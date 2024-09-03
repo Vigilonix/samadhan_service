@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.service;
 
+import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
 import com.vigilonix.jaanch.helper.NotificationPayloadTransformerFactory;
 import com.vigilonix.jaanch.helper.NotificationWorkerFactory;
@@ -21,12 +22,13 @@ public class NotificationService {
     private final NotificationWorkerFactory notificationWorkerFactory;
     private final GeoHierarchyService geoHierarchyService;
 
+    @Timed
     public boolean sendNotification(OdApplication odApplication) {
         log.debug("going to send notification for {}", odApplication);
-//        if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
-//            log.info("test geonode skipping notification {}", odApplication);
-//            return false;
-//        }
+        if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
+            log.info("test geonode skipping notification {}", odApplication);
+            return false;
+        }
         try {
             List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
             log.debug("transformed payload {} for odApplication {}", notificationPayloads, odApplication);

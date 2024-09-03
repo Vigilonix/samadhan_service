@@ -14,7 +14,7 @@ public class TimedAspect {
 
     public static final String TIMED_ASPECT_TIME_TAKEN_FOR_IS_MS = "Timed aspect: time taken for {} is {} ms";
 
-    @Around("@annotation(com.dt.beyond.aop.Timed)")
+    @Around("@annotation(com.vigilonix.jaanch.aop.Timed)")
     public Object timed(final ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         try {

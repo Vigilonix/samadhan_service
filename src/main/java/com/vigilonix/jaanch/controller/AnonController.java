@@ -18,8 +18,8 @@ public class AnonController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(path = "/wba/chat/webhoook", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public OAuth2Response wbaChatWebhook(@RequestBody Map<String, Object> payload) {
-        return anonService.wbaChatWebhook(payload);
+    public void wbaChatWebhook(@RequestBody String payload) {
+        anonService.wbaChatWebhook(payload);
     }
 
 }

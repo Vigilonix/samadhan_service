@@ -21,6 +21,9 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @ToString
+@Table(indexes = {
+        @Index(name = "user_uuid", columnList = "uuid"),
+})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
