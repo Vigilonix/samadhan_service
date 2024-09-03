@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Service
 @Component
@@ -21,24 +22,28 @@ public class NotificationService {
     private final NotificationPayloadTransformerFactory notificationPayloadTransformerFactory;
     private final NotificationWorkerFactory notificationWorkerFactory;
     private final GeoHierarchyService geoHierarchyService;
+    private final ThreadPoolExecutor threadPoolExecutor;
 
     @Timed
-    public boolean sendNotification(OdApplication odApplication) {
-        log.debug("going to send notification for {}", odApplication);
-        if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
-            log.info("test geonode skipping notification {}", odApplication);
-            return false;
-        }
-        try {
-            List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
-            log.debug("transformed payload {} for odApplication {}", notificationPayloads, odApplication);
-            for (NotificationPayload notificationPayload : notificationPayloads) {
-                return notificationWorkerFactory.notify(notificationPayload).isSuccess();
+    public void sendNotification(OdApplication odApplication) {
+        threadPoolExecutor.submit(() -> {
+            log.debug("Going to send notification for {}", odApplication);
+            if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
+                log.info("Test geonode, skipping notification for {}", odApplication);
+                return;  // Corrected from 'return false;' to 'return;' since it's a void method
             }
-            return false;
-        }catch (Exception e) {
-            log.error("failed to notify {}", odApplication, e);
-        }
-        return false;
+            try {
+                List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
+                log.debug("Transformed payload {} for odApplication {}", notificationPayloads, odApplication);
+                for (NotificationPayload notificationPayload : notificationPayloads) {
+                    boolean success = notificationWorkerFactory.notify(notificationPayload).isSuccess();
+                    if (!success) {
+                        log.error("Failed to notify for payload {}", notificationPayload);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Failed to notify {}", odApplication, e);
+            }
+        });
     }
 }
