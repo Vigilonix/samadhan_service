@@ -53,8 +53,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private State state;
     @Column
+    @ToString.Exclude
     private String deviceToken;
     @Column
+    @ToString.Exclude
     private String secret;
     @Column
     private String phoneNumber;
