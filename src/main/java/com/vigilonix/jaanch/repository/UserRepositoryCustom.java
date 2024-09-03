@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.repository;
 
+import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,6 +17,7 @@ public class UserRepositoryCustom {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Timed
     public List<User> findByPrefixNameAndGeoNodeIn(String prefixName, List<UUID> geoNodes) {
         // Convert the List<UUID> to a comma-separated string
         String geoNodesString = geoNodes.stream()

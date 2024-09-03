@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.repository;
 
+import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.model.OAuthToken;
 import com.vigilonix.jaanch.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,12 +16,15 @@ public interface OAuthTokenRepository extends JpaRepository<OAuthToken, String> 
 
     OAuthToken findByToken(String token);
 
+    @Timed
     OAuthToken findByTokenAndExpireTimeGreaterThan(String authToken, long currentTimeMillis);
 
+    @Timed
     @Modifying
     @Query("delete from OAuthToken o where o.user = :user")
     void deleteByUser(User user);
 
+    @Timed
     @Modifying
     @Query("delete from OAuthToken o where o.expireTime= :currentTimeMillis")
     void deleteByExpireTime(long currentTimeMillis);
