@@ -2,16 +2,14 @@ package com.vigilonix.jaanch.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vigilonix.jaanch.enums.ChannelType;
 import com.vigilonix.jaanch.model.ContactMessage;
 import com.vigilonix.jaanch.pojo.whatsapp.WebhookPayload;
-import com.vigilonix.jaanch.pojo.whatsapp.WhatsAppWebhookPayload;
 import com.vigilonix.jaanch.repository.ContactMessageRepository;
-import com.vigilonix.jaanch.request.OAuth2Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
@@ -48,11 +46,13 @@ public class AnonService {
             WebhookPayload.Value value = change.getValue();
             String responseJson = value.getMessages().get(0).getInteractive() != null ? value.getMessages().get(0).getInteractive().getNfm_reply().getResponse_json() : objectMapper.createObjectNode().toString();
             Map<String, Object> responseJsonMap = objectMapper.readValue(responseJson, new TypeReference<Map<String, Object>>() {});
+            String flowToken = (String) responseJsonMap.get("flow_token");
 
 
 
             // Create ContactMessage object using builder and map directly from POJO fields
             ContactMessage contactMessage = ContactMessage.builder()
+                    .channelType(ChannelType.WHATSAPP)
                     .entryId(entry.getId())
                     .contactName(value.getContacts().get(0).getProfile().getName())
                     .contactWaId(value.getContacts().get(0).getWa_id())
@@ -68,6 +68,7 @@ public class AnonService {
                     .metadataPhoneNumberId(value.getMetadata().getPhone_number_id())
                     .contextMessageId(value.getMessages().get(0).getContext() != null ? value.getMessages().get(0).getContext().getId() : null)
                     .contextFrom(value.getMessages().get(0).getContext() != null ? value.getMessages().get(0).getContext().getFrom() : null)
+                    .contextUuid(flowToken)
                     .build();
             contactMessageRepository.save(contactMessage);
         }catch (Exception e) {

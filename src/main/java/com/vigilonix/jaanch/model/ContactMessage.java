@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.model;
 
+import com.vigilonix.jaanch.enums.ChannelType;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -46,7 +46,8 @@ public class ContactMessage implements Serializable {
     private String contactEmail;
 
     @Column
-    private String channelType;
+    @Enumerated(EnumType.STRING)
+    private ChannelType channelType;
 
     @Column
     private String messageId;
@@ -79,6 +80,8 @@ public class ContactMessage implements Serializable {
 
     @Column
     private String contextMessageId;
+    @Column
+    private String contextUuid;
 
     @Column
     private String contextFrom;
