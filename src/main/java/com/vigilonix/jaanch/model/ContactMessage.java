@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.model;
 
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,10 +9,12 @@ import lombok.NoArgsConstructor;
 
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Map;
 
 @Data
 @Builder
@@ -60,8 +63,13 @@ public class ContactMessage implements Serializable {
     @Column
     private String interactiveType;
 
+    @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private String interactiveResponseJson;
+    private String raw_json;
+
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private Map<String, Object> interactiveResponse;
 
     @Column
     private String metadataDisplayPhoneNumber;
