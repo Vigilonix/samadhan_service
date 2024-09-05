@@ -21,5 +21,6 @@ public class GeoHierarchyNode {
     private List<LatLong> geofence;
     private List<GeoHierarchyNode> children;
     private Boolean isTest;
+    private Boolean isDemo;
 
 }
