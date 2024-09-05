@@ -12,10 +12,6 @@ import lombok.*;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class WhatsappParameter {
-    private String type;
-    private WhatsappImage image;
-    private WhatsappDocument document;
-    private String text;
-    private WbaAction action;
+public class WbaAction {
+    private String flowToken;
 }

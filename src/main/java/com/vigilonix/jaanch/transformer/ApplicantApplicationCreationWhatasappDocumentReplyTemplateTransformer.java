@@ -94,6 +94,7 @@ public class ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransform
                                         .type("button")
                                         .subType("flow")
                                         .index(0)
+                                        .parameters(Arrays.asList(WhatsappParameter.builder().type("action").action(WbaAction.builder().flowToken(odApplication.getUuid().toString()).build()).build()))
                                         .build()
                         ))
                         .build())

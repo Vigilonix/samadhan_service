@@ -28,10 +28,10 @@ public class NotificationService {
     public void sendNotification(OdApplication odApplication) {
         threadPoolExecutor.submit(() -> {
             log.debug("Going to send notification for {}", odApplication);
-            if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
-                log.info("Test geonode, skipping notification for {}", odApplication);
-                return;  // Corrected from 'return false;' to 'return;' since it's a void method
-            }
+//            if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
+//                log.info("Test geonode, skipping notification for {}", odApplication);
+//                return;  // Corrected from 'return false;' to 'return;' since it's a void method
+//            }
             try {
                 List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
                 log.debug("Transformed payload {} for odApplication {}", notificationPayloads, odApplication);
