@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vigilonix.jaanch.model.ContactMessage;
 import com.vigilonix.jaanch.pojo.whatsapp.WebhookPayload;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -46,6 +46,10 @@ public class AnonService {
             WebhookPayload.Entry entry = webhookPayload.getEntry().get(0);
             WebhookPayload.Change change = entry.getChanges().get(0);
             WebhookPayload.Value value = change.getValue();
+            String responseJson = value.getMessages().get(0).getInteractive() != null ? value.getMessages().get(0).getInteractive().getNfm_reply().getResponse_json() : objectMapper.createObjectNode().toString();
+            Map<String, Object> responseJsonMap = objectMapper.readValue(responseJson, new TypeReference<Map<String, Object>>() {});
+
+
 
             // Create ContactMessage object using builder and map directly from POJO fields
             ContactMessage contactMessage = ContactMessage.builder()
@@ -59,7 +63,7 @@ public class AnonService {
                     .messageType(value.getMessages().get(0).getType())
                     .interactiveType(value.getMessages().get(0).getInteractive() != null ? value.getMessages().get(0).getInteractive().getType() : null)
                     .raw_json(payload)
-                    .interactiveResponse(value.getMessages().get(0).getInteractive() != null ? value.getMessages().get(0).getInteractive().getNfm_reply().getResponse_json() : new HashMap<>())
+                    .interactiveResponse(responseJsonMap)
                     .metadataDisplayPhoneNumber(value.getMetadata().getDisplay_phone_number())
                     .metadataPhoneNumberId(value.getMetadata().getPhone_number_id())
                     .contextMessageId(value.getMessages().get(0).getContext() != null ? value.getMessages().get(0).getContext().getId() : null)

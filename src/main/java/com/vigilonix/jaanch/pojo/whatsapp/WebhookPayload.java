@@ -81,7 +81,7 @@ public class WebhookPayload {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class NfmReply {
-        private Map<String, Object> response_json; // Change this from String to Map
+        private String response_json; // Change this from String to Map
         private String body;
         private String name;
     }
