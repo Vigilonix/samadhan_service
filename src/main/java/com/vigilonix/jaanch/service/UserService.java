@@ -137,15 +137,15 @@ public class UserService {
         principal.setModifiedOn(System.currentTimeMillis());
         principal.setLastLive(System.currentTimeMillis());
         if(userRequest.getLatitude() != null
-                && changeDetector.isChanged(principal.getName(), userRequest.getName())) {
+                && changeDetector.isChanged(principal.getLatitude(), userRequest.getLatitude())) {
             principal.setLatitude(userRequest.getLatitude());
         }
         if(userRequest.getLongitude() != null
-                && changeDetector.isChanged(principal.getName(), userRequest.getName())) {
+                && changeDetector.isChanged(principal.getLongitude(), userRequest.getLongitude())) {
             principal.setLongitude(userRequest.getLongitude());
         }
         if(StringUtils.isNotEmpty(userRequest.getFirebaseDeviceToken())
-                && changeDetector.isChanged(principal.getName(), userRequest.getName())) {
+                && changeDetector.isChanged(principal.getDeviceToken(), userRequest.getFirebaseDeviceToken())) {
             principal.setDeviceToken(userRequest.getFirebaseDeviceToken());
         }
 
