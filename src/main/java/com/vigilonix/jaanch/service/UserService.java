@@ -1,6 +1,7 @@
 package com.vigilonix.jaanch.service;
 
 
+import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.enums.Role;
 import com.vigilonix.jaanch.enums.State;
@@ -122,19 +123,32 @@ public class UserService {
         if (State.DISABLED.equals(principal.getState())) {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.DISABLED_USER));
         }
-        if (MapUtils.isNotEmpty(userRequest.getPostGeoHierarchyNodeUuidMap())) {
-            geoHierarchyService.getFirstLevelNodes(userRequest.getPostGeoHierarchyNodeUuidMap()).forEach(uuid -> {
-                        if (geoHierarchyService.getNodeById(uuid) == null) {
-                            throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
-                        }
-                    }
-            );
-            principal.setPostGeoHierarchyNodeUuidMap(userRequest.getPostGeoHierarchyNodeUuidMap());
-        }
+//        if (MapUtils.isNotEmpty(userRequest.getPostGeoHierarchyNodeUuidMap())) {
+//            geoHierarchyService.getFirstLevelNodes(userRequest.getPostGeoHierarchyNodeUuidMap()).forEach(uuid -> {
+//                        if (geoHierarchyService.getNodeById(uuid) == null) {
+//                            throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
+//                        }
+//                    }
+//            );
+//            principal.setPostGeoHierarchyNodeUuidMap(userRequest.getPostGeoHierarchyNodeUuidMap());
+//        }
 
 
         principal.setModifiedOn(System.currentTimeMillis());
         principal.setLastLive(System.currentTimeMillis());
+        if(userRequest.getLatitude() != null
+                && changeDetector.isChanged(principal.getName(), userRequest.getName())) {
+            principal.setLatitude(userRequest.getLatitude());
+        }
+        if(userRequest.getLongitude() != null
+                && changeDetector.isChanged(principal.getName(), userRequest.getName())) {
+            principal.setLongitude(userRequest.getLongitude());
+        }
+        if(StringUtils.isNotEmpty(userRequest.getFirebaseDeviceToken())
+                && changeDetector.isChanged(principal.getName(), userRequest.getName())) {
+            principal.setDeviceToken(userRequest.getFirebaseDeviceToken());
+        }
+
         log.info("going to save user {} after put api", principal);
         userRepository.save(principal);
         log.info("save successfully user {} after put api", principal);
@@ -147,6 +161,7 @@ public class UserService {
         tokenService.deleteByUserId(principal);
     }
 
+    @LogPayload
     public OAuth2Response refreshToken(RefreshTokenRequest refreshTokenRequest) {
         OAuthToken authToken = tokenService.refreshStaleToken(refreshTokenRequest);
         return authTokenTransformer.transform(authToken);

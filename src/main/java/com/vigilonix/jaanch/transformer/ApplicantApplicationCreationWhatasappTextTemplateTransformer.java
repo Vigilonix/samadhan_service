@@ -25,11 +25,11 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ApplicantApplicationCreationWhatasappTextTemplateTransformer implements Transformer<OdApplication, List<NotificationPayload>> {
+public class ApplicantApplicationCreationWhatasappTextTemplateTransformer implements Transformer<OdApplication, NotificationPayload> {
     private final GeoHierarchyService geoHierarchyService;
 
     @Override
-    public List<NotificationPayload> transform(OdApplication odApplication) {
+    public NotificationPayload transform(OdApplication odApplication) {
         Map<String, String> params = Map.of("name", odApplication.getApplicantName(),
                 "receiptNo", odApplication.getReceiptNo(),
                 "odName", odApplication.getOd().getName(),
@@ -78,9 +78,9 @@ public class ApplicantApplicationCreationWhatasappTextTemplateTransformer implem
                 .build();
 
 
-        return Arrays.asList(NotificationPayload.builder()
+        return NotificationPayload.builder()
                 .request(sendRequest)
-                .notificationMethod(NotificationMethod.WHATSAPP_TEMPLATE).build());
+                .notificationMethod(NotificationMethod.WHATSAPP_TEMPLATE).build();
 
     }
 

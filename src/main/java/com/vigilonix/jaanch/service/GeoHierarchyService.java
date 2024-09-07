@@ -2,6 +2,7 @@ package com.vigilonix.jaanch.service;
 
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
+import lombok.Getter;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 public class GeoHierarchyService {
     private final GeoHierarchyNode rootNode;
     private final Map<UUID, GeoHierarchyNode> nodeByUuid;
+    @Getter
     private final Map<GeoHierarchyNode, GeoHierarchyNode> parentMap;
     private final Set<UUID> testNodes;
 

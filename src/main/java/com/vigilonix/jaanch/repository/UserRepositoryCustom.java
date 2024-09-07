@@ -31,4 +31,27 @@ public class UserRepositoryCustom {
 
         return query.getResultList();
     }
+
+    @Timed
+    public List<User> findAuthorityGeoHierarchyUser(UUID geoHierarchyNodeUuid) {
+        String sqlQuery = """
+        SELECT * 
+        FROM users u 
+        WHERE NOT jsonb_exists(u.post_geo_hierarchy_node_uuid_map, 'BEAT') 
+        AND EXISTS ( 
+            SELECT 1 
+            FROM jsonb_each(u.post_geo_hierarchy_node_uuid_map::jsonb) AS post(post_key, post_value) 
+            WHERE post.post_key != 'BEAT' 
+            AND jsonb_exists(post.post_value, :uuid)
+        )
+    """;
+
+        Query query = entityManager.createNativeQuery(sqlQuery, User.class);
+        query.setParameter("uuid", geoHierarchyNodeUuid.toString());
+
+        return query.getResultList();
+    }
+
+
+
 }

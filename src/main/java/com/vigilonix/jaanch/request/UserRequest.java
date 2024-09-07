@@ -3,6 +3,8 @@ package com.vigilonix.jaanch.request;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.Rank;
 import jakarta.validation.constraints.NotEmpty;
@@ -18,6 +20,7 @@ import java.util.UUID;
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserRequest {
     private String uuid;
@@ -33,8 +36,10 @@ public class UserRequest {
     @NotEmpty
     private Rank rank;
     @NotEmpty
-    @JsonProperty("phone_number")
     private String phoneNumber;
+    private String firebaseDeviceToken;
+    private Double latitude;
+    private Double longitude;
 
     @JsonProperty("location_range")
     private Integer locationRangeInMeters;

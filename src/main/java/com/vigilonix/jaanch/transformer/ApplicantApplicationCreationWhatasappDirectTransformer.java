@@ -16,17 +16,16 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ApplicantApplicationCreationWhatasappDirectTransformer implements Transformer<OdApplication, List<NotificationPayload>> {
+public class ApplicantApplicationCreationWhatasappDirectTransformer implements Transformer<OdApplication, NotificationPayload> {
     private final GeoHierarchyService geoHierarchyService;
 
     @Override
-    public List<NotificationPayload> transform(OdApplication odApplication) {
+    public NotificationPayload transform(OdApplication odApplication) {
         Map<String, String> params = Map.of("name", odApplication.getApplicantName(),
                 "receiptNo", odApplication.getReceiptNo(),
                 "odName", odApplication.getOd().getName(),
@@ -70,9 +69,9 @@ public class ApplicantApplicationCreationWhatasappDirectTransformer implements T
                 .build();
 
 
-        return Arrays.asList(NotificationPayload.builder()
+        return NotificationPayload.builder()
                 .request(requestPayload)
-                .notificationMethod(NotificationMethod.WHATSAPP_DIRECT).build());
+                .notificationMethod(NotificationMethod.WHATSAPP_DIRECT).build();
 
     }
 

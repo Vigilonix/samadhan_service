@@ -1,20 +1,18 @@
 package com.vigilonix.jaanch.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
 import com.vigilonix.jaanch.enums.NotificationMethod;
+import com.vigilonix.jaanch.helper.FirebaseCloudMessageNotificationWorker;
 import com.vigilonix.jaanch.helper.INotificationWorker;
 import com.vigilonix.jaanch.helper.CherrioWhatsappNotificationWorker;
 import com.vigilonix.jaanch.model.OdApplication;
-import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
-import com.vigilonix.jaanch.pojo.NotificationPayload;
-import com.vigilonix.jaanch.pojo.OdApplicationStatus;
-import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
+import com.vigilonix.jaanch.pojo.*;
 import com.vigilonix.jaanch.request.AuthRequest;
 import com.vigilonix.jaanch.request.UserRequest;
-import com.vigilonix.jaanch.transformer.ApplicantApplicationClosedWhatasappDocumentTemplateTransformer;
-import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappDirectTransformer;
-import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransformer;
-import com.vigilonix.jaanch.transformer.ApplicantApplicationCreationWhatasappTextTemplateTransformer;
+import com.vigilonix.jaanch.transformer.*;
 import com.vigilonix.jaanch.validator.*;
 import jakarta.servlet.MultipartConfigElement;
 import org.apache.commons.collections4.Transformer;
@@ -40,6 +38,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -149,26 +148,44 @@ public class BeanConfig {
     }
 
     @Bean
-    public Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> getNotificationPayloadTransformer(ApplicantApplicationCreationWhatasappDirectTransformer applicantApplicationCreationWhatasappDirectTransformer,
+    public Map<OdApplicationStatus, List<Transformer<OdApplication, NotificationPayload>>> getNotificationPayloadTransformer(ApplicantApplicationCreationWhatasappDirectTransformer applicantApplicationCreationWhatasappDirectTransformer,
                                                                                                                              ApplicantApplicationCreationWhatasappTextTemplateTransformer applicantApplicationCreationWhatasappTextTemplateTransformer,
                                                                                                                              ApplicantApplicationClosedWhatasappDocumentTemplateTransformer applicantApplicationClosedWhatasappDocumentTemplateTransformer,
+                                                                                                                             ApplicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer  applicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer,
                                                                                                                              ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransformer applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer) {
-        Map<OdApplicationStatus, Transformer<OdApplication, List<NotificationPayload>>> templateTransformerMap = new HashMap<>();
+        Map<OdApplicationStatus, List<Transformer<OdApplication, NotificationPayload>>> templateTransformerMap = new HashMap<>();
 //        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappDirectTransformer);
-        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer);
-        templateTransformerMap.put(OdApplicationStatus.CLOSED,  applicantApplicationClosedWhatasappDocumentTemplateTransformer);
+        templateTransformerMap.put(OdApplicationStatus.OPEN, Arrays.asList(applicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer));
+//        templateTransformerMap.put(OdApplicationStatus.OPEN, Arrays.asList(applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer));
+        templateTransformerMap.put(OdApplicationStatus.CLOSED,  Arrays.asList(applicantApplicationClosedWhatasappDocumentTemplateTransformer));
         return templateTransformerMap;
     }
 
     @Bean
-    public Map<NotificationMethod, NavigableSet<INotificationWorker>> getNotificationWorkerMap(CherrioWhatsappNotificationWorker cherrioWhatsappNotificationWorker) {
+    public Map<NotificationMethod, NavigableSet<INotificationWorker>> getNotificationWorkerMap(CherrioWhatsappNotificationWorker cherrioWhatsappNotificationWorker, FirebaseCloudMessageNotificationWorker firebaseCloudMessageNotificationWorker) {
         Map<NotificationMethod, NavigableSet<INotificationWorker>> notificationWorkerMap = new HashMap<>();
         NavigableSet<INotificationWorker> whatsappWorkers = new TreeSet<>(Comparator.comparingInt(INotificationWorker::getPriority).reversed());
         whatsappWorkers.add(cherrioWhatsappNotificationWorker);
 
+        NavigableSet<INotificationWorker>  firebaseCloudMessageWorkers= new TreeSet<>(Comparator.comparingInt(INotificationWorker::getPriority).reversed());
+        firebaseCloudMessageWorkers.add(firebaseCloudMessageNotificationWorker);
+
         // Put the TreeSet into the map
         notificationWorkerMap.put(NotificationMethod.WHATSAPP_TEMPLATE, whatsappWorkers);
+        notificationWorkerMap.put(NotificationMethod.FIREBASE_CLOUD_MESSAGE, firebaseCloudMessageWorkers);
 
         return notificationWorkerMap;
+    }
+
+    @Bean
+    public FirebaseApp initFirebase(FirebaseConf firebaseConf) throws IOException {
+        FileInputStream serviceAccount =
+                new FileInputStream(firebaseConf.getPrivateFilePath());
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .setDatabaseUrl(firebaseConf.getDatabaseUrl())
+                .build();
+        return FirebaseApp.initializeApp(options);
     }
 }

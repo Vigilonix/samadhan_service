@@ -34,12 +34,12 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
-public class ApplicantApplicationClosedWhatasappDocumentTemplateTransformer implements Transformer<OdApplication, List<NotificationPayload>> {
+public class ApplicantApplicationClosedWhatasappDocumentTemplateTransformer implements Transformer<OdApplication, NotificationPayload> {
     private final GeoHierarchyService geoHierarchyService;
     private final CherrioWhatsappDocumentUpload cherrioWhatsappDocumentUpload;
 
     @Override
-    public List<NotificationPayload> transform(OdApplication odApplication) {
+    public NotificationPayload transform(OdApplication odApplication) {
         Map<String, String> params = Map.of("name", odApplication.getApplicantName(),
                 "receiptNo", odApplication.getReceiptNo(),
                 "odName", odApplication.getOd().getName(),
@@ -81,9 +81,9 @@ public class ApplicantApplicationClosedWhatasappDocumentTemplateTransformer impl
                 .build();
 
 
-        return Arrays.asList(NotificationPayload.builder()
+        return NotificationPayload.builder()
                 .request(sendRequest)
-                .notificationMethod(NotificationMethod.WHATSAPP_TEMPLATE).build());
+                .notificationMethod(NotificationMethod.WHATSAPP_TEMPLATE).build();
 
     }
 

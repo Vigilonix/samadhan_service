@@ -1,6 +1,7 @@
 package com.vigilonix.jaanch.service;
 
 import com.vigilonix.jaanch.aop.Timed;
+import com.vigilonix.jaanch.enums.NotificationMethod;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
 import com.vigilonix.jaanch.helper.NotificationPayloadTransformerFactory;
 import com.vigilonix.jaanch.helper.NotificationWorkerFactory;
@@ -28,21 +29,25 @@ public class NotificationService {
     public void sendNotification(OdApplication odApplication) {
         threadPoolExecutor.submit(() -> {
             log.debug("Going to send notification for {}", odApplication);
-            if (geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
-                log.info("Test geonode, skipping notification for {}", odApplication);
-                return;  // Corrected from 'return false;' to 'return;' since it's a void method
-            }
             try {
                 List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
                 log.debug("Transformed payload {} for odApplication {}", notificationPayloads, odApplication);
                 for (NotificationPayload notificationPayload : notificationPayloads) {
-                    boolean success = notificationWorkerFactory.notify(notificationPayload).isSuccess();
-                    if (!success) {
-                        log.error("Failed to notify for payload {}", notificationPayload);
+                    try {
+                        if(NotificationMethod.WHATSAPP_TEMPLATE.equals(notificationPayload.getNotificationMethod()) && geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
+                            log.info("Test geonode, skipping notification for {}", odApplication);
+                            continue;
+                        }
+                        boolean success = notificationWorkerFactory.notify(notificationPayload).isSuccess();
+                        if (!success) {
+                            log.error("Failed to notify for payload {}", notificationPayload);
+                        }
+                    }catch (RuntimeException e) {
+                        log.error("Failed to notify using notification payload {}", notificationPayload, e);
                     }
                 }
-            } catch (Exception e) {
-                log.error("Failed to notify {}", odApplication, e);
+            } catch (RuntimeException e) {
+                log.error("Failed to notify while creating payload {}", odApplication, e);
             }
         });
     }
