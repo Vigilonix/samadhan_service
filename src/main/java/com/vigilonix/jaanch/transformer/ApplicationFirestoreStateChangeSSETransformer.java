@@ -1,12 +1,10 @@
 package com.vigilonix.jaanch.transformer;
 
-import com.vigilonix.jaanch.config.Constant;
 import com.vigilonix.jaanch.enums.GeoHierarchyType;
 import com.vigilonix.jaanch.enums.NotificationMethod;
-import com.vigilonix.jaanch.enums.NotificationType;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.pojo.FirebaseCloudMessageRequest;
+import com.vigilonix.jaanch.pojo.FirestoreNotificationRequest;
 import com.vigilonix.jaanch.pojo.NotificationPayload;
 import com.vigilonix.jaanch.repository.UserRepositoryCustom;
 import com.vigilonix.jaanch.service.GeoHierarchyService;
@@ -26,7 +24,7 @@ import java.util.UUID;
 @Component
 @Transactional
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ApplicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer implements Transformer<OdApplication, NotificationPayload> {
+public class ApplicationFirestoreStateChangeSSETransformer implements Transformer<OdApplication, NotificationPayload> {
     private final GeoHierarchyService geoHierarchyService;
     private final UserRepositoryCustom userRepositoryCustom;
     @Override
@@ -38,19 +36,15 @@ public class ApplicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer impl
 
         List<User> ownerUsers = userRepositoryCustom.findAuthorityGeoHierarchyUser(ownerGeoHierarachyNode);
         if(CollectionUtils.isEmpty(ownerUsers)) {
-            throw new IllegalArgumentException("no one is woner of this geofence"+ odApplication.getGeoHierarchyNodeUuid());
+            throw new IllegalArgumentException("no one is owner of this geofence"+ odApplication.getGeoHierarchyNodeUuid());
         }
         User authorityUser = ownerUsers.get(0);
-        Map<String, String> dataMap = Map.of(
-        Constant.CLICK_ACTION, Constant.FLUTTER_NOTIFICATION_CLICK ,
-                Constant.TYPE, NotificationType.OD_APPLICATION_CREATED.name());
+        Map<String,Object> dataMap = Map.of("last_od_application_refresh_epoch", System.currentTimeMillis());
         return         NotificationPayload.builder()
-                .notificationMethod(NotificationMethod.NOTIFICATION_CLOUD_MESSAGE)
-                .request(FirebaseCloudMessageRequest.builder()
-                        .to(authorityUser.getDeviceToken())
-                        .title("Jaanch")
-                        .body(String.format("Report %s created", odApplication.getReceiptNo()))
-                        .data(dataMap)
+                .notificationMethod(NotificationMethod.SSE_EVENT)
+                .request(FirestoreNotificationRequest.builder()
+                        .to(authorityUser.getUuid().toString())
+                        .dataMap(dataMap)
                         .build())
                 .build();
     }

@@ -2,10 +2,13 @@ package com.vigilonix.jaanch.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
 import com.vigilonix.jaanch.enums.NotificationMethod;
 import com.vigilonix.jaanch.helper.FirebaseCloudMessageNotificationWorker;
+import com.vigilonix.jaanch.helper.FirestoreWriter;
 import com.vigilonix.jaanch.helper.INotificationWorker;
 import com.vigilonix.jaanch.helper.CherrioWhatsappNotificationWorker;
 import com.vigilonix.jaanch.model.OdApplication;
@@ -152,27 +155,35 @@ public class BeanConfig {
                                                                                                                              ApplicantApplicationCreationWhatasappTextTemplateTransformer applicantApplicationCreationWhatasappTextTemplateTransformer,
                                                                                                                              ApplicantApplicationClosedWhatasappDocumentTemplateTransformer applicantApplicationClosedWhatasappDocumentTemplateTransformer,
                                                                                                                              ApplicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer  applicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer,
-                                                                                                                             ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransformer applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer) {
+                                                                                                                             ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransformer applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer,
+                                                                                                                             ApplicationFirestoreStateChangeSSETransformer applicationFirestoreStateChangeSSETransformer) {
         Map<OdApplicationStatus, List<Transformer<OdApplication, NotificationPayload>>> templateTransformerMap = new HashMap<>();
-//        templateTransformerMap.put(OdApplicationStatus.OPEN, applicantApplicationCreationWhatasappDirectTransformer);
-        templateTransformerMap.put(OdApplicationStatus.OPEN, Arrays.asList(applicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer));
-//        templateTransformerMap.put(OdApplicationStatus.OPEN, Arrays.asList(applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer));
-        templateTransformerMap.put(OdApplicationStatus.CLOSED,  Arrays.asList(applicantApplicationClosedWhatasappDocumentTemplateTransformer));
+        templateTransformerMap.put(OdApplicationStatus.OPEN, Arrays.asList(applicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer, applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer, applicationFirestoreStateChangeSSETransformer));
+        templateTransformerMap.put(OdApplicationStatus.ENQUIRY,  Arrays.asList(applicationFirestoreStateChangeSSETransformer));
+        templateTransformerMap.put(OdApplicationStatus.REVIEW,  Arrays.asList(applicationFirestoreStateChangeSSETransformer));
+        templateTransformerMap.put(OdApplicationStatus.CLOSED,  Arrays.asList(applicantApplicationClosedWhatasappDocumentTemplateTransformer, applicationFirestoreStateChangeSSETransformer));
         return templateTransformerMap;
     }
 
     @Bean
-    public Map<NotificationMethod, NavigableSet<INotificationWorker>> getNotificationWorkerMap(CherrioWhatsappNotificationWorker cherrioWhatsappNotificationWorker, FirebaseCloudMessageNotificationWorker firebaseCloudMessageNotificationWorker) {
+    public Map<NotificationMethod, NavigableSet<INotificationWorker>> getNotificationWorkerMap(
+            CherrioWhatsappNotificationWorker cherrioWhatsappNotificationWorker,
+            FirebaseCloudMessageNotificationWorker firebaseCloudMessageNotificationWorker,
+            FirestoreWriter firestoreWriter) {
         Map<NotificationMethod, NavigableSet<INotificationWorker>> notificationWorkerMap = new HashMap<>();
         NavigableSet<INotificationWorker> whatsappWorkers = new TreeSet<>(Comparator.comparingInt(INotificationWorker::getPriority).reversed());
         whatsappWorkers.add(cherrioWhatsappNotificationWorker);
 
-        NavigableSet<INotificationWorker>  firebaseCloudMessageWorkers= new TreeSet<>(Comparator.comparingInt(INotificationWorker::getPriority).reversed());
-        firebaseCloudMessageWorkers.add(firebaseCloudMessageNotificationWorker);
+        NavigableSet<INotificationWorker>  NotificationCloudMessageWorkers= new TreeSet<>(Comparator.comparingInt(INotificationWorker::getPriority).reversed());
+        NotificationCloudMessageWorkers.add(firebaseCloudMessageNotificationWorker);
+
+        NavigableSet<INotificationWorker> sseWorkers= new TreeSet<>(Comparator.comparingInt(INotificationWorker::getPriority).reversed());
+        sseWorkers.add(firestoreWriter);
 
         // Put the TreeSet into the map
         notificationWorkerMap.put(NotificationMethod.WHATSAPP_TEMPLATE, whatsappWorkers);
-        notificationWorkerMap.put(NotificationMethod.FIREBASE_CLOUD_MESSAGE, firebaseCloudMessageWorkers);
+        notificationWorkerMap.put(NotificationMethod.NOTIFICATION_CLOUD_MESSAGE, NotificationCloudMessageWorkers);
+        notificationWorkerMap.put(NotificationMethod.SSE_EVENT, sseWorkers);
 
         return notificationWorkerMap;
     }
@@ -187,5 +198,10 @@ public class BeanConfig {
                 .setDatabaseUrl(firebaseConf.getDatabaseUrl())
                 .build();
         return FirebaseApp.initializeApp(options);
+    }
+
+    @Bean
+    public Firestore getFirestore(FirebaseApp firebaseApp) {
+        return FirestoreClient.getFirestore();
     }
 }
