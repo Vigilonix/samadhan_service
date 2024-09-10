@@ -26,6 +26,7 @@ public class FirebaseCloudMessageNotificationWorker implements INotificationWork
         Message message = Message.builder()
                 .setNotification(Notification.builder()
                         .setTitle(firebaseCloudMessageRequest.getTitle())
+                        .setBody(firebaseCloudMessageRequest.getBody())
                         .build())
                 .setToken(firebaseCloudMessageRequest.getTo())
                 .putAllData(firebaseCloudMessageRequest.getData())

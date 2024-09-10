@@ -12,5 +12,6 @@ import java.util.Map;
 public class FirebaseCloudMessageRequest implements INotificationRequest{
     private final String to;
     private final String title;
+    private final String body;
     private final Map<String, String> data;
 }

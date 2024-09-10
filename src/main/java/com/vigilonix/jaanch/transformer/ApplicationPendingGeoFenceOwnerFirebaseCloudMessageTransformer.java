@@ -48,7 +48,8 @@ public class ApplicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer impl
                 .notificationMethod(NotificationMethod.FIREBASE_CLOUD_MESSAGE)
                 .request(FirebaseCloudMessageRequest.builder()
                         .to(authorityUser.getDeviceToken())
-                        .title(String.format("Jaanch Application Report %s created", odApplication.getReceiptNo()))
+                        .title("Jaanch")
+                        .body(String.format("Report %s created", odApplication.getReceiptNo()))
                         .data(dataMap)
                         .build())
                 .build();
