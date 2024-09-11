@@ -123,15 +123,15 @@ public class UserService {
         if (State.DISABLED.equals(principal.getState())) {
             throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.DISABLED_USER));
         }
-//        if (MapUtils.isNotEmpty(userRequest.getPostGeoHierarchyNodeUuidMap())) {
-//            geoHierarchyService.getFirstLevelNodes(userRequest.getPostGeoHierarchyNodeUuidMap()).forEach(uuid -> {
-//                        if (geoHierarchyService.getNodeById(uuid) == null) {
-//                            throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
-//                        }
-//                    }
-//            );
-//            principal.setPostGeoHierarchyNodeUuidMap(userRequest.getPostGeoHierarchyNodeUuidMap());
-//        }
+        if (MapUtils.isNotEmpty(userRequest.getPostGeoHierarchyNodeUuidMap())) {
+            geoHierarchyService.getFirstLevelNodes(userRequest.getPostGeoHierarchyNodeUuidMap()).forEach(uuid -> {
+                        if (geoHierarchyService.getNodeById(uuid) == null) {
+                            throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
+                        }
+                    }
+            );
+            principal.setPostGeoHierarchyNodeUuidMap(userRequest.getPostGeoHierarchyNodeUuidMap());
+        }
 
 
         principal.setModifiedOn(System.currentTimeMillis());
