@@ -10,6 +10,7 @@ import com.vigilonix.jaanch.pojo.whatsapp.WhatsappParameter;
 import com.vigilonix.jaanch.pojo.whatsapp.WhatsappTemplate;
 import com.vigilonix.jaanch.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.Transformer;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ApplicantApplicationCreationWhatasappTextTemplateTransformer implements Transformer<OdApplication, NotificationPayload> {
     private final GeoHierarchyService geoHierarchyService;
@@ -78,6 +80,7 @@ public class ApplicantApplicationCreationWhatasappTextTemplateTransformer implem
                 .build();
 
 
+        log.info("wba creation transformer {}", sendRequest);
         return NotificationPayload.builder()
                 .request(sendRequest)
                 .notificationMethod(NotificationMethod.WHATSAPP_TEMPLATE).build();

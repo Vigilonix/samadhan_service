@@ -80,7 +80,7 @@ public class ApplicantApplicationClosedWhatasappDocumentTemplateTransformer impl
                         .build())
                 .build();
 
-
+        log.info("wba closed transformer {}", sendRequest);
         return NotificationPayload.builder()
                 .request(sendRequest)
                 .notificationMethod(NotificationMethod.WHATSAPP_TEMPLATE).build();

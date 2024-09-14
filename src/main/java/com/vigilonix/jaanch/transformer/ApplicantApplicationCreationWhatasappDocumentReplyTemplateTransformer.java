@@ -101,6 +101,7 @@ public class ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransform
                 .build();
 
 
+        log.info("wba creation transformer {}", sendRequest);
         return NotificationPayload.builder()
                 .request(sendRequest)
                 .notificationMethod(NotificationMethod.WHATSAPP_TEMPLATE).build();

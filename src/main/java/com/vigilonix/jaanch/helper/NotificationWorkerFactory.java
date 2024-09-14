@@ -20,7 +20,7 @@ public class NotificationWorkerFactory {
         log.debug("payload received to notify {}", notificationPayload);
         for (INotificationWorker notificationWorker :notificationWorkerMap.getOrDefault(notificationPayload.getNotificationMethod(), new TreeSet<>())) {
             try {
-                log.debug("notification worker {} for payload {}", notificationWorker, notificationPayload);
+                log.info("notification worker {} for payload {}", notificationWorker, notificationPayload);
                 return  notificationWorker.work(notificationPayload);
             }catch (RuntimeException e) {
                 log.error("failed to notify for payload {}", notificationPayload, e);

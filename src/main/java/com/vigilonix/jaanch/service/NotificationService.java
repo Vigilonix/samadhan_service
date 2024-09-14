@@ -31,7 +31,7 @@ public class NotificationService {
             log.debug("Going to send notification for {}", odApplication);
             try {
                 List<NotificationPayload> notificationPayloads = notificationPayloadTransformerFactory.transform(odApplication);
-                log.debug("Transformed payload {} for odApplication {}", notificationPayloads, odApplication);
+                log.info("Transformed payload {} for odApplication {}", notificationPayloads, odApplication);
                 for (NotificationPayload notificationPayload : notificationPayloads) {
                     try {
                         if(NotificationMethod.WHATSAPP_TEMPLATE.equals(notificationPayload.getNotificationMethod()) && geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
@@ -42,6 +42,7 @@ public class NotificationService {
                         if (!success) {
                             log.error("Failed to notify for payload {}", notificationPayload);
                         }
+                        log.error("notify response for payload {} is {} ", notificationPayload, success);
                     }catch (RuntimeException e) {
                         log.error("Failed to notify using notification payload {}", notificationPayload, e);
                     }
