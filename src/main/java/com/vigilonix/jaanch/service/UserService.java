@@ -148,6 +148,9 @@ public class UserService {
                 && changeDetector.isChanged(principal.getDeviceToken(), userRequest.getFirebaseDeviceToken())) {
             principal.setDeviceToken(userRequest.getFirebaseDeviceToken());
         }
+        if(StringUtils.isNotEmpty(userRequest.getPassword())) {
+            principal.setSecret(encoder.encode(userRequest.getPassword()));
+        }
 
         log.info("going to save user {} after put api", principal);
         userRepository.save(principal);
