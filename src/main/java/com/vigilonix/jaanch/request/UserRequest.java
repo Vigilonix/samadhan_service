@@ -26,7 +26,7 @@ public class UserRequest {
     private String uuid;
     @NotEmpty
     private String name;
-    @NotEmpty
+    @ToString.Exclude
     private String password;
     @NotEmpty
     private String email;
