@@ -133,7 +133,7 @@ public class GeoHierarchyService {
         return getAllLevelNodes(nodeByUuid.get(geoHierarchyNodeUuid));
     }
 
-    public Map<Post, List<UUID>> resolveGeoHierarchyNodes(Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap, List<UUID> geoHierarchyNodeUuids) {
+    public Map<Post, List<UUID>> resolveGeoHierarchyNodes(final Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap, List<UUID> geoHierarchyNodeUuids) {
         if(CollectionUtils.isEmpty(geoHierarchyNodeUuids)) return postGeoHierarchyNodeUuidMap;
         Map<Post, List<UUID>> postToFilteredGeoNodeUuidsMap = new HashMap<>();
 
@@ -141,11 +141,12 @@ public class GeoHierarchyService {
         postGeoHierarchyNodeUuidMap.forEach((post, geoNodeUuids) -> {
             // Filter the geo node UUIDs by checking if they match any input UUIDs
             List<UUID> matchedGeoNodeUuids = geoNodeUuids.stream()
-                    .flatMap(geoNodeUuid -> {
+//                    .flatMap(geoNodeUuid -> {
                         // Simulate fetching all-level nodes for each geoNodeUuid
-                        return getAllLevelNodes(geoNodeUuid).stream().map(GeoHierarchyNode::getUuid);
-                    })
+//                        return getAllLevelNodes(geoNodeUuid).stream().map(GeoHierarchyNode::getUuid);
+//                    })
                     .filter(geoHierarchyNodeUuids::contains) // Retain only those in geoHierarchyNodeUuids
+                    .distinct()
                     .collect(Collectors.toList());
 
             // If matches are found, add them to the result map
