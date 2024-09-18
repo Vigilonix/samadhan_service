@@ -2,6 +2,7 @@ package com.vigilonix.jaanch.service;
 
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.aop.Timed;
+import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.model.OdApplication;
 import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.*;
@@ -140,24 +141,25 @@ public class OdApplicationService {
 
     @LogPayload
     @Timed
-    public List<OdApplicationPayload> getList(String odApplicationStatus, User principal) {
+    public List<OdApplicationPayload> getList(String odApplicationStatus, User principal, List<UUID> geoHierarchyNodeUuids) {
+        Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         OdApplicationStatus status = null;
         if (StringUtils.isNotEmpty(odApplicationStatus)) {
             status = OdApplicationStatus.valueOf(odApplicationStatus);
         }
-        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap());
+        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes);
         List<OdApplication> result = new ArrayList<>();
         if (status != null) {
             if (CollectionUtils.isEmpty(authorityNodes)) {
                 result = odApplicationRepository.findByOdOrEnquiryOfficerAndStatus(principal, status);
             } else {
-                result = odApplicationRepository.findByGeoHierarchyNodeUuidInAndStatus(geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap()), status);
+                result = odApplicationRepository.findByGeoHierarchyNodeUuidInAndStatus(geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes), status);
             }
         } else {
             if (CollectionUtils.isEmpty(authorityNodes)) {
                 result = odApplicationRepository.findByOdOrEnquiryOfficer(principal);
             } else {
-                result = odApplicationRepository.findByGeoHierarchyNodeUuidIn(geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap()));
+                result = odApplicationRepository.findByGeoHierarchyNodeUuidIn(geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes));
             }
         }
         return result.stream()
@@ -168,15 +170,16 @@ public class OdApplicationService {
 
     @LogPayload
     @Timed
-    public List<OdApplicationPayload> getReceiptList(User principal) {
-        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap());
+    public List<OdApplicationPayload> getReceiptList(User principal, List<UUID> geoHierarchyNodeUuids) {
+        Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes);
         if (CollectionUtils.isEmpty(authorityNodes)) {
             return odApplicationRepository.findByOd(principal)
                     .stream()
                     .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                     .collect(Collectors.toList());
         }
-        return odApplicationRepository.findByGeoHierarchyNodeUuidIn(geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap()))
+        return odApplicationRepository.findByGeoHierarchyNodeUuidIn(geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes))
                 .stream()
                 .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
                 .collect(Collectors.toList());
@@ -185,9 +188,9 @@ public class OdApplicationService {
 
     @LogPayload
     @Timed
-    public AnalyticalResponse getDashboardAnalytics(User principal) {
-
-        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap());
+    public AnalyticalResponse getDashboardAnalytics(User principal, List<UUID> geoHierarchyNodeUuids) {
+        Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes);
         List<Object[]> allPostGeoAnalyticalRecord = new ArrayList<>();
         List<Object[]> selfAllPostGeoAnalyticalRecord = new ArrayList<>();
         if(CollectionUtils.isNotEmpty(authorityNodes)) {

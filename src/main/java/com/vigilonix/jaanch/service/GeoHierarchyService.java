@@ -3,6 +3,7 @@ package com.vigilonix.jaanch.service;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
 import lombok.Getter;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -130,5 +131,29 @@ public class GeoHierarchyService {
 
     public List<GeoHierarchyNode> getAllLevelNodes(UUID geoHierarchyNodeUuid) {
         return getAllLevelNodes(nodeByUuid.get(geoHierarchyNodeUuid));
+    }
+
+    public Map<Post, List<UUID>> resolveGeoHierarchyNodes(Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap, List<UUID> geoHierarchyNodeUuids) {
+        if(CollectionUtils.isEmpty(geoHierarchyNodeUuids)) return postGeoHierarchyNodeUuidMap;
+        Map<Post, List<UUID>> postToFilteredGeoNodeUuidsMap = new HashMap<>();
+
+        // Iterate through posts and their corresponding geo node UUIDs
+        postGeoHierarchyNodeUuidMap.forEach((post, geoNodeUuids) -> {
+            // Filter the geo node UUIDs by checking if they match any input UUIDs
+            List<UUID> matchedGeoNodeUuids = geoNodeUuids.stream()
+                    .flatMap(geoNodeUuid -> {
+                        // Simulate fetching all-level nodes for each geoNodeUuid
+                        return getAllLevelNodes(geoNodeUuid).stream().map(GeoHierarchyNode::getUuid);
+                    })
+                    .filter(geoHierarchyNodeUuids::contains) // Retain only those in geoHierarchyNodeUuids
+                    .collect(Collectors.toList());
+
+            // If matches are found, add them to the result map
+            if (!matchedGeoNodeUuids.isEmpty()) {
+                postToFilteredGeoNodeUuidsMap.put(post, matchedGeoNodeUuids);
+            }
+        });
+
+        return postToFilteredGeoNodeUuidsMap;
     }
 }

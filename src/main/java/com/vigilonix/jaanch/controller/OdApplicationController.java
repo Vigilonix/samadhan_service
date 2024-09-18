@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/od_application")
@@ -40,18 +41,18 @@ public class OdApplicationController {
 
     @LogPayload
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<OdApplicationPayload> getOdApplication(@RequestParam(name = "status", required = false) String status) {
-        return odApplicationService.getList(status, authHelper.getPrincipal());
+    public List<OdApplicationPayload> getOdApplication(@RequestParam(name = "status", required = false) String status, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return odApplicationService.getList(status, authHelper.getPrincipal(), geoHierarchyNodeUuids);
     }
 
     @LogPayload
     @GetMapping(path = "/receipt", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<OdApplicationPayload> getOdApplication() {
-        return odApplicationService.getReceiptList(authHelper.getPrincipal());
+    public List<OdApplicationPayload> getOdApplication(@RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return odApplicationService.getReceiptList(authHelper.getPrincipal(), geoHierarchyNodeUuids);
     }
 
     @GetMapping(path = "/analytics", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public AnalyticalResponse getDashboardAnalytics() {
-        return odApplicationService.getDashboardAnalytics(authHelper.getPrincipal());
+    public AnalyticalResponse getDashboardAnalytics(@RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return odApplicationService.getDashboardAnalytics(authHelper.getPrincipal(), geoHierarchyNodeUuids);
     }
 }
