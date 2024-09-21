@@ -42,7 +42,8 @@ public class OdApplicationCreationValidator implements Validator<List<Validation
                 odApplicationValidationPayload.getPrincipalUser().getPostGeoHierarchyNodeUuidMap()
         );
 
-        if (!CollectionUtils.isSubCollection(
+
+        if (CollectionUtils.isNotEmpty(odApplicationValidationPayload.getGeoHierarchyNodeUuids()) && !CollectionUtils.isSubCollection(
                 odApplicationValidationPayload.getGeoHierarchyNodeUuids(),
                 associatedGeoHierarchyNodeSet)) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);

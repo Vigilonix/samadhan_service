@@ -225,4 +225,11 @@ public class OdApplicationService {
                 .self_statusCountMap(selfStatusCountMap)
                 .build();
     }
+
+    public String getAnalytics(User principal, List<UUID> geoHierarchyNodeUuids) {
+        Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        return """
+                
+                """;
+    }
 }

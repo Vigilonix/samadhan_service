@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/od_application")
@@ -54,5 +53,10 @@ public class OdApplicationController {
     @GetMapping(path = "/analytics", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public AnalyticalResponse getDashboardAnalytics(@RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
         return odApplicationService.getDashboardAnalytics(authHelper.getPrincipal(), geoHierarchyNodeUuids);
+    }
+
+    @GetMapping(path = "/analytic", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public String getDashboardAnalytic(@RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return odApplicationService.getAnalytics(authHelper.getPrincipal(), geoHierarchyNodeUuids);
     }
 }
