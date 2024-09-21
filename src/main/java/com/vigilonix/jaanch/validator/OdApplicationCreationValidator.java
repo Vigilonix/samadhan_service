@@ -6,13 +6,12 @@ import com.vigilonix.jaanch.pojo.ODApplicationValidationPayload;
 import com.vigilonix.jaanch.pojo.OdApplicationPayload;
 import com.vigilonix.jaanch.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -38,6 +37,15 @@ public class OdApplicationCreationValidator implements Validator<List<Validation
         }
         if (StringUtils.isEmpty(odRequest.getApplicantPhoneNumber()) || odRequest.getApplicantPhoneNumber().length() != 10 || !odRequest.getApplicantPhoneNumber().chars().allMatch(Character::isDigit)) {
             errors.add(ValidationErrorEnum.INVALID_PHONE_NUMBER);
+        }
+        List<UUID> associatedGeoHierarchyNodeSet = geoHierarchyService.getAllLevelNodes(
+                odApplicationValidationPayload.getPrincipalUser().getPostGeoHierarchyNodeUuidMap()
+        );
+
+        if (!CollectionUtils.isSubCollection(
+                odApplicationValidationPayload.getGeoHierarchyNodeUuids(),
+                associatedGeoHierarchyNodeSet)) {
+            errors.add(ValidationErrorEnum.INVALID_GRANT);
         }
         errors.addAll(pdfValidator.validate(odRequest.getApplicationFilePath()));
         return errors;

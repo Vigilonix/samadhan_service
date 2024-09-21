@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.service;
 
+import com.vigilonix.jaanch.enums.GeoHierarchyType;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
 import lombok.Getter;
@@ -115,14 +116,26 @@ public class GeoHierarchyService {
         return getAllLevelNodesOfAuthorityPost(principalPostMap).contains(geoHierarchyNodeUuid);
     }
 
-    // Utility methods
-    public GeoHierarchyNode transformWithoutChildren(GeoHierarchyNode node) {
-        return GeoHierarchyNode.builder()
+    public GeoHierarchyNode cloneWithBeatChildren(GeoHierarchyNode node) {
+        // Create a single builder instance for the node
+        GeoHierarchyNode.GeoHierarchyNodeBuilder builder = GeoHierarchyNode.builder()
                 .uuid(node.getUuid())
                 .name(node.getName())
                 .geofence(node.getGeofence())
-                .type(node.getType())
-                .build();
+                .type(node.getType());
+
+        // Set children based on node type
+        if (GeoHierarchyType.THANA.equals(node.getType())) {
+            builder.children(Collections.emptyList());
+        } else {
+            List<GeoHierarchyNode> updatedChildren = node.getChildren().stream()
+                    .map(this::cloneWithBeatChildren)
+                    .collect(Collectors.toList());
+            builder.children(updatedChildren);
+        }
+
+        // Build and return the node
+        return builder.build();
     }
 
     public boolean isTestNode(UUID geoHierarchyNodeUuid) {

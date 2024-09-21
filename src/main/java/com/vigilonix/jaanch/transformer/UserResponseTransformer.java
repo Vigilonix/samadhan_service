@@ -40,7 +40,7 @@ public class UserResponseTransformer implements Transformer<User, UserResponse> 
                 .postGeoHierarchyNodeUuidMap(principal.getPostGeoHierarchyNodeUuidMap().entrySet().stream().collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> entry.getValue().stream()
-                                .map(uuid -> geoHierarchyService.transformWithoutChildren(geoHierarchyService.getNodeById(uuid)))
+                                .map(uuid -> geoHierarchyService.cloneWithBeatChildren(geoHierarchyService.getNodeById(uuid)))
                                 .collect(Collectors.toList())
                 )))
                 .highestPost(geoHierarchyService.findHighestPost(principal.getPostGeoHierarchyNodeUuidMap()))

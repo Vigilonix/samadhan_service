@@ -39,7 +39,7 @@ public class ApplicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer impl
         List<User> ownerUsers = userRepositoryCustom.findAuthorityGeoHierarchyUser(ownerGeoHierarachyNode);
         if(CollectionUtils.isEmpty(ownerUsers)) {
             log.error("failed to find owner user for geofence {} for odApplication {}", ownerGeoHierarachyNode, odApplication);
-            throw new IllegalArgumentException("no one is woner of this geofence"+ odApplication.getGeoHierarchyNodeUuid());
+            throw new IllegalArgumentException("no one is owner of this geofence"+ odApplication.getGeoHierarchyNodeUuid());
         }
         User authorityUser = ownerUsers.get(0);
         log.info("authority user for geonode {} is {}", ownerGeoHierarachyNode, authorityUser);

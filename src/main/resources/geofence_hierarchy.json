@@ -136,7 +136,7 @@
                     {
                       "name": "TPaliganj",
                       "type": "THANA",
-                      "uuid": "4a6b97e3-a7d5-4f9a-8b6e-7f3e2a5f7c8e",
+                      "uuid": "97b9baaf-4f3d-4fa1-8f2e-fad28acf670b",
                       "geofence": [],
                       "children": []
                     }
@@ -161,7 +161,15 @@
                       "type": "THANA",
                       "uuid": "9f7812a4-8a7a-4397-9f5e-8b1c2f7a8b8a",
                       "geofence": [],
-                      "children": []
+                      "children": [
+                        {
+                          "name": "TPatliputraBeat1",
+                          "type": "BEAT",
+                          "uuid": "b5f9d43b-bae1-4137-9b37-bff3799f13f7",
+                          "geofence": [],
+                          "children": []
+                        }
+                      ]
                     },
                     {
                       "name": "TGandhi Maidan",

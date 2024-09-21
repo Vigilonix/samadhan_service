@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+import java.util.UUID;
+
 @Getter
 @Builder
 @RequiredArgsConstructor
@@ -16,4 +19,5 @@ public class ODApplicationValidationPayload {
     private final OdApplicationPayload odApplicationPayload;
     private final OdApplication odApplication;
     private final User enquiryUser;
+    private final List<UUID> geoHierarchyNodeUuids;
 }

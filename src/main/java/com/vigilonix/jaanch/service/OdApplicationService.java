@@ -54,18 +54,18 @@ public class OdApplicationService {
 
     @Timed
     @LogPayload
-    public OdApplicationPayload create(OdApplicationPayload odApplicationPayload, User principal) {
-        odCreateValidationService.validate(ODApplicationValidationPayload.builder().odApplicationPayload(odApplicationPayload).principalUser(principal).build());
+    public OdApplicationPayload create(OdApplicationPayload odApplicationPayload, User principal, List<UUID> geoHierarchyNodeUuids) {
+        odCreateValidationService.validate(ODApplicationValidationPayload.builder()
+                .odApplicationPayload(odApplicationPayload).principalUser(principal)
+                .geoHierarchyNodeUuids(geoHierarchyNodeUuids)
+                .build());
 
         Long epoch = System.currentTimeMillis();
-        GeoHierarchyNode geoHierarchyNode = Objects.isNull(odApplicationPayload.getGeoHierarchyNodeUuid())
-                ? geoHierarchyService.getHighestPostNode(principal.getPostGeoHierarchyNodeUuidMap())
-                : geoHierarchyService.getNodeById(odApplicationPayload.getGeoHierarchyNodeUuid());
+        GeoHierarchyNode geoHierarchyNode = resolveGeoHierarchyNode(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         Optional<Integer> maxBucketNo = odApplicationRepository.findMaxReceiptBucketNumberForCurrentMonth(geoHierarchyNode.getUuid());
         int bucketNo = maxBucketNo.map(integer -> integer + 1).orElse(1);
 
         OdApplication odApplication = OdApplication.builder()
-                .geoHierarchyNodeUuid(geoHierarchyNode.getUuid())
                 .uuid(UUID.randomUUID())
                 .od(principal)
                 .applicantName(odApplicationPayload.getApplicantName())
@@ -81,6 +81,12 @@ public class OdApplicationService {
         odApplicationRepository.save(odApplication);
         notificationService.sendNotification(odApplication);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
+    }
+
+    private GeoHierarchyNode resolveGeoHierarchyNode(Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap, List<UUID> geoHierarchyNodeUuids) {
+        return CollectionUtils.isEmpty(geoHierarchyNodeUuids)
+                ? geoHierarchyService.getHighestPostNode(postGeoHierarchyNodeUuidMap)
+                : geoHierarchyService.getNodeById(geoHierarchyNodeUuids.get(0));
     }
 
     private String generateReceiptNumber(GeoHierarchyNode geoHierarchyNode, int bucketNo) {

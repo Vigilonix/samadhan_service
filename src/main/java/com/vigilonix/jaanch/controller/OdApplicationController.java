@@ -23,8 +23,8 @@ public class OdApplicationController {
 
     @LogPayload
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public OdApplicationPayload create(@RequestBody OdApplicationPayload publicApplicationPojo) {
-        return odApplicationService.create(publicApplicationPojo, authHelper.getPrincipal());
+    public OdApplicationPayload create(@RequestBody OdApplicationPayload publicApplicationPojo, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return odApplicationService.create(publicApplicationPojo, authHelper.getPrincipal(), geoHierarchyNodeUuids);
     }
 
     @LogPayload
