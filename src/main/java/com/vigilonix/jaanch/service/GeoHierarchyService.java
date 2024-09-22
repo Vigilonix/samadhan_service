@@ -154,10 +154,10 @@ public class GeoHierarchyService {
         postGeoHierarchyNodeUuidMap.forEach((post, geoNodeUuids) -> {
             // Filter the geo node UUIDs by checking if they match any input UUIDs
             List<UUID> matchedGeoNodeUuids = geoNodeUuids.stream()
-//                    .flatMap(geoNodeUuid -> {
-                        // Simulate fetching all-level nodes for each geoNodeUuid
-//                        return getAllLevelNodes(geoNodeUuid).stream().map(GeoHierarchyNode::getUuid);
-//                    })
+                    .flatMap(geoNodeUuid -> {
+//                         Simulate fetching all-level nodes for each geoNodeUuid
+                        return getAllLevelNodes(geoNodeUuid).stream().map(GeoHierarchyNode::getUuid);
+                    })
                     .filter(geoHierarchyNodeUuids::contains) // Retain only those in geoHierarchyNodeUuids
                     .distinct()
                     .collect(Collectors.toList());
