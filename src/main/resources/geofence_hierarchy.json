@@ -106,7 +106,7 @@
                     {
                       "name": "TManer",
                       "type": "THANA",
-                      "uuid": "5e4a3f6b-8f7c-4e3b-8a5f-6f3e7a9b4c8e",
+                      "uuid": "61ff1fb1-e829-452d-873a-c0f71dd29620",
                       "geofence": [],
                       "children": []
                     }
@@ -123,7 +123,7 @@
                 {
                   "name": "TMasaurhi Circle",
                   "type": "CIRCLE",
-                  "uuid": "7d67cbe2-6a3b-4c37-8c38-8f7fca7ab4a6",
+                  "uuid": "3e297b8f-9872-4525-9723-39ac9b5ba2b9",
                   "geofence": [],
                   "children": [
                     {
@@ -153,7 +153,7 @@
                 {
                   "name": "TPatna City Circle",
                   "type": "CIRCLE",
-                  "uuid": "7d67cbe2-6a3b-4c37-8c38-8f7fca7ab4a6",
+                  "uuid": "b96cf0e7-c128-4154-a492-6d4fbf3a77d3",
                   "geofence": [],
                   "children": [
                     {

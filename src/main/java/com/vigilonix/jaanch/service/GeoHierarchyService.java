@@ -4,6 +4,7 @@ import com.vigilonix.jaanch.enums.GeoHierarchyType;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.pojo.GeoHierarchyNode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class GeoHierarchyService {
     private final GeoHierarchyNode rootNode;
     private final Map<UUID, GeoHierarchyNode> nodeByUuid;
@@ -39,6 +41,10 @@ public class GeoHierarchyService {
             GeoHierarchyNode currentNode = bfsQueue.poll();
             nodeByUuid.put(currentNode.getUuid(), currentNode);
             currentNode.getChildren().forEach(child -> {
+                if(parentMap.containsKey(child)) {
+                    log.error("duplicate uuid present {}", child);
+                    throw new IllegalArgumentException("duplicate uuid" + child);
+                }
                 parentMap.put(child, currentNode);
                 if(BooleanUtils.isTrue(currentNode.getIsTest()) || testNodes.contains(currentNode.getUuid())) {
                     testNodes.add(child.getUuid());
