@@ -39,12 +39,12 @@ public class GeoHierarchyService {
         bfsQueue.offer(rootNode);
         while (!bfsQueue.isEmpty()) {
             GeoHierarchyNode currentNode = bfsQueue.poll();
+            if(nodeByUuid.containsKey(currentNode.getUuid())) {
+                log.error("duplicate uuid present {}", currentNode);
+                throw new IllegalArgumentException("duplicate uuid" + currentNode);
+            }
             nodeByUuid.put(currentNode.getUuid(), currentNode);
             currentNode.getChildren().forEach(child -> {
-                if(parentMap.containsKey(child)) {
-                    log.error("duplicate uuid present {}", child);
-                    throw new IllegalArgumentException("duplicate uuid" + child);
-                }
                 parentMap.put(child, currentNode);
                 if(BooleanUtils.isTrue(currentNode.getIsTest()) || testNodes.contains(currentNode.getUuid())) {
                     testNodes.add(child.getUuid());
