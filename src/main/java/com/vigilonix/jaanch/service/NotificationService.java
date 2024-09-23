@@ -42,7 +42,7 @@ public class NotificationService {
                         if (!success) {
                             log.error("Failed to notify for payload {}", notificationPayload);
                         }
-                        log.error("notify response for payload {} is {} ", notificationPayload, success);
+                        log.info("notify response for payload {} is {} ", notificationPayload, success);
                     }catch (RuntimeException e) {
                         log.error("Failed to notify using notification payload {}", notificationPayload, e);
                     }
