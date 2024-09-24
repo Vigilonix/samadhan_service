@@ -33,7 +33,7 @@ public class KandTransformer implements Transformer<Kand, KandPayload> {
                 .sourceGeoHierarchyNodeUuid(kand.getSourceGeoHierarchyNodeUuid())
                 .firFilePath(kand.getFirFilePath())
                 .mediaPaths(kand.getMediaPaths())
-                .incidentTime(kand.getIncidentTime())
+                .incidentEpoch(kand.getIncidentEpoch())
                 .build();
     }
 }

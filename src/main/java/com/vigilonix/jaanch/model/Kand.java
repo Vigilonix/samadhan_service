@@ -50,7 +50,7 @@ public class Kand {
 
 
     @Column
-    private Long incidentTime;
+    private Long incidentEpoch;
 
     @Column
     private Boolean isBns;

@@ -50,5 +50,5 @@ public class KandPayload {
 
     private List<String> mediaPaths;
 
-    private Long incidentTime;
+    private Long incidentEpoch;
 }
