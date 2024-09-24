@@ -5,5 +5,6 @@ public enum KandTag {
     MOBILE_SNATCHING,
     TWO_WHEELER_THEFT,
     THREE_WHEELER_THEFT,
+    FOUR_WHEELER_THEFT,
     LOOT
 }
