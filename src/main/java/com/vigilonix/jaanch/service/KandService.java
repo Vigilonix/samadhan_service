@@ -1,6 +1,8 @@
 package com.vigilonix.jaanch.service;
 
 import com.vigilonix.jaanch.enums.Post;
+import com.vigilonix.jaanch.enums.ValidationErrorEnum;
+import com.vigilonix.jaanch.exception.ValidationRuntimeException;
 import com.vigilonix.jaanch.model.Kand;
 import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.KandPayload;
@@ -13,10 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -89,6 +88,7 @@ public class KandService {
     // Retrieve a single Kand by UUID
     public KandPayload getKand(UUID kandUuid, User principal) {
         Kand kand = kandRepository.findByUuid(kandUuid);
+        if(kand == null) throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_UUID));
         return kandTransformer.transform(kand);
     }
 
