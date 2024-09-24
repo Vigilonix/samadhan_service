@@ -40,6 +40,8 @@ public class KandService {
                 .tags(kandPayload.getTags())
                 .targetGeoHierarchyNodeUuid(Objects.isNull(kandPayload.getTargetGeoHierarchyNodeUuid())? geoHierarchyService.getHighestPostNode(postGeoNodeMap).getUuid() : kandPayload.getTargetGeoHierarchyNodeUuid())
                 .sections(kandPayload.getSections())
+                .sectionPayload(kandPayload.getSectionPayload())
+                .isBns(kandPayload.getIsBns())
                 .createdAt(System.currentTimeMillis())
                 .modifiedAt(System.currentTimeMillis())
                 .updatedBy(principal)
@@ -69,6 +71,8 @@ public class KandService {
         existingKand.setTags(kandPayload.getTags());
         existingKand.setTargetGeoHierarchyNodeUuid(kandPayload.getTargetGeoHierarchyNodeUuid());
         existingKand.setSections(kandPayload.getSections());
+        existingKand.setSectionPayload(kandPayload.getSectionPayload());
+        existingKand.setIsBns(kandPayload.getIsBns());
         existingKand.setModifiedAt(System.currentTimeMillis());
         existingKand.setUpdatedBy(principal);
         existingKand.setVictims(kandPayload.getVictims());

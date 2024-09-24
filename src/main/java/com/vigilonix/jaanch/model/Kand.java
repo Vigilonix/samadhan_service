@@ -43,6 +43,13 @@ public class Kand {
     @Column(columnDefinition = "jsonb")
     private List<Section> sections;
 
+    @Type(JsonType.class)
+    @Column(columnDefinition = "jsonb")
+    private List<String> sectionPayload;
+
+    @Column
+    private Boolean isBns;
+
     @Column
     private Long createdAt;
     @Column

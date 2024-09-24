@@ -30,6 +30,10 @@ public class KandPayload {
 
     private List<Section> sections;
 
+    private List<String> sectionPayload;
+
+    private Boolean isBns;
+
     private Long createdAt;
     private Long modifiedAt;
 

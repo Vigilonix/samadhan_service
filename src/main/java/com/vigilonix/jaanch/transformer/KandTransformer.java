@@ -23,6 +23,8 @@ public class KandTransformer implements Transformer<Kand, KandPayload> {
                 .tags(kand.getTags())
                 .targetGeoHierarchyNodeUuid(kand.getTargetGeoHierarchyNodeUuid())
                 .sections(kand.getSections())
+                .sectionPayload(kand.getSectionPayload())
+                .isBns(kand.getIsBns())
                 .createdAt(kand.getCreatedAt())
                 .modifiedAt(kand.getModifiedAt())
                 .updatedByUserUuid(kand.getUpdatedBy().getUuid())
