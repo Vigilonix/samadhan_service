@@ -71,4 +71,6 @@ public class User {
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap;
+
+    private Gender gender;
 }

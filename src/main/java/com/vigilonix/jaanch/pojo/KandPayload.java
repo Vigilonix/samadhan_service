@@ -15,10 +15,31 @@ import java.util.UUID;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class KandPayload {
     private UUID uuid;
+
+    private String firNo;
+
     private Double lat;
+
     private Double lang;
+
     private List<String> tag;
-    private UUID geoHierarchyNodeUuid;
-    private Integer section;
-    private String subSection;
+
+    private UUID targetGeoHierarchyNodeUuid;
+
+    private List<Section> sections;
+
+    private Long createdAt;
+    private Long modifiedAt;
+
+    private UUID updatedByUserUuid;
+
+    private List<Person> victims;
+
+    private List<Person> informants;
+
+    private String sourceGeoHierarchyNodeUuid;
+
+    private String firFilePath;
+
+    private List<String> mediaPaths;
 }
