@@ -4,12 +4,10 @@ import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.model.Kand;
 import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.KandPayload;
-import com.vigilonix.jaanch.pojo.ODApplicationTransformationRequest;
 import com.vigilonix.jaanch.repository.KandRepository;
 import com.vigilonix.jaanch.transformer.KandTransformer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -39,7 +37,7 @@ public class KandService {
                 .firNo(kandPayload.getFirNo())
                 .lat(kandPayload.getLat())
                 .lang(kandPayload.getLang())
-                .tag(kandPayload.getTag())
+                .tags(kandPayload.getTags())
                 .targetGeoHierarchyNodeUuid(Objects.isNull(kandPayload.getTargetGeoHierarchyNodeUuid())? geoHierarchyService.getHighestPostNode(postGeoNodeMap).getUuid() : kandPayload.getTargetGeoHierarchyNodeUuid())
                 .sections(kandPayload.getSections())
                 .createdAt(System.currentTimeMillis())
@@ -68,7 +66,7 @@ public class KandService {
         existingKand.setFirNo(kandPayload.getFirNo());
         existingKand.setLat(kandPayload.getLat());
         existingKand.setLang(kandPayload.getLang());
-        existingKand.setTag(kandPayload.getTag());
+        existingKand.setTags(kandPayload.getTags());
         existingKand.setTargetGeoHierarchyNodeUuid(kandPayload.getTargetGeoHierarchyNodeUuid());
         existingKand.setSections(kandPayload.getSections());
         existingKand.setModifiedAt(System.currentTimeMillis());

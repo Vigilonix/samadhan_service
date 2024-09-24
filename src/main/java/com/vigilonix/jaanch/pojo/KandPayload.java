@@ -22,7 +22,7 @@ public class KandPayload {
 
     private Double lang;
 
-    private List<String> tag;
+    private List<String> tags;
 
     private UUID targetGeoHierarchyNodeUuid;
 

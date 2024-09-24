@@ -34,7 +34,7 @@ public class Kand {
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private List<String> tag;
+    private List<String> tags;
 
     @Column
     private UUID targetGeoHierarchyNodeUuid;

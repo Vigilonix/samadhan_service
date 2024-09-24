@@ -20,7 +20,7 @@ public class KandTransformer implements Transformer<Kand, KandPayload> {
                 .firNo(kand.getFirNo())
                 .lat(kand.getLat())
                 .lang(kand.getLang())
-                .tag(kand.getTag())
+                .tags(kand.getTags())
                 .targetGeoHierarchyNodeUuid(kand.getTargetGeoHierarchyNodeUuid())
                 .sections(kand.getSections())
                 .createdAt(kand.getCreatedAt())
