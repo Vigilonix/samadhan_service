@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.model;
 
+import com.vigilonix.jaanch.enums.KandTag;
 import com.vigilonix.jaanch.pojo.Person;
 import com.vigilonix.jaanch.pojo.Section;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -34,7 +35,7 @@ public class Kand {
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private List<String> tags;
+    private List<KandTag> tags;
 
     @Column
     private UUID targetGeoHierarchyNodeUuid;

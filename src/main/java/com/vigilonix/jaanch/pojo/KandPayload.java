@@ -3,6 +3,7 @@ package com.vigilonix.jaanch.pojo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.vigilonix.jaanch.enums.KandTag;
 import lombok.*;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class KandPayload {
 
     private Double lang;
 
-    private List<String> tags;
+    private List<KandTag> tags;
 
     private UUID targetGeoHierarchyNodeUuid;
 

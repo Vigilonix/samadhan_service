@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class KandTransformer implements Transformer<Kand, KandPayload> {
-        private final GeoHierarchyService geoHierarchyService;
+    private final GeoHierarchyService geoHierarchyService;
 
     @Override
     public KandPayload transform(Kand kand) {
