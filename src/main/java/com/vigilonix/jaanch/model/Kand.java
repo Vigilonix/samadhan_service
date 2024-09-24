@@ -47,6 +47,10 @@ public class Kand {
     @Column(columnDefinition = "jsonb")
     private List<String> sectionPayload;
 
+
+    @Column
+    private Long incidentTime;
+
     @Column
     private Boolean isBns;
 

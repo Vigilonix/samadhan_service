@@ -48,4 +48,6 @@ public class KandPayload {
     private String firFilePath;
 
     private List<String> mediaPaths;
+
+    private Long incidentTime;
 }

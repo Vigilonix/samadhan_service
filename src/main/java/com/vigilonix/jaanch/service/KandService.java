@@ -50,6 +50,7 @@ public class KandService {
                 .sourceGeoHierarchyNodeUuid(kandPayload.getSourceGeoHierarchyNodeUuid())
                 .firFilePath(kandPayload.getFirFilePath())
                 .mediaPaths(kandPayload.getMediaPaths())
+                .incidentTime(kandPayload.getIncidentTime())
                 .build();
 
         // Save the new Kand entity
@@ -80,6 +81,7 @@ public class KandService {
         existingKand.setSourceGeoHierarchyNodeUuid(kandPayload.getSourceGeoHierarchyNodeUuid());
         existingKand.setFirFilePath(kandPayload.getFirFilePath());
         existingKand.setMediaPaths(kandPayload.getMediaPaths());
+        existingKand.setIncidentTime(kandPayload.getIncidentTime());
         Kand updatedKand = kandRepository.save(existingKand);
         return kandTransformer.transform(updatedKand);
     }
