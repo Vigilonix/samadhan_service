@@ -13,8 +13,8 @@ import lombok.*;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Section {
-    private Integer sectionNumber;
-    private Integer clause;
+    private String sectionNumber;
+    private String clause;
     //generally lower case a b, c,d
     //TODO on Little: to get back with children of sub cluase
     private String subClause;
