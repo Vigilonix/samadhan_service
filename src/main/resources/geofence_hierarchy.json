@@ -294,6 +294,13 @@
                   "uuid": "cc509788-c4ef-4bbf-bf6b-9ca68db875a6",
                   "geofence": [],
                   "children": []
+                },
+                {
+                  "name": "Pirbahore",
+                  "type": "THANA",
+                  "uuid": "92a7d8b2-89b4-4a3c-8a0e-1f7b2eacb45d",
+                  "geofence": [],
+                  "children": []
                 }
               ]
 
