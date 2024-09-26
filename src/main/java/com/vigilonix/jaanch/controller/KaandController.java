@@ -2,18 +2,15 @@ package com.vigilonix.jaanch.controller;
 
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.helper.AuthHelper;
-import com.vigilonix.jaanch.pojo.AnalyticalResponse;
+import com.vigilonix.jaanch.pojo.KandFilter;
 import com.vigilonix.jaanch.pojo.KandPayload;
-import com.vigilonix.jaanch.pojo.OdApplicationPayload;
 import com.vigilonix.jaanch.service.KandService;
-import com.vigilonix.jaanch.service.OdApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/kand")
@@ -46,4 +43,12 @@ public class KaandController {
     public List<KandPayload> getList(@RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
         return kandService.getKandList(authHelper.getPrincipal(), geoHierarchyNodeUuids);
     }
+
+    @LogPayload
+    @PostMapping(path = "/filter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<KandPayload> filter(@RequestBody KandFilter kandFilter, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return kandService.getKandFilterList(authHelper.getPrincipal(), geoHierarchyNodeUuids, kandFilter);
+    }
+
+
 }

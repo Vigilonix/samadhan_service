@@ -5,6 +5,7 @@ import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.exception.ValidationRuntimeException;
 import com.vigilonix.jaanch.model.Kand;
 import com.vigilonix.jaanch.model.User;
+import com.vigilonix.jaanch.pojo.KandFilter;
 import com.vigilonix.jaanch.pojo.KandPayload;
 import com.vigilonix.jaanch.repository.KandRepository;
 import com.vigilonix.jaanch.transformer.KandTransformer;
@@ -103,5 +104,9 @@ public class KandService {
         return kandList.stream()
                 .map(kandTransformer::transform)
                 .collect(Collectors.toList());
+    }
+
+    public List<KandPayload> getKandFilterList(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
+        return null;
     }
 }
