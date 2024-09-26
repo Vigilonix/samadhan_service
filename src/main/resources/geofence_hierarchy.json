@@ -279,8 +279,22 @@
                   "uuid": "c1a865f2-dc8d-41fc-8c72-1144bdbeb1d0",
                   "geofence": [],
                   "children": []
-                }
+                },
+                {
+                  "name": "Shastri Nagar",
+                  "type": "THANA",
+                  "uuid": "895afff2-dbff-4ea6-ba1a-b2e5e05175f7",
+                  "geofence": [],
+                  "children": []
+                },
+                {
 
+                  "name": "SK Puri",
+                  "type": "THANA",
+                  "uuid": "cc509788-c4ef-4bbf-bf6b-9ca68db875a6",
+                  "geofence": [],
+                  "children": []
+                }
               ]
 
             },
