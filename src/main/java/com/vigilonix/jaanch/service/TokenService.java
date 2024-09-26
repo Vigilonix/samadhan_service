@@ -36,7 +36,7 @@ public class TokenService {
                 .refreshToken(UUID.randomUUID().toString())
                 .token(UUID.randomUUID().toString())
                 .build();
-        OAuthTokenRepository.deleteByUser(user);
+//        OAuthTokenRepository.deleteByUser(user);
         OAuthTokenRepository.save(oAuthToken);
         return oAuthToken;
     }
@@ -71,7 +71,7 @@ public class TokenService {
                 .refreshToken(UUID.randomUUID().toString())
                 .token(token.getUser().getUuid().toString())
                 .build();
-        OAuthTokenRepository.deleteByUser(token.getUser());
+//        OAuthTokenRepository.deleteByUser(token.getUser());
         OAuthTokenRepository.save(newToken);
         return newToken;
     }

@@ -306,17 +306,18 @@
 
             },
             {
-              "name": "Patna Sadar 0",
+              "name": "Patna Sadar D",
               "type": "SUB_DIVISION",
               "is_demo": true,
               "uuid": "4f3b7332-b267-4210-9d85-dc89b0265150",
               "geofence": [],
               "children": [
                 {
-                  "name": "Patna Sadar Circle 0",
+                  "name": "Patna Sadar Circle D",
                   "type": "CIRCLE",
                   "uuid": "dc1e8b36-9c67-43e6-bae7-87ad4c326c1b",
                   "geofence": [],
+                  "is_demo": true,
                   "children": [
                     {
                       "name": "Punpun",
