@@ -21,27 +21,38 @@ public class KandRepositoryCustom {
 
     @Timed
     public List<Kand> findByPrefixNameAndGeoNodeIn(long startEpoch, long endEpoch, List<KandTag> tags, int limit, int offset, List<UUID> geoHierarchyNodeUuids) {
-        // Assuming tagsParam is a list or array of strings
+        // Format the tags parameter as a string for SQL
         String tagsParam = tags.stream()
                 .map(tag -> "'" + tag + "'")
                 .collect(Collectors.joining(", "));
 
+        // Create the SQL query with all parameters
         String sqlQuery = """
         SELECT k.*
         FROM kand k
         WHERE 1=1
         AND k.tags \\?\\?| array[""" + tagsParam + """
         ]
+        AND k.created_at BETWEEN :startEpoch AND :endEpoch
+        AND k.target_geo_hierarchy_node_uuid IN (:geoHierarchyNodeUuids)
         ORDER BY k.created_at DESC
+        LIMIT :limit OFFSET :offset
     """;
 
-// Create the native query
+        // Create the native query
         Query query = entityManager.createNativeQuery(sqlQuery, Kand.class);
 
-// Execute and return the result list
-        return query.getResultList();
+        // Set the parameters
+        query.setParameter("startEpoch", startEpoch);
+        query.setParameter("endEpoch", endEpoch);
+        query.setParameter("limit", limit);
+        query.setParameter("offset", offset);
+        query.setParameter("geoHierarchyNodeUuids", geoHierarchyNodeUuids);
 
+        // Execute and return the result list
+        return query.getResultList();
     }
+
 
 
 
