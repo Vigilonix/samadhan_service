@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.service;
 
+import com.vigilonix.jaanch.enums.KandTag;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.exception.ValidationRuntimeException;
@@ -8,6 +9,7 @@ import com.vigilonix.jaanch.model.User;
 import com.vigilonix.jaanch.pojo.KandFilter;
 import com.vigilonix.jaanch.pojo.KandPayload;
 import com.vigilonix.jaanch.repository.KandRepository;
+import com.vigilonix.jaanch.repository.KandRepositoryCustom;
 import com.vigilonix.jaanch.transformer.KandTransformer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +30,7 @@ public class KandService {
     private final KandTransformer kandTransformer;
     private final KandRepository kandRepository;
     private final GeoHierarchyService geoHierarchyService;
+    private final KandRepositoryCustom kandRepositoryCustom;
 
     // Create a new Kand
     public KandPayload createKand(KandPayload kandPayload, User principal, List<UUID> geoHierarchyNodeUuids) {
@@ -107,6 +110,16 @@ public class KandService {
     }
 
     public List<KandPayload> getKandFilterList(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
-        return null;
+        Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        List<UUID> allGeoHierarchyUuids= geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
+        return kandRepositoryCustom.findByPrefixNameAndGeoNodeIn(
+                        Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() : kandFilter.getStartEpoch(),
+                        Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
+                        Objects.isNull(kandFilter.getKandTags()) ? Arrays.asList(KandTag.values()) : kandFilter.getKandTags(),
+                        Objects.isNull(kandFilter.getLimit()) ? 1000 : kandFilter.getLimit(),
+                        Objects.isNull(kandFilter.getOffset()) ? 0 : kandFilter.getOffset(),
+                        allGeoHierarchyUuids)
+                .stream().map(kandTransformer::transform)
+                .collect(Collectors.toList());
     }
 }

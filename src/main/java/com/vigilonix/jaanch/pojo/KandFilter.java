@@ -19,4 +19,6 @@ public class KandFilter {
     private Long startEpoch;
     private Long endEpoch;
     private List<KandTag> kandTags;
+    private Integer offset;
+    private Integer limit;
 }
