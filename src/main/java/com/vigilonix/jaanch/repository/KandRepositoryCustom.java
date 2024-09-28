@@ -8,6 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,29 +21,28 @@ public class KandRepositoryCustom {
 
     @Timed
     public List<Kand> findByPrefixNameAndGeoNodeIn(long startEpoch, long endEpoch, List<KandTag> tags, int limit, int offset, List<UUID> geoHierarchyNodeUuids) {
-        // Using triple-quoted string for the SQL query
+        // Assuming tagsParam is a list or array of strings
+        String tagsParam = tags.stream()
+                .map(tag -> "'" + tag + "'")
+                .collect(Collectors.joining(", "));
+
         String sqlQuery = """
-        SELECT * FROM kand k
-        WHERE k.incident_epoch BETWEEN :startEpoch AND :endEpoch
-        AND k.target_geo_hierarchy_node_uuid IN :geoHierarchyNodeUuids
+        SELECT k.*
+        FROM kand k
+        WHERE 1=1
+        AND k.tags \\?\\?| array[""" + tagsParam + """
+        ]
         ORDER BY k.created_at DESC
-        LIMIT :limit OFFSET :offset
     """;
 
-        // Create the native query
+// Create the native query
         Query query = entityManager.createNativeQuery(sqlQuery, Kand.class);
-        query.setParameter("startEpoch", startEpoch);
-        query.setParameter("endEpoch", endEpoch);
 
-        // Convert List<KandTag> to an array of Strings for JSONB ?| operation
-
-        query.setParameter("limit", limit);
-        query.setParameter("offset", offset);
-        query.setParameter("geoHierarchyNodeUuids", geoHierarchyNodeUuids);
-
-        // Execute and return the result list
+// Execute and return the result list
         return query.getResultList();
+
     }
+
 
 
 
