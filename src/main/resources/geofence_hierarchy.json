@@ -192,6 +192,39 @@
           ]
         },
         {
+          "name": "Patna D",
+          "type": "DISTRICT",
+          "uuid": "75cf5b02-2629-44d6-9d63-3a20dd71d6ae",
+          "geofence": [],
+          "children": [
+            {
+              "name": "Patna Sadar D",
+              "type": "SUB_DIVISION",
+              "is_demo": true,
+              "uuid": "4f3b7332-b267-4210-9d85-dc89b0265150",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Patna Sadar Circle D",
+                  "type": "CIRCLE",
+                  "uuid": "dc1e8b36-9c67-43e6-bae7-87ad4c326c1b",
+                  "geofence": [],
+                  "is_demo": true,
+                  "children": [
+                    {
+                      "name": "Punpun",
+                      "type": "THANA",
+                      "uuid": "4cc380c6-6c25-47e1-8eb5-d3d5ebf0a7e6",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "name": "Patna",
           "type": "DISTRICT",
           "uuid": "d18b92e8-883e-4c0a-924f-25a5b9d03648",
@@ -304,31 +337,6 @@
                 }
               ]
 
-            },
-            {
-              "name": "Patna Sadar D",
-              "type": "SUB_DIVISION",
-              "is_demo": true,
-              "uuid": "4f3b7332-b267-4210-9d85-dc89b0265150",
-              "geofence": [],
-              "children": [
-                {
-                  "name": "Patna Sadar Circle D",
-                  "type": "CIRCLE",
-                  "uuid": "dc1e8b36-9c67-43e6-bae7-87ad4c326c1b",
-                  "geofence": [],
-                  "is_demo": true,
-                  "children": [
-                    {
-                      "name": "Punpun",
-                      "type": "THANA",
-                      "uuid": "4cc380c6-6c25-47e1-8eb5-d3d5ebf0a7e6",
-                      "geofence": [],
-                      "children": []
-                    }
-                  ]
-                }
-              ]
             },
             {
               "name": "Barh",
