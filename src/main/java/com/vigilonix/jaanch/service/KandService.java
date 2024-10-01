@@ -6,8 +6,7 @@ import com.vigilonix.jaanch.enums.ValidationErrorEnum;
 import com.vigilonix.jaanch.exception.ValidationRuntimeException;
 import com.vigilonix.jaanch.model.Kand;
 import com.vigilonix.jaanch.model.User;
-import com.vigilonix.jaanch.pojo.KandFilter;
-import com.vigilonix.jaanch.pojo.KandPayload;
+import com.vigilonix.jaanch.pojo.*;
 import com.vigilonix.jaanch.repository.KandRepository;
 import com.vigilonix.jaanch.repository.KandRepositoryCustom;
 import com.vigilonix.jaanch.transformer.KandTransformer;
@@ -121,5 +120,72 @@ public class KandService {
                         allGeoHierarchyUuids)
                 .stream().map(kandTransformer::transform)
                 .collect(Collectors.toList());
+    }
+
+    public ChartData getKandWeekDayTrend(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
+        ChartData chartData = ChartData.builder()
+                .xLabels(Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday",
+                        "Friday", "Saturday", "Sunday"))
+                .series(Arrays.asList(Series.builder()
+                                .id("a")
+                                .label("chain_snatching")
+                                .data(new int[]{1, 2, 0, 3, 4, 2, 1})
+                                .build()
+                        ,Series.builder()
+                                .id("b")
+                                .label("pickpocketing")
+                                .data(new int[]{0, 1, 3, 1, 2, 1, 2})
+                                .build(),
+                        Series.builder()
+                                .id("c")
+                                .label("vehicle_theft")
+                                .data(new int[]{2, 1, 1, 2, 3, 2, 3})
+                                .build()))
+                .build();
+        return chartData;
+    }
+
+    public ChartData getKandHourTrend(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
+        List<String> hourLabels = Arrays.asList(
+                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
+                "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"
+        );
+
+        // Create the chartData object with hourly data for the crime types
+        ChartData chartData = ChartData.builder()
+                .xLabels(hourLabels)
+                .series(Arrays.asList(
+                        Series.builder()
+                                .id("a")
+                                .label("Chain Snatching")
+                                .data(new int[]{1, 3, 2, 0, 5, 3, 4, 2, 1, 3, 1, 4, 5, 3, 6, 2, 1, 0, 1, 3, 2, 4, 5, 2}) // Sample hourly data for Chain Snatching
+                                .build(),
+                        Series.builder()
+                                .id("b")
+                                .label("Mobile Snatching")
+                                .data(new int[]{0, 1, 1, 2, 2, 1, 0, 1, 3, 2, 1, 4, 3, 2, 3, 1, 1, 2, 1, 0, 1, 2, 1, 2}) // Sample hourly data for Mobile Snatching
+                                .build(),
+                        Series.builder()
+                                .id("c")
+                                .label("Two Wheeler Theft")
+                                .data(new int[]{2, 2, 3, 1, 4, 2, 1, 0, 1, 2, 4, 3, 2, 1, 5, 3, 4, 2, 1, 2, 3, 1, 0, 1}) // Sample hourly data for Two Wheeler Theft
+                                .build()
+                ))
+                .build();
+
+        return chartData;
+    }
+
+    public List<GroupData> getTagCounters(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
+        List<GroupData> groupDataList = new ArrayList<>();
+        Random random = new Random();
+
+        // Iterate through KandTag enum values to generate sample GroupData
+        for (KandTag kandTag : KandTag.values()) {
+            int randomValue = random.nextInt(500); // Random value between 0 and 499
+            groupDataList.add(new GroupData(kandTag.getName(), randomValue));
+        }
+
+        return groupDataList;
     }
 }

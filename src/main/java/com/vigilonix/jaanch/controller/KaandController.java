@@ -2,6 +2,8 @@ package com.vigilonix.jaanch.controller;
 
 import com.vigilonix.jaanch.aop.LogPayload;
 import com.vigilonix.jaanch.helper.AuthHelper;
+import com.vigilonix.jaanch.pojo.ChartData;
+import com.vigilonix.jaanch.pojo.GroupData;
 import com.vigilonix.jaanch.pojo.KandFilter;
 import com.vigilonix.jaanch.pojo.KandPayload;
 import com.vigilonix.jaanch.service.KandService;
@@ -48,6 +50,24 @@ public class KaandController {
     @PostMapping(path = "/filter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<KandPayload> filter(@RequestBody KandFilter kandFilter, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
         return kandService.getKandFilterList(authHelper.getPrincipal(), geoHierarchyNodeUuids, kandFilter);
+    }
+
+    @LogPayload
+    @PostMapping(path = "/chart/week_trend", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ChartData getKandWeekTrend(@RequestBody KandFilter kandFilter, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return kandService.getKandWeekDayTrend(authHelper.getPrincipal(), geoHierarchyNodeUuids, kandFilter);
+    }
+
+    @LogPayload
+    @PostMapping(path = "/chart/hour_trend", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ChartData getKandHourTrend(@RequestBody KandFilter kandFilter, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return kandService.getKandHourTrend(authHelper.getPrincipal(), geoHierarchyNodeUuids, kandFilter);
+    }
+
+    @LogPayload
+    @PostMapping(path = "/chart/tag_counter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<GroupData> getTagCounters(@RequestBody KandFilter kandFilter, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return kandService.getTagCounters(authHelper.getPrincipal(), geoHierarchyNodeUuids, kandFilter);
     }
 
 
