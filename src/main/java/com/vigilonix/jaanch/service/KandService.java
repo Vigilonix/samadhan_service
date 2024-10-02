@@ -231,15 +231,24 @@ public class KandService {
     }
 
     public List<GroupData> getTagCounters(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
-        List<GroupData> groupDataList = new ArrayList<>();
-        Random random = new Random();
+        Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
+        Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
+        tags.add(KandTag.ALL);
 
-        // Iterate through KandTag enum values to generate sample GroupData
-        for (KandTag kandTag : KandTag.values()) {
-            int randomValue = random.nextInt(500); // Random value between 0 and 499
-            groupDataList.add(new GroupData(kandTag.getName(), randomValue));
-        }
+        long startEpoch = Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch();
+        long endEpoch = Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch();
 
-        return groupDataList;
+        // Fetch tag counters from DAO layer
+        List<Object[]> results = kandRepositoryCustom.findCountAggregateByTag(startEpoch, endEpoch, tags, allGeoHierarchyUuids);
+
+
+        // Convert the query results into GroupData
+        List<GroupData> groupDataList = results.stream()
+                .map(result -> new GroupData((String) result[0], ((Long) result[1]).intValue())) // (tag, occurrences)
+                .collect(Collectors.toList());
+
+        return groupDataList; 
     }
+
 }

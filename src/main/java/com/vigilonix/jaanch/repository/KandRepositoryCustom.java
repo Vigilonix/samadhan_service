@@ -3,15 +3,13 @@ package com.vigilonix.jaanch.repository;
 import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.enums.KandTag;
 import com.vigilonix.jaanch.model.Kand;
+import com.vigilonix.jaanch.pojo.KandFilter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -68,7 +66,7 @@ public class KandRepositoryCustom {
                     FROM
                         kand k
                     WHERE 
-                        k.created_at BETWEEN :startEpoch AND :endEpoch
+                        k.incident_epoch BETWEEN :startEpoch AND :endEpoch
                         AND k.target_geo_hierarchy_node_uuid IN (:geoHierarchyNodeUuids)
                 ),
                 tag_kand AS (
@@ -128,7 +126,7 @@ public class KandRepositoryCustom {
                 FROM
                     kand k
                 WHERE 
-                    k.created_at BETWEEN :startEpoch AND :endEpoch
+                    k.incident_epoch BETWEEN :startEpoch AND :endEpoch
                     AND k.target_geo_hierarchy_node_uuid IN (:geoHierarchyNodeUuids)
             ),
             tag_kand AS (
@@ -174,5 +172,61 @@ public class KandRepositoryCustom {
     }
 
 
+    public List<Object[]> findCountAggregateByTag(long startEpoch, long endEpoch, Set<KandTag> tags, List<UUID> geoHierarchyNodeUuids) {
+        // Query the aggregated data directly from the database
+        String tagsParam = tags.stream()
+                .map(tag -> "'" + tag + "'")
+                .collect(Collectors.joining(", "));
 
+        String sqlQuery = """
+            WITH filter_kand AS (
+                SELECT
+                    uuid,
+                    tags
+                FROM
+                    kand k
+                WHERE 
+                    k.incident_epoch BETWEEN :startEpoch AND :endEpoch
+                    AND k.target_geo_hierarchy_node_uuid IN (:geoHierarchyNodeUuids)
+            ),
+            tag_kand AS (
+                SELECT
+                    uuid,
+                    jsonb_array_elements_text(tags) AS tag
+                FROM
+                    filter_kand k
+                WHERE
+                    k.tags \\?\\?| array[""" + tagsParam + """
+                            ]
+            )
+            SELECT
+                COALESCE(tag, 'ALL') AS tag,
+                COUNT(*) AS occurrences
+            FROM (
+                SELECT
+                    uuid,
+                    tag
+                FROM tag_kand
+                UNION ALL
+                SELECT
+                    uuid,
+                    NULL AS tag
+                FROM
+                    filter_kand
+            ) AS combined 
+            GROUP BY tag
+            """;
+
+        // Create the native query
+        Query query = entityManager.createNativeQuery(sqlQuery);
+
+        // Set the parameters
+        query.setParameter("startEpoch", startEpoch);
+        query.setParameter("endEpoch", endEpoch);
+        query.setParameter("geoHierarchyNodeUuids", geoHierarchyNodeUuids);
+
+        // Execute the query and get the results
+        List<Object[]> results = query.getResultList();
+        return results;
+    }
 }
