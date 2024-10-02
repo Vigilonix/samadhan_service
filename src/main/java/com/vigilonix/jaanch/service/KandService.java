@@ -13,6 +13,7 @@ import com.vigilonix.jaanch.repository.KandRepositoryCustom;
 import com.vigilonix.jaanch.transformer.KandTransformer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -116,7 +117,7 @@ public class KandService {
         return kandRepositoryCustom.getKandListByFilter(
                         Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() : kandFilter.getStartEpoch(),
                         Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
-                        Objects.isNull(kandFilter.getKandTags()) ? Arrays.asList(KandTag.values()) : kandFilter.getKandTags(),
+                        CollectionUtils.isEmpty(kandFilter.getKandTags()) ? Arrays.asList(KandTag.values()) : kandFilter.getKandTags(),
                         Objects.isNull(kandFilter.getLimit()) ? 1000 : kandFilter.getLimit(),
                         Objects.isNull(kandFilter.getOffset()) ? 0 : kandFilter.getOffset(),
                         allGeoHierarchyUuids)
