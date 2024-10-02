@@ -177,31 +177,54 @@ public class KandService {
     }
 
     public ChartData getKandHourTrend(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
-        List<String> hourLabels = Arrays.asList(
-                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12",
-                "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"
+        Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
+        Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
+        tags.add(KandTag.ALL);
+
+        // Query the aggregated data directly from the database for hourly trend
+        List<Object[]> results = kandRepositoryCustom.findAggregatedByHourAndTag(
+                Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch(),
+                Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
+                tags,
+                allGeoHierarchyUuids
         );
 
-        // Create the chartData object with hourly data for the crime types
+        // Initialize a map to store trend data for each KandTag
+        Map<KandTag, int[]> tagDataMap = new HashMap<>();
+        for (KandTag tag : tags) {
+            tagDataMap.put(tag, new int[24]); // Initialize an array of size 24 (0 to 23 hours) for each KandTag
+        }
+
+        // Process the query results to fill in the trend data arrays
+        for (Object[] result : results) {
+            int hourOfDay = Objects.isNull(result[0]) ? 0 : (((Double) result[0]).intValue()); // Extract hour_of_day (0 = Midnight, 23 = 11 PM)
+            String tagString = (String) result[1];
+            int occurrences = ((Long) result[2]).intValue();
+
+            // Find the KandTag corresponding to the tag string
+            for (KandTag tag : tags) {
+                if (tagString.contains(tag.name())) {
+                    tagDataMap.get(tag)[hourOfDay] += occurrences; // Increment the appropriate hour for the tag
+                }
+            }
+        }
+
+        // Convert the map entries into Series for the chart
+        List<Series> seriesList = tagDataMap.entrySet().stream()
+                .map(entry -> Series.builder()
+                        .id(entry.getKey().name().toLowerCase())
+                        .label(entry.getKey().getName()) // Assuming KandTag has a getName() method
+                        .data(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+
+        // Create the chart data object with series
         ChartData chartData = ChartData.builder()
-                .xLabels(hourLabels)
-                .series(Arrays.asList(
-                        Series.builder()
-                                .id("a")
-                                .label("Chain Snatching")
-                                .data(new int[]{1, 3, 2, 0, 5, 3, 4, 2, 1, 3, 1, 4, 5, 3, 6, 2, 1, 0, 1, 3, 2, 4, 5, 2}) // Sample hourly data for Chain Snatching
-                                .build(),
-                        Series.builder()
-                                .id("b")
-                                .label("Mobile Snatching")
-                                .data(new int[]{0, 1, 1, 2, 2, 1, 0, 1, 3, 2, 1, 4, 3, 2, 3, 1, 1, 2, 1, 0, 1, 2, 1, 2}) // Sample hourly data for Mobile Snatching
-                                .build(),
-                        Series.builder()
-                                .id("c")
-                                .label("Two Wheeler Theft")
-                                .data(new int[]{2, 2, 3, 1, 4, 2, 1, 0, 1, 2, 4, 3, 2, 1, 5, 3, 4, 2, 1, 2, 3, 1, 0, 1}) // Sample hourly data for Two Wheeler Theft
-                                .build()
-                ))
+                .xLabels(Arrays.asList(
+                        "12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM",
+                        "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM")) // Labels for hours of the day
+                .series(seriesList)
                 .build();
 
         return chartData;

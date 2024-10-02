@@ -113,6 +113,65 @@ public class KandRepositoryCustom {
         return query.getResultList();
     }
 
+    @Timed
+    public List<Object[]> findAggregatedByHourAndTag(long startEpoch, long endEpoch, Set<KandTag> tags, List<UUID> geoHierarchyNodeUuids) {
+        String tagsParam = tags.stream()
+                .map(tag -> "'" + tag + "'")
+                .collect(Collectors.joining(", "));
+
+        String sqlQuery = """
+            WITH filter_kand AS (
+                SELECT
+                    uuid,
+                    tags,
+                    EXTRACT(HOUR FROM TO_TIMESTAMP(k.incident_epoch / 1000)) AS hour_of_day
+                FROM
+                    kand k
+                WHERE 
+                    k.created_at BETWEEN :startEpoch AND :endEpoch
+                    AND k.target_geo_hierarchy_node_uuid IN (:geoHierarchyNodeUuids)
+            ),
+            tag_kand AS (
+                SELECT
+                    uuid,
+                    jsonb_array_elements_text(tags) AS tag,
+                    hour_of_day
+                FROM
+                    filter_kand k
+                WHERE
+                    k.tags \\?\\?| array[""" + tagsParam + """
+                            ]
+            )
+            SELECT
+                hour_of_day,
+                COALESCE(tag, 'ALL') AS tag,
+                COUNT(*) AS occurrences
+            FROM (
+                SELECT
+                    hour_of_day,
+                    tag
+                FROM tag_kand
+                UNION ALL
+                SELECT
+                    hour_of_day,
+                    NULL AS tag
+                FROM
+                    filter_kand
+            ) AS combined
+            GROUP BY hour_of_day, tag
+            """;
+
+        // Create the native query
+        Query query = entityManager.createNativeQuery(sqlQuery);
+
+        // Set the parameters
+        query.setParameter("startEpoch", startEpoch);
+        query.setParameter("endEpoch", endEpoch);
+        query.setParameter("geoHierarchyNodeUuids", geoHierarchyNodeUuids);
+
+        // Execute and return the result list as Object arrays (hour_of_day, tag, occurrences)
+        return query.getResultList();
+    }
 
 
 
