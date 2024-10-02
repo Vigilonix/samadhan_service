@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,7 +147,7 @@ public class KandService {
 
         // Process the query results to fill in the trend data arrays
         for (Object[] result : results) {
-            int dayOfWeek = Objects.isNull(result[0]) ? 0 : (((Double) result[0]).intValue()); // Extract day_of_week (0 = Sunday, 6 = Saturday)
+            int dayOfWeek = Objects.isNull(result[0]) ? 0 : (((BigDecimal) result[0]).intValue()); // Extract day_of_week (0 = Sunday, 6 = Saturday)
             String tagString = (String) result[1];
             int occurrences = ((Long) result[2]).intValue();
 
@@ -198,7 +199,7 @@ public class KandService {
 
         // Process the query results to fill in the trend data arrays
         for (Object[] result : results) {
-            int hourOfDay = Objects.isNull(result[0]) ? 0 : (((Double) result[0]).intValue()); // Extract hour_of_day (0 = Midnight, 23 = 11 PM)
+            int hourOfDay = Objects.isNull(result[0]) ? 0 : (((BigDecimal) result[0]).intValue()); // Extract hour_of_day (0 = Midnight, 23 = 11 PM)
             String tagString = (String) result[1];
             int occurrences = ((Long) result[2]).intValue();
 
