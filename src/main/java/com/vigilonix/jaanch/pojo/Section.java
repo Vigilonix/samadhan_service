@@ -10,6 +10,7 @@ import lombok.*;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Section {

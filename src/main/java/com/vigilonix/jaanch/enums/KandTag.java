@@ -6,11 +6,12 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum KandTag {
-    CHAIN_SNATCHING("Chain Snatching"),
-    MOBILE_SNATCHING("Mobile Snatching"),
-    TWO_WHEELER_THEFT("Two Wheeler Theft"),
-    THREE_WHEELER_THEFT("Three Wheeler Theft"),
-    FOUR_WHEELER_THEFT("Four Wheeler Theft");
+    CHAIN_SNATCHING("Chain"),
+    MOBILE_SNATCHING("Mobile"),
+    TWO_WHEELER_THEFT("2 Wheeler"),
+    THREE_WHEELER_THEFT("3 Wheeler"),
+    ALL("ALL"),
+    FOUR_WHEELER_THEFT("4 Wheeler");
 //    LOOT("LOOT");
 
     private final String name;

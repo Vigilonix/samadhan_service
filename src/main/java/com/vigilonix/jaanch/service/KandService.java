@@ -1,5 +1,6 @@
 package com.vigilonix.jaanch.service;
 
+import com.google.common.collect.Sets;
 import com.vigilonix.jaanch.enums.KandTag;
 import com.vigilonix.jaanch.enums.Post;
 import com.vigilonix.jaanch.enums.ValidationErrorEnum;
@@ -123,25 +124,55 @@ public class KandService {
     }
 
     public ChartData getKandWeekDayTrend(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
+        // Resolve the GeoHierarchy nodes based on user and geoHierarchyNodeUuids
+        Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
+        Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
+        tags.add(KandTag.ALL);
+
+        // Query the aggregated data directly from the database
+        List<Object[]> results = kandRepositoryCustom.findAggregatedByDayOfWeekAndTag(
+                Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch(),
+                Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
+                tags,
+                allGeoHierarchyUuids
+        );
+
+        // Initialize a map to store trend data for each KandTag
+        Map<KandTag, int[]> tagDataMap = new HashMap<>();
+        for (KandTag tag : tags) {
+            tagDataMap.put(tag, new int[7]); // Initialize an array of size 7 (Monday to Sunday) for each KandTag
+        }
+
+        // Process the query results to fill in the trend data arrays
+        for (Object[] result : results) {
+            int dayOfWeek = Objects.isNull(result[0]) ? 0 : (((Double) result[0]).intValue()); // Extract day_of_week (0 = Sunday, 6 = Saturday)
+            String tagString = (String) result[1];
+            int occurrences = ((Long) result[2]).intValue();
+
+            // Find the KandTag corresponding to the tag string
+            for (KandTag tag : tags) {
+                if (tagString.contains(tag.name())) {
+                    tagDataMap.get(tag)[dayOfWeek] += occurrences; // Increment the appropriate day for the tag
+                }
+            }
+        }
+
+        // Convert the map entries into Series for the chart
+        List<Series> seriesList = tagDataMap.entrySet().stream()
+                .map(entry -> Series.builder()
+                        .id(entry.getKey().name().toLowerCase())
+                        .label(entry.getKey().getName()) // Assuming KandTag has a getName() method
+                        .data(entry.getValue())
+                        .build())
+                .collect(Collectors.toList());
+
+        // Create the chart data object with series
         ChartData chartData = ChartData.builder()
-                .xLabels(Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday",
-                        "Friday", "Saturday", "Sunday"))
-                .series(Arrays.asList(Series.builder()
-                                .id("a")
-                                .label("chain_snatching")
-                                .data(new int[]{1, 2, 0, 3, 4, 2, 1})
-                                .build()
-                        ,Series.builder()
-                                .id("b")
-                                .label("pickpocketing")
-                                .data(new int[]{0, 1, 3, 1, 2, 1, 2})
-                                .build(),
-                        Series.builder()
-                                .id("c")
-                                .label("vehicle_theft")
-                                .data(new int[]{2, 1, 1, 2, 3, 2, 3})
-                                .build()))
+                .xLabels(Arrays.asList("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")) // 0 = Sunday, 6 = Saturday
+                .series(seriesList)
                 .build();
+
         return chartData;
     }
 
