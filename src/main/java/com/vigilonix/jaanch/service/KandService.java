@@ -112,7 +112,7 @@ public class KandService {
     public List<KandPayload> getKandFilterList(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
         Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> allGeoHierarchyUuids= geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
-        return kandRepositoryCustom.findByPrefixNameAndGeoNodeIn(
+        return kandRepositoryCustom.getKandListByFilter(
                         Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() : kandFilter.getStartEpoch(),
                         Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
                         Objects.isNull(kandFilter.getKandTags()) ? Arrays.asList(KandTag.values()) : kandFilter.getKandTags(),

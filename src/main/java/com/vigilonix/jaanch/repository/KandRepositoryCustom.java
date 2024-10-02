@@ -3,7 +3,6 @@ package com.vigilonix.jaanch.repository;
 import com.vigilonix.jaanch.aop.Timed;
 import com.vigilonix.jaanch.enums.KandTag;
 import com.vigilonix.jaanch.model.Kand;
-import com.vigilonix.jaanch.pojo.KandFilter;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -19,7 +18,7 @@ public class KandRepositoryCustom {
     private EntityManager entityManager;
 
     @Timed
-    public List<Kand> findByPrefixNameAndGeoNodeIn(long startEpoch, long endEpoch, List<KandTag> tags, int limit, int offset, List<UUID> geoHierarchyNodeUuids) {
+    public List<Kand> getKandListByFilter(long startEpoch, long endEpoch, List<KandTag> tags, int limit, int offset, List<UUID> geoHierarchyNodeUuids) {
         // Format the tags parameter as a string for SQL
         String tagsParam = tags.stream()
                 .map(tag -> "'" + tag + "'")
@@ -89,6 +88,8 @@ public class KandRepositoryCustom {
                         day_of_week,
                         tag
                     FROM tag_kand
+                    WHERE tag in ("""+tagsParam+"""
+                    )
                     UNION ALL
                     SELECT
                         day_of_week,
@@ -138,26 +139,28 @@ public class KandRepositoryCustom {
                     filter_kand k
                 WHERE
                     k.tags \\?\\?| array[""" + tagsParam + """
-                            ]
-            )
-            SELECT
-                hour_of_day,
-                COALESCE(tag, 'ALL') AS tag,
-                COUNT(*) AS occurrences
-            FROM (
+                                ]
+                )
                 SELECT
                     hour_of_day,
-                    tag
-                FROM tag_kand
-                UNION ALL
-                SELECT
-                    hour_of_day,
-                    NULL AS tag
-                FROM
-                    filter_kand
-            ) AS combined
-            GROUP BY hour_of_day, tag
-            """;
+                    COALESCE(tag, 'ALL') AS tag,
+                    COUNT(*) AS occurrences
+                FROM (
+                    SELECT
+                        hour_of_day,
+                        tag
+                    FROM tag_kand
+                    WHERE tag in ("""+tagsParam+"""
+                            )
+                    UNION ALL
+                    SELECT
+                        hour_of_day,
+                        NULL AS tag
+                    FROM
+                        filter_kand
+                ) AS combined
+                GROUP BY hour_of_day, tag
+                """;
 
         // Create the native query
         Query query = entityManager.createNativeQuery(sqlQuery);
@@ -197,25 +200,27 @@ public class KandRepositoryCustom {
                     filter_kand k
                 WHERE
                     k.tags \\?\\?| array[""" + tagsParam + """
-                            ]
-            )
-            SELECT
-                COALESCE(tag, 'ALL') AS tag,
-                COUNT(*) AS occurrences
-            FROM (
+                                ]
+                )
                 SELECT
-                    uuid,
-                    tag
-                FROM tag_kand
-                UNION ALL
-                SELECT
-                    uuid,
-                    NULL AS tag
-                FROM
-                    filter_kand
-            ) AS combined 
-            GROUP BY tag
-            """;
+                    COALESCE(tag, 'ALL') AS tag,
+                    COUNT(*) AS occurrences
+                FROM (
+                    SELECT
+                        uuid,
+                        tag
+                    FROM tag_kand
+                    WHERE tag in ("""+tagsParam+"""
+                       )
+                    UNION ALL
+                    SELECT
+                        uuid,
+                        NULL AS tag
+                    FROM
+                        filter_kand
+                ) AS combined 
+                GROUP BY tag
+                """;
 
         // Create the native query
         Query query = entityManager.createNativeQuery(sqlQuery);
