@@ -31,9 +31,9 @@ public class KandRepositoryCustom {
         WHERE 1=1
         AND k.tags \\?\\?| array[""" + tagsParam + """
         ]
-        AND k.created_at BETWEEN :startEpoch AND :endEpoch
+        AND k.incident_epoch BETWEEN :startEpoch AND :endEpoch
         AND k.target_geo_hierarchy_node_uuid IN (:geoHierarchyNodeUuids)
-        ORDER BY k.created_at DESC
+        ORDER BY k.incident_epoch DESC
         LIMIT :limit OFFSET :offset
     """;
 
