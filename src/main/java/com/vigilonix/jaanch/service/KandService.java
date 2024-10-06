@@ -193,7 +193,7 @@ public class KandService {
         );
 
         // Initialize a map to store trend data for each KandTag
-        Map<KandTag, int[]> tagDataMap = new HashMap<>();
+        TreeMap<KandTag, int[]> tagDataMap = new TreeMap<>((a,b)-> Integer.compare(a.getOrder(), b.getOrder()));
         for (KandTag tag : tags) {
             tagDataMap.put(tag, new int[24]); // Initialize an array of size 24 (0 to 23 hours) for each KandTag
         }
@@ -270,7 +270,7 @@ public class KandService {
             UUID geoHierarchyNodeUuid= (UUID) result[0];
             geoCounterMap.put(geoHierarchyNodeUuid, occurrences);
         }
-        for(Map.Entry<Post, List<UUID>> entry: postGeoNodeMap.entrySet()) {
+        for(Map.Entry<Post, List<UUID>> entry: principal.getPostGeoHierarchyNodeUuidMap().entrySet()) {
 
             for(UUID geoHierarchyNodeUuid: entry.getValue()) {
                 recursePopulateKandCounter(geoCounterMap, geoHierarchyNodeUuid);
