@@ -269,6 +269,8 @@ public class KandRepositoryCustom {
                     COUNT(DISTINCT(uuid)) AS occurrences
                 FROM
                     filter_kand
+                WHERE tag in ("""+tagsParam+"""
+                                       )
                 GROUP BY 1 
                 """;
 
