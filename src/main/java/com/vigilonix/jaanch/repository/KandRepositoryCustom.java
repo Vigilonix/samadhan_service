@@ -234,4 +234,54 @@ public class KandRepositoryCustom {
         List<Object[]> results = query.getResultList();
         return results;
     }
+
+    public List<Object[]> findCountAggregateByGeoFence(long startEpoch, long endEpoch, Set<KandTag> tags, List<UUID> geoHierarchyNodeUuids) {
+        // Query the aggregated data directly from the database
+        String tagsParam = tags.stream()
+                .map(tag -> "'" + tag + "'")
+                .collect(Collectors.joining(", "));
+
+        String sqlQuery = """
+            WITH filter_kand AS (
+                SELECT
+                    uuid,
+                    target_geo_hierarchy_node_uuid,
+                    tags
+                FROM
+                    kand k
+                WHERE 
+                    k.incident_epoch BETWEEN :startEpoch AND :endEpoch
+                    AND k.target_geo_hierarchy_node_uuid IN (:geoHierarchyNodeUuids)
+            ),
+            tag_kand AS (
+                SELECT
+                    uuid,
+                    target_geo_hierarchy_node_uuid,
+                    jsonb_array_elements_text(tags) AS tag
+                FROM
+                    filter_kand k
+                WHERE
+                    k.tags \\?\\?| array[""" + tagsParam + """
+                                ]
+                )
+                SELECT
+                    target_geo_hierarchy_node_uuid,
+                    COUNT(DISTINCT(uuid)) AS occurrences
+                FROM
+                    filter_kand
+                GROUP BY 1 
+                """;
+
+        // Create the native query
+        Query query = entityManager.createNativeQuery(sqlQuery);
+
+        // Set the parameters
+        query.setParameter("startEpoch", startEpoch);
+        query.setParameter("endEpoch", endEpoch);
+        query.setParameter("geoHierarchyNodeUuids", geoHierarchyNodeUuids);
+
+        // Execute the query and get the results
+        List<Object[]> results = query.getResultList();
+        return results;
+    }
 }

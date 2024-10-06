@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/kand")
@@ -68,6 +69,12 @@ public class KaandController {
     @PostMapping(path = "/chart/tag_counter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<GroupData> getTagCounters(@RequestBody KandFilter kandFilter, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
         return kandService.getTagCounters(authHelper.getPrincipal(), geoHierarchyNodeUuids, kandFilter);
+    }
+
+    @LogPayload
+    @PostMapping(path = "/geo_fence_counter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Map<java.util.UUID, Integer> geoFenceCounter(@RequestBody KandFilter kandFilter, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return kandService.geoFenceCounter(authHelper.getPrincipal(), geoHierarchyNodeUuids, kandFilter);
     }
 
 

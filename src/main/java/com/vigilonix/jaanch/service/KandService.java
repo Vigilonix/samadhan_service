@@ -253,4 +253,44 @@ public class KandService {
         return groupDataList; 
     }
 
+    public Map<UUID, Integer> geoFenceCounter(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
+        Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
+        Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
+        tags.add(KandTag.ALL);
+
+        long startEpoch = Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch();
+        long endEpoch = Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch();
+
+        // Fetch tag counters from DAO layer
+        List<Object[]> results = kandRepositoryCustom.findCountAggregateByGeoFence(startEpoch, endEpoch, tags, allGeoHierarchyUuids);
+        Map<UUID,Integer> geoCounterMap = new HashMap<>();
+        for(Object[] result: results) {
+            int occurrences= Objects.isNull(result[1]) ? 0 : (((Long) result[1]).intValue());
+            UUID geoHierarchyNodeUuid= (UUID) result[0];
+            geoCounterMap.put(geoHierarchyNodeUuid, occurrences);
+        }
+        for(Map.Entry<Post, List<UUID>> entry: postGeoNodeMap.entrySet()) {
+
+            for(UUID geoHierarchyNodeUuid: entry.getValue()) {
+                recursePopulateKandCounter(geoCounterMap, geoHierarchyNodeUuid);
+            }
+        }
+        return geoCounterMap;
+    }
+
+    private int recursePopulateKandCounter(Map<UUID, Integer> geoCounterMap, UUID geoHierarchyNodeUuid) {
+        GeoHierarchyNode geoHierarchyNode = geoHierarchyService.getNodeById(geoHierarchyNodeUuid);
+        if(CollectionUtils.isEmpty(geoHierarchyNode.getChildren())) {
+            geoCounterMap.putIfAbsent(geoHierarchyNodeUuid,0);
+            return geoCounterMap.get(geoHierarchyNodeUuid);
+        }
+        int val=0;
+        for(GeoHierarchyNode child: geoHierarchyNode.getChildren()) {
+            val+= recursePopulateKandCounter(geoCounterMap, child.getUuid());
+        }
+        //no need to count Kand which is tied to higher geo fence than thana as kand is always tied to thana and no higher hierarchy
+        geoCounterMap.put(geoHierarchyNodeUuid, val);
+        return val;
+    }
 }
