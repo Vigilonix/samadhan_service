@@ -14,6 +14,6 @@ public enum KandTag {
     FOUR_WHEELER_THEFT("4 Wheeler", 5);
 //    LOOT("LOOT");
 
-    private final String name;
+    private final String label;
     private final int order;
 }

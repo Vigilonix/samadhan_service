@@ -164,7 +164,7 @@ public class KandService {
         List<Series> seriesList = tagDataMap.entrySet().stream()
                 .map(entry -> Series.builder()
                         .id(entry.getKey().name().toLowerCase())
-                        .label(entry.getKey().getName()) // Assuming KandTag has a getName() method
+                        .label(entry.getKey().getLabel()) // Assuming KandTag has a getName() method
                         .data(entry.getValue())
                         .build())
                 .collect(Collectors.toList());
@@ -216,7 +216,7 @@ public class KandService {
         List<Series> seriesList = tagDataMap.entrySet().stream()
                 .map(entry -> Series.builder()
                         .id(entry.getKey().name().toLowerCase())
-                        .label(entry.getKey().getName()) // Assuming KandTag has a getName() method
+                        .label(entry.getKey().getLabel()) // Assuming KandTag has a getName() method
                         .data(entry.getValue())
                         .build())
                 .collect(Collectors.toList());
@@ -247,7 +247,7 @@ public class KandService {
 
         // Convert the query results into GroupData
         List<GroupData> groupDataList = results.stream()
-                .map(result -> new GroupData((String) result[0], ((Long) result[1]).intValue())) // (tag, occurrences)
+                .map(result -> new GroupData(KandTag.valueOf((String)result[0]).getLabel(), ((Long) result[1]).intValue())) // (tag, occurrences)
                 .collect(Collectors.toList());
 
         return groupDataList; 

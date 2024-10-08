@@ -203,22 +203,11 @@ public class KandRepositoryCustom {
                                 ]
                 )
                 SELECT
-                    COALESCE(tag, 'ALL') AS tag,
+                    tag,
                     COUNT(*) AS occurrences
-                FROM (
-                    SELECT
-                        uuid,
-                        tag
-                    FROM tag_kand
-                    WHERE tag in ("""+tagsParam+"""
+                FROM tag_kand 
+                WHERE tag in ("""+tagsParam+"""
                        )
-                    UNION ALL
-                    SELECT
-                        uuid,
-                        NULL AS tag
-                    FROM
-                        filter_kand
-                ) AS combined 
                 GROUP BY tag
                 """;
 
@@ -268,7 +257,7 @@ public class KandRepositoryCustom {
                     target_geo_hierarchy_node_uuid,
                     COUNT(DISTINCT(uuid)) AS occurrences
                 FROM
-                    filter_kand
+                    tag_kand
                 WHERE tag in ("""+tagsParam+"""
                                        )
                 GROUP BY 1 
