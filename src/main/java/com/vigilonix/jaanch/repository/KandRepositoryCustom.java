@@ -18,7 +18,7 @@ public class KandRepositoryCustom {
     private EntityManager entityManager;
 
     @Timed
-    public List<Kand> getKandListByFilter(long startEpoch, long endEpoch, List<KandTag> tags, int limit, int offset, List<UUID> geoHierarchyNodeUuids) {
+    public List<Kand> getKandListByFilter(long startEpoch, long endEpoch, Set<KandTag> tags, int limit, int offset, List<UUID> geoHierarchyNodeUuids) {
         // Format the tags parameter as a string for SQL
         String tagsParam = tags.stream()
                 .map(tag -> "'" + tag + "'")

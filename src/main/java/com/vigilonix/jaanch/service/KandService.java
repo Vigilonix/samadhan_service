@@ -114,10 +114,11 @@ public class KandService {
     public List<KandPayload> getKandFilterList(User principal, List<UUID> geoHierarchyNodeUuids, KandFilter kandFilter) {
         Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> allGeoHierarchyUuids= geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
+        Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
         return kandRepositoryCustom.getKandListByFilter(
                         Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() : kandFilter.getStartEpoch(),
                         Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
-                        Objects.isNull(kandFilter.getKandTags()) ? Collections.emptyList() : kandFilter.getKandTags(),
+                        tags,
                         Objects.isNull(kandFilter.getLimit()) ? 1000 : kandFilter.getLimit(),
                         Objects.isNull(kandFilter.getOffset()) ? 0 : kandFilter.getOffset(),
                         allGeoHierarchyUuids)
@@ -236,7 +237,6 @@ public class KandService {
         Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
         Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
-        tags.add(KandTag.ALL);
 
         long startEpoch = Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch();
         long endEpoch = Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch();
@@ -257,7 +257,6 @@ public class KandService {
         Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
         Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
-        tags.add(KandTag.ALL);
 
         long startEpoch = Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch();
         long endEpoch = Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch();
