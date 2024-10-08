@@ -115,6 +115,8 @@ public class KandService {
         Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> allGeoHierarchyUuids= geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
         Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
+        tags.add(KandTag.ALL);
+
         return kandRepositoryCustom.getKandListByFilter(
                         Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() : kandFilter.getStartEpoch(),
                         Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
@@ -237,6 +239,7 @@ public class KandService {
         Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
         Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
+        tags.add(KandTag.ALL);
 
         long startEpoch = Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch();
         long endEpoch = Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch();
@@ -257,6 +260,7 @@ public class KandService {
         Map<Post, List<UUID>> postGeoNodeMap = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> allGeoHierarchyUuids = geoHierarchyService.getAllLevelNodes(postGeoNodeMap);
         Set<KandTag> tags = Objects.isNull(kandFilter.getKandTags()) ? Sets.newHashSet(KandTag.values()) : Sets.newHashSet(kandFilter.getKandTags());
+        tags.add(KandTag.ALL);
 
         long startEpoch = Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000 : kandFilter.getStartEpoch();
         long endEpoch = Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch();
