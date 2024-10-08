@@ -117,7 +117,7 @@ public class KandService {
         return kandRepositoryCustom.getKandListByFilter(
                         Objects.isNull(kandFilter.getStartEpoch()) ? System.currentTimeMillis() : kandFilter.getStartEpoch(),
                         Objects.isNull(kandFilter.getEndEpoch()) ? System.currentTimeMillis() : kandFilter.getEndEpoch(),
-                        CollectionUtils.isEmpty(kandFilter.getKandTags()) ? Arrays.asList(KandTag.values()) : kandFilter.getKandTags(),
+                        Objects.isNull(kandFilter.getKandTags()) ? Collections.emptyList() : kandFilter.getKandTags(),
                         Objects.isNull(kandFilter.getLimit()) ? 1000 : kandFilter.getLimit(),
                         Objects.isNull(kandFilter.getOffset()) ? 0 : kandFilter.getOffset(),
                         allGeoHierarchyUuids)
