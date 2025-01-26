@@ -8,6 +8,7 @@ import com.vigilonix.applicationnadministrativeservice.pojo.OdApplicationStatus;
 import com.vigilonix.applicationnadministrativeservice.pojo.ODApplicationTransformationRequest;
 import com.vigilonix.applicationnadministrativeservice.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .applicationFilePath(odApplication.getApplicationFilePath())
                 .geoHierarchyNodeUuid(odApplication.getGeoHierarchyNodeUuid())
                 .geoHierarchyNodeName(geoHierarchyService.getNodeById(odApplication.getGeoHierarchyNodeUuid()).getName())
-                .enquiries(odApplication.getEnquiries().stream().map(e-> EnquiryPayload.builder().path(e.getPath()).ownerUuid(e.getOwnerUuid()).createdAt(e.getCreatedAt()).enquiryOfficeName("foo").build()).collect(Collectors.toList()))
+                .enquiries(CollectionUtils.isEmpty(odApplication.getEnquiries()) ?null : odApplication.getEnquiries().stream().map(e-> EnquiryPayload.builder().path(e.getPath()).ownerUuid(e.getOwnerUuid()).createdAt(e.getCreatedAt()).enquiryOfficeName("foo").build()).collect(Collectors.toList()))
                 .status(odApplication.getStatus())
                 .receiptNo(odApplication.getReceiptNo())
                 .createdAt(odApplication.getCreatedAt())
