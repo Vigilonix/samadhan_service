@@ -1,0 +1,60 @@
+package com.vigilonix.applicationnadministrativeservice.validator;
+
+import com.google.common.collect.Sets;
+import com.vigilonix.applicationnadministrativeservice.enums.ValidationError;
+import com.vigilonix.applicationnadministrativeservice.enums.ValidationErrorEnum;
+import com.vigilonix.applicationnadministrativeservice.model.User;
+import com.vigilonix.applicationnadministrativeservice.pojo.OdApplicationStatus;
+import com.vigilonix.applicationnadministrativeservice.pojo.OdApplicationPayload;
+import com.vigilonix.applicationnadministrativeservice.pojo.ODApplicationValidationPayload;
+import com.vigilonix.applicationnadministrativeservice.service.GeoHierarchyService;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+@Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class OdApplicationUpdateValidator implements Validator<List<ValidationError>, ODApplicationValidationPayload> {
+    private final GeoHierarchyService geoHierarchyService;
+    private final PDFValidator pdfValidator;
+    private final OdApplicationCreationValidator odApplicationCreationValidator;
+    @Override
+    public List<ValidationError> validate(ODApplicationValidationPayload odApplicationValidationPayload) {
+        List<ValidationError> errors = new ArrayList<>();
+        OdApplicationPayload odRequest = odApplicationValidationPayload.getOdApplicationPayload();
+        User principal = odApplicationValidationPayload.getPrincipalUser();
+        if(Objects.isNull(odApplicationValidationPayload.getOdApplication())) {
+            return Collections.singletonList(ValidationErrorEnum.INVALID_UUID);
+        }
+        if(CollectionUtils.isEmpty(odRequest.getEnquiries()) && OdApplicationStatus.OPEN.equals(odApplicationValidationPayload.getOdApplication().getStatus())) {
+            return odApplicationCreationValidator.validate(odApplicationValidationPayload);
+        }
+        if(CollectionUtils.isNotEmpty(odRequest.getEnquiries()) && Objects.isNull(odApplicationValidationPayload.getEnquiryUser())) {
+            errors.add(ValidationErrorEnum.INVALID_ID);
+        }
+        if((!Objects.isNull(odApplicationValidationPayload.getEnquiryUser()) ||
+                Sets.newHashSet(OdApplicationStatus.REVIEW)
+                    .contains(odApplicationValidationPayload.getOdApplication().getStatus()))
+                && !geoHierarchyService.hasAuthority(odApplicationValidationPayload.getOdApplication().getGeoHierarchyNodeUuid(),principal.getPostGeoHierarchyNodeUuidMap())) {
+            errors.add(ValidationErrorEnum.INVALID_GRANT);
+        }
+
+        if(CollectionUtils.isNotEmpty(odRequest.getEnquiries()) && StringUtils.isNotEmpty(odRequest.getEnquiries().get(0).getPath())) {
+            odRequest.getEnquiries().forEach(e-> {
+                errors.addAll(pdfValidator.validate(e.getPath()));
+                if (!principal.getUuid().equals(e.getOwnerUuid())) {
+                    errors.add(ValidationErrorEnum.INVALID_GRANT);
+                }
+            });
+        }
+        return errors;
+    }
+
+}
