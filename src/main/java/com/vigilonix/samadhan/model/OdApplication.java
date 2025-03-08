@@ -1,5 +1,6 @@
 package com.vigilonix.samadhan.model;
 
+import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.pojo.OdApplicationStatus;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
@@ -52,4 +53,7 @@ public class OdApplication {
     private Long createdAt;
     @Column
     private Long modifiedAt;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ApplicationCategory category;
 }

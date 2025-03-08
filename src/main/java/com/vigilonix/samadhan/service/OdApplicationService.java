@@ -78,6 +78,7 @@ public class OdApplicationService {
                 .createdAt(epoch)
                 .modifiedAt(epoch)
                 .status(OdApplicationStatus.OPEN)
+                .category(odApplicationPayload.getCategory())
                 .build();
         odApplicationRepository.save(odApplication);
         notificationService.sendNotification(odApplication);
@@ -130,7 +131,6 @@ public class OdApplicationService {
         if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(OdApplicationStatus.CLOSED);
         }
-
 
         odApplication.setModifiedAt(System.currentTimeMillis());
         odApplicationRepository.save(odApplication);

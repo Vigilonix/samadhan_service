@@ -2,6 +2,7 @@ package com.vigilonix.samadhan.pojo;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.vigilonix.samadhan.enums.ApplicationCategory;
 import lombok.*;
 
 import java.util.List;
@@ -36,4 +37,5 @@ public class OdApplicationPayload {
     private boolean hasAuthorityOnReviewStatus;
     private boolean hasAuthorityOnClosedStatus;
     private boolean hasAuthorityToReassign;
+    private ApplicationCategory category;
 }
