@@ -35,6 +35,7 @@ public class OdApplication {
     private String applicationFilePath;
     @Column
     private UUID geoHierarchyNodeUuid;
+    //TODO multiple users can be endorsed.
     @ManyToOne
     private User enquiryOfficer;
     @Type(JsonType.class)

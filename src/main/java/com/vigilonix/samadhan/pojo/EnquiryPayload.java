@@ -15,4 +15,5 @@ public class EnquiryPayload {
     private Long createdAt;
     private UUID ownerUuid;
     private String enquiryOfficeName;
+    private String comment;
 }

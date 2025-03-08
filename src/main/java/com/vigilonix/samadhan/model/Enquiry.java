@@ -14,4 +14,5 @@ public class Enquiry {
     private String path;
     private Long createdAt;
     private UUID ownerUuid;
+    private String comment;
 }
