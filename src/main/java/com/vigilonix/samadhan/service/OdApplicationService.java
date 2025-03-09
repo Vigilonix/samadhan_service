@@ -237,18 +237,20 @@ public class OdApplicationService {
                 """;
     }
 
-    public void createAssignment(OdAssignmentPayload assignmentPojo, UUID odApplicationUuid, User principal, List<UUID> geoHierarchyNodeUuids) {
-        User assignee = userRepository.findByUuid(assignmentPojo.getAssigneeUuid());
+    public void createAssignment(List<OdAssignmentPayload> assignmentRequests, UUID odApplicationUuid, User principal, List<UUID> geoHierarchyNodeUuids) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odApplicationUuid);
-        OdApplicationAssignment odApplicationAssignment = OdApplicationAssignment.builder()
-                .uuid(UUID.randomUUID())
-                .application(odApplication)
-                .enquiryOfficer(assignee)
-                .createdAt(System.currentTimeMillis())
-                .modifiedAt(System.currentTimeMillis())
-                .status(OdApplicationStatus.ENQUIRY)
-                .build();
-        odApplicationAssignmentRepository.save(odApplicationAssignment);
+        for(OdAssignmentPayload assignmentPojo : assignmentRequests) {
+            User assignee = userRepository.findByUuid(assignmentPojo.getAssigneeUuid());
+            OdApplicationAssignment odApplicationAssignment = OdApplicationAssignment.builder()
+                    .uuid(UUID.randomUUID())
+                    .application(odApplication)
+                    .enquiryOfficer(assignee)
+                    .createdAt(System.currentTimeMillis())
+                    .modifiedAt(System.currentTimeMillis())
+                    .status(OdApplicationStatus.ENQUIRY)
+                    .build();
+            odApplicationAssignmentRepository.save(odApplicationAssignment);
+        }
         odApplication.setStatus(OdApplicationStatus.ENQUIRY);
         odApplicationRepository.save(odApplication);
     }
