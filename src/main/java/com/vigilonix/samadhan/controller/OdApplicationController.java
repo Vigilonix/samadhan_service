@@ -4,6 +4,7 @@ import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.helper.AuthHelper;
 import com.vigilonix.samadhan.pojo.AnalyticalResponse;
 import com.vigilonix.samadhan.pojo.OdApplicationPayload;
+import com.vigilonix.samadhan.pojo.OdAssignmentPayload;
 import com.vigilonix.samadhan.service.OdApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,12 @@ public class OdApplicationController {
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public OdApplicationPayload create(@RequestBody OdApplicationPayload publicApplicationPojo, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
         return odApplicationService.create(publicApplicationPojo, authHelper.getPrincipal(), geoHierarchyNodeUuids);
+    }
+
+    @LogPayload
+    @PostMapping(value = "/{uuid}/assignment", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void createAssignment(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody OdAssignmentPayload assignmentPojo, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        odApplicationService.createAssignment(assignmentPojo, java.util.UUID.fromString(odApplicationUuid), authHelper.getPrincipal(), geoHierarchyNodeUuids);
     }
 
     @LogPayload

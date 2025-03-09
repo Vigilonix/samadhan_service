@@ -19,5 +19,6 @@ public class ODApplicationValidationPayload {
     private final OdApplicationPayload odApplicationPayload;
     private final OdApplication odApplication;
     private final User enquiryUser;
+    private final List<User> enquiryUsers;
     private final List<UUID> geoHierarchyNodeUuids;
 }

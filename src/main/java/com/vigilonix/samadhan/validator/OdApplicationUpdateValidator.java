@@ -33,28 +33,23 @@ public class OdApplicationUpdateValidator implements Validator<List<ValidationEr
         if(Objects.isNull(odApplicationValidationPayload.getOdApplication())) {
             return Collections.singletonList(ValidationErrorEnum.INVALID_UUID);
         }
-        if(CollectionUtils.isEmpty(odRequest.getEnquiries()) && OdApplicationStatus.OPEN.equals(odApplicationValidationPayload.getOdApplication().getStatus())) {
             return odApplicationCreationValidator.validate(odApplicationValidationPayload);
-        }
-        if(CollectionUtils.isNotEmpty(odRequest.getEnquiries()) && Objects.isNull(odApplicationValidationPayload.getEnquiryUser())) {
-            errors.add(ValidationErrorEnum.INVALID_ID);
-        }
-        if((!Objects.isNull(odApplicationValidationPayload.getEnquiryUser()) ||
-                Sets.newHashSet(OdApplicationStatus.REVIEW)
-                    .contains(odApplicationValidationPayload.getOdApplication().getStatus()))
-                && !geoHierarchyService.hasAuthority(odApplicationValidationPayload.getOdApplication().getGeoHierarchyNodeUuid(),principal.getPostGeoHierarchyNodeUuidMap())) {
-            errors.add(ValidationErrorEnum.INVALID_GRANT);
-        }
-
-        if(CollectionUtils.isNotEmpty(odRequest.getEnquiries()) && StringUtils.isNotEmpty(odRequest.getEnquiries().get(0).getPath())) {
-            odRequest.getEnquiries().forEach(e-> {
-                errors.addAll(pdfValidator.validate(e.getPath()));
-                if (!principal.getUuid().equals(e.getOwnerUuid())) {
-                    errors.add(ValidationErrorEnum.INVALID_GRANT);
-                }
-            });
-        }
-        return errors;
+//        if((!Objects.isNull(odApplicationValidationPayload.getEnquiryUser()) ||
+//                Sets.newHashSet(OdApplicationStatus.REVIEW)
+//                    .contains(odApplicationValidationPayload.getOdApplication().getStatus()))
+//                && !geoHierarchyService.hasAuthority(odApplicationValidationPayload.getOdApplication().getGeoHierarchyNodeUuid(),principal.getPostGeoHierarchyNodeUuidMap())) {
+//            errors.add(ValidationErrorEnum.INVALID_GRANT);
+//        }
+//
+//        if(CollectionUtils.isNotEmpty(odRequest.getEnquiries()) && StringUtils.isNotEmpty(odRequest.getEnquiries().get(0).getPath())) {
+//            odRequest.getEnquiries().forEach(e-> {
+//                errors.addAll(pdfValidator.validate(e.getPath()));
+//                if (!principal.getUuid().equals(e.getOwnerUuid())) {
+//                    errors.add(ValidationErrorEnum.INVALID_GRANT);
+//                }
+//            });
+//        }
+//        return errors;
     }
 
 }

@@ -13,7 +13,9 @@ import java.util.UUID;
 public class EnquiryPayload {
     private String path;
     private Long createdAt;
-    private UUID ownerUuid;
+    private Long modifiedAt;
+    private UUID userUuid;
     private String enquiryOfficeName;
     private String comment;
+    private OdApplicationStatus Status;
 }

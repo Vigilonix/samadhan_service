@@ -33,7 +33,6 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .applicationFilePath(odApplication.getApplicationFilePath())
                 .geoHierarchyNodeUuid(odApplication.getGeoHierarchyNodeUuid())
                 .geoHierarchyNodeName(geoHierarchyService.getNodeById(odApplication.getGeoHierarchyNodeUuid()).getName())
-                .enquiries(CollectionUtils.isEmpty(odApplication.getEnquiries()) ?null : odApplication.getEnquiries().stream().map(e-> EnquiryPayload.builder().path(e.getPath()).ownerUuid(e.getOwnerUuid()).createdAt(e.getCreatedAt()).enquiryOfficeName("foo").build()).collect(Collectors.toList()))
                 .status(odApplication.getStatus())
                 .receiptNo(odApplication.getReceiptNo())
                 .createdAt(odApplication.getCreatedAt())

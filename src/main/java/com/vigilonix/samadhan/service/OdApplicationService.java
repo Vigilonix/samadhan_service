@@ -3,10 +3,11 @@ package com.vigilonix.samadhan.service;
 import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.aop.Timed;
 import com.vigilonix.samadhan.enums.Post;
-import com.vigilonix.samadhan.model.Enquiry;
 import com.vigilonix.samadhan.model.OdApplication;
+import com.vigilonix.samadhan.model.OdApplicationAssignment;
 import com.vigilonix.samadhan.model.User;
 import com.vigilonix.samadhan.pojo.*;
+import com.vigilonix.samadhan.repository.OdApplicationAssignmentRepository;
 import com.vigilonix.samadhan.repository.OdApplicationRepository;
 import com.vigilonix.samadhan.repository.UserRepository;
 import com.vigilonix.samadhan.transformer.OdApplicationTransformer;
@@ -35,6 +36,7 @@ public class OdApplicationService {
     private final ValidationService<ODApplicationValidationPayload> odUpdateValidationService;
     private final ValidationService<ODApplicationValidationPayload> odCreateValidationService;
     private final NotificationService notificationService;
+    private final OdApplicationAssignmentRepository odApplicationAssignmentRepository;
 
     @Autowired
     public OdApplicationService(
@@ -43,7 +45,7 @@ public class OdApplicationService {
             UserRepository userRepository,
             GeoHierarchyService geoHierarchyService,
             @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
-            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService) {
+            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService, OdApplicationAssignmentRepository odApplicationAssignmentRepository) {
         this.odApplicationRepository = odApplicationRepository;
         this.odApplicationTransformer = odApplicationTransformer;
         this.userRepository = userRepository;
@@ -51,6 +53,7 @@ public class OdApplicationService {
         this.odUpdateValidationService = odUpdateValidationService;
         this.odCreateValidationService = odCreateValidationService;
         this.notificationService = notificationService;
+        this.odApplicationAssignmentRepository = odApplicationAssignmentRepository;
     }
 
     @Timed
@@ -112,19 +115,19 @@ public class OdApplicationService {
                 .odApplication(odApplication)
                 .enquiryUser(userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid()))
                 .principalUser(principal).build());
-        if (CollectionUtils.isEmpty(odApplicationPayload.getEnquiries())) {
-            User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
-            GeoHierarchyNode geoHierarchyNode = geoHierarchyService.getHighestPostNode(enquiryOfficer.getPostGeoHierarchyNodeUuidMap());
-            odApplication.setEnquiryOfficer(enquiryOfficer);
-            odApplication.setGeoHierarchyNodeUuid(geoHierarchyNode.getUuid());
-            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
-        }
-        if (CollectionUtils.isNotEmpty(odApplicationPayload.getEnquiries())) {
-            List<Enquiry> enquiries = odApplicationPayload.getEnquiries().stream().map(e-> Enquiry.builder().build()).collect(Collectors.toList());
-            enquiries.addAll(odApplication.getEnquiries());
-            odApplication.setEnquiries(enquiries);
-            odApplication.setStatus(OdApplicationStatus.REVIEW);
-        }
+//        if (CollectionUtils.isEmpty(odApplicationPayload.getEnquiries())) {
+//            User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
+//            GeoHierarchyNode geoHierarchyNode = geoHierarchyService.getHighestPostNode(enquiryOfficer.getPostGeoHierarchyNodeUuidMap());
+//            odApplication.setEnquiryOfficer(enquiryOfficer);
+//            odApplication.setGeoHierarchyNodeUuid(geoHierarchyNode.getUuid());
+//            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
+//        }
+//        if (CollectionUtils.isNotEmpty(odApplicationPayload.getEnquiries())) {
+//            List<Enquiry> enquiries = odApplicationPayload.getEnquiries().stream().map(e-> Enquiry.builder().build()).collect(Collectors.toList());
+//            enquiries.addAll(odApplication.getEnquiries());
+//            odApplication.setEnquiries(enquiries);
+//            odApplication.setStatus(OdApplicationStatus.REVIEW);
+//        }
         if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(OdApplicationStatus.ENQUIRY);
         }
@@ -231,5 +234,19 @@ public class OdApplicationService {
         return """
                 
                 """;
+    }
+
+    public void createAssignment(OdAssignmentPayload assignmentPojo, UUID odApplicationUuid, User principal, List<UUID> geoHierarchyNodeUuids) {
+        User assignee = userRepository.findByUuid(assignmentPojo.getAssignee());
+        OdApplication odApplication = odApplicationRepository.findByUuid(odApplicationUuid);
+        OdApplicationAssignment odApplicationAssignment = OdApplicationAssignment.builder()
+                .uuid(UUID.randomUUID())
+                .application(odApplication)
+                .enquiryOfficer(assignee)
+                .createdAt(System.currentTimeMillis())
+                .modifiedAt(System.currentTimeMillis())
+                .status(OdApplicationStatus.ENQUIRY)
+                .build();
+        odApplicationAssignmentRepository.save(odApplicationAssignment);
     }
 }

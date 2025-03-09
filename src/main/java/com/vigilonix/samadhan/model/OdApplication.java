@@ -39,9 +39,6 @@ public class OdApplication {
     //TODO multiple users can be endorsed.
     @ManyToOne
     private User enquiryOfficer;
-    @Type(JsonType.class)
-    @Column(columnDefinition = "jsonb")
-    private List<Enquiry> enquiries;
     @Column
     @Enumerated(EnumType.STRING)
     private OdApplicationStatus status;
