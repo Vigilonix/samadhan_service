@@ -25,9 +25,8 @@ public class OdApplicationPayload {
     private UUID geoHierarchyNodeUuid;
 //    @JsonProperty("field_geo_node_name")
     private String geoHierarchyNodeName;
-    private UUID enquiryOfficerUuid;
-    private String enquiryOfficerName;
-    private List<EnquiryPayload> enquiries;
+//    private UUID enquiryOfficerUuid;
+//    private String enquiryOfficerName;
     private OdApplicationStatus status;
     private String receiptNo;
     private Long createdAt;

@@ -113,7 +113,7 @@ public class OdApplicationService {
         odUpdateValidationService.validate(ODApplicationValidationPayload.builder()
                 .odApplicationPayload(odApplicationPayload)
                 .odApplication(odApplication)
-                .enquiryUser(userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid()))
+//                .enquiryUser(userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid()))
                 .principalUser(principal).build());
 //        if (CollectionUtils.isEmpty(odApplicationPayload.getEnquiries())) {
 //            User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
