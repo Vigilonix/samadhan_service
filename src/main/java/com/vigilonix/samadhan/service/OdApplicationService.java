@@ -237,7 +237,7 @@ public class OdApplicationService {
     }
 
     public void createAssignment(OdAssignmentPayload assignmentPojo, UUID odApplicationUuid, User principal, List<UUID> geoHierarchyNodeUuids) {
-        User assignee = userRepository.findByUuid(assignmentPojo.getAssignee());
+        User assignee = userRepository.findByUuid(assignmentPojo.getAssigneeUuid());
         OdApplication odApplication = odApplicationRepository.findByUuid(odApplicationUuid);
         OdApplicationAssignment odApplicationAssignment = OdApplicationAssignment.builder()
                 .uuid(UUID.randomUUID())
@@ -248,5 +248,8 @@ public class OdApplicationService {
                 .status(OdApplicationStatus.ENQUIRY)
                 .build();
         odApplicationAssignmentRepository.save(odApplicationAssignment);
+        odApplication = odApplicationRepository.findByUuid(odApplicationUuid);
+        odApplication.setStatus(OdApplicationStatus.ENQUIRY);
+        odApplicationRepository.save(odApplication);
     }
 }
