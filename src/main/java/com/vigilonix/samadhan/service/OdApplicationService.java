@@ -85,8 +85,7 @@ public class OdApplicationService {
                 .build();
         odApplicationRepository.save(odApplication);
         notificationService.sendNotification(odApplication);
-        List<OdApplicationAssignment> assignments = odApplicationAssignmentRepository.findByApplication(odApplication);
-        return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).assignments(assignments).build());
+        return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
     }
 
     private GeoHierarchyNode resolveGeoHierarchyNode(Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap, List<UUID> geoHierarchyNodeUuids) {
@@ -146,7 +145,8 @@ public class OdApplicationService {
     @Timed
     public OdApplicationPayload get(UUID odUuid, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odUuid);
-        return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
+        List<OdApplicationAssignment> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication);
+        return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).assignments(assignments).build());
     }
 
     @LogPayload

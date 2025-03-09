@@ -10,7 +10,7 @@ import org.hibernate.annotations.Type;
 import java.util.List;
 import java.util.UUID;
 
-@Entity(name = "od_application_assignment")
+@Entity(name = "OdApplicationAssignment")
 @Table(
         name = "od_application_assignment"
 )
@@ -24,8 +24,6 @@ public class OdApplicationAssignment {
     @Id
     @Column
     private UUID uuid;
-    @ManyToOne
-    private User od;
     @ManyToOne(fetch = FetchType.LAZY)
     private OdApplication application;
     @Column
