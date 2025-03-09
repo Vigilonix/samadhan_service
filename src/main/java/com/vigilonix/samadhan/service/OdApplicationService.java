@@ -10,6 +10,7 @@ import com.vigilonix.samadhan.pojo.*;
 import com.vigilonix.samadhan.repository.OdApplicationAssignmentRepository;
 import com.vigilonix.samadhan.repository.OdApplicationRepository;
 import com.vigilonix.samadhan.repository.UserRepository;
+import com.vigilonix.samadhan.transformer.OdApplicationAssignmentTransformer;
 import com.vigilonix.samadhan.transformer.OdApplicationTransformer;
 import com.vigilonix.samadhan.validator.ValidationService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class OdApplicationService {
     private final ValidationService<ODApplicationValidationPayload> odCreateValidationService;
     private final NotificationService notificationService;
     private final OdApplicationAssignmentRepository odApplicationAssignmentRepository;
+    private final OdApplicationAssignmentTransformer odApplicationAssignmentTransformer;
 
     @Autowired
     public OdApplicationService(
@@ -45,7 +47,7 @@ public class OdApplicationService {
             UserRepository userRepository,
             GeoHierarchyService geoHierarchyService,
             @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
-            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService, OdApplicationAssignmentRepository odApplicationAssignmentRepository) {
+            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService, OdApplicationAssignmentRepository odApplicationAssignmentRepository, OdApplicationAssignmentTransformer odApplicationAssignmentTransformer) {
         this.odApplicationRepository = odApplicationRepository;
         this.odApplicationTransformer = odApplicationTransformer;
         this.userRepository = userRepository;
@@ -54,6 +56,7 @@ public class OdApplicationService {
         this.odCreateValidationService = odCreateValidationService;
         this.notificationService = notificationService;
         this.odApplicationAssignmentRepository = odApplicationAssignmentRepository;
+        this.odApplicationAssignmentTransformer = odApplicationAssignmentTransformer;
     }
 
     @Timed
@@ -206,10 +209,10 @@ public class OdApplicationService {
         List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes);
         List<Object[]> allPostGeoAnalyticalRecord = new ArrayList<>();
         List<Object[]> selfAllPostGeoAnalyticalRecord = new ArrayList<>();
-        if(CollectionUtils.isNotEmpty(authorityNodes)) {
+        if (CollectionUtils.isNotEmpty(authorityNodes)) {
             allPostGeoAnalyticalRecord = odApplicationRepository.countByStatusForGeoNodes(authorityNodes);
         }
-        selfAllPostGeoAnalyticalRecord= odApplicationRepository.countByStatusForOdOfficer(principal);
+        selfAllPostGeoAnalyticalRecord = odApplicationRepository.countByStatusForOdOfficer(principal);
         Map<OdApplicationStatus, Long> geoStatusCountMap = allPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(
@@ -224,8 +227,8 @@ public class OdApplicationService {
                         record -> (Long) record[1],                 // count
                         Long::sum                                  // in case of duplicate keys, sum the values
                 ));
-        for(OdApplicationStatus odApplicationStatus: Arrays.asList(OdApplicationStatus.REVIEW, OdApplicationStatus.OPEN, OdApplicationStatus.CLOSED)) {
-            selfStatusCountMap.put(odApplicationStatus, geoStatusCountMap.getOrDefault(odApplicationStatus,0L));
+        for (OdApplicationStatus odApplicationStatus : Arrays.asList(OdApplicationStatus.REVIEW, OdApplicationStatus.OPEN, OdApplicationStatus.CLOSED)) {
+            selfStatusCountMap.put(odApplicationStatus, geoStatusCountMap.getOrDefault(odApplicationStatus, 0L));
         }
         return AnalyticalResponse.builder()
                 .statusCountMap(geoStatusCountMap)
@@ -236,13 +239,13 @@ public class OdApplicationService {
     public String getAnalytics(User principal, List<UUID> geoHierarchyNodeUuids) {
         Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         return """
-                
+                                
                 """;
     }
 
     public void createAssignment(List<OdAssignmentPayload> assignmentRequests, UUID odApplicationUuid, User principal, List<UUID> geoHierarchyNodeUuids) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odApplicationUuid);
-        for(OdAssignmentPayload assignmentPojo : assignmentRequests) {
+        for (OdAssignmentPayload assignmentPojo : assignmentRequests) {
             User assignee = userRepository.findByUuid(assignmentPojo.getAssigneeUuid());
             OdApplicationAssignment odApplicationAssignment = OdApplicationAssignment.builder()
                     .uuid(UUID.randomUUID())
@@ -256,5 +259,23 @@ public class OdApplicationService {
         }
         odApplication.setStatus(OdApplicationStatus.ENQUIRY);
         odApplicationRepository.save(odApplication);
+    }
+
+    public OdAssignmentPayload updateAssignment(OdAssignmentPayload assignmentPayload, UUID assignmentUuid, User principal) {
+        OdApplicationAssignment odApplicationAssignment = odApplicationAssignmentRepository.findByUuid(assignmentUuid);
+        if (StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
+            odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
+            odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
+        }
+        if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.ENQUIRY.equals(assignmentPayload.getStatus())) {
+            odApplicationAssignment.setStatus(OdApplicationStatus.ENQUIRY);
+            odApplicationAssignment.setFilePath(null);
+        }
+        if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.CLOSED.equals(assignmentPayload.getStatus())) {
+            odApplicationAssignment.setStatus(OdApplicationStatus.CLOSED);
+        }
+        odApplicationAssignment.setModifiedAt(System.currentTimeMillis());
+        odApplicationAssignmentRepository.save(odApplicationAssignment);
+        return odApplicationAssignmentTransformer.transform(odApplicationAssignment);
     }
 }
