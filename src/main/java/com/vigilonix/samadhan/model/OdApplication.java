@@ -54,6 +54,4 @@ public class OdApplication {
     @Column
     @Enumerated(EnumType.STRING)
     private ApplicationCategory category;
-    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<OdApplicationAssignment> assignments;
 }

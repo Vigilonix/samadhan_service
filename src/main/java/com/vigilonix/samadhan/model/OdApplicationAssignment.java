@@ -12,10 +12,7 @@ import java.util.UUID;
 
 @Entity(name = "od_application_assignment")
 @Table(
-        name = "od_application_assignment",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"od_id", "application_id"}, name = "UK_od_application")
-        }
+        name = "od_application_assignment"
 )
 @Getter
 @AllArgsConstructor

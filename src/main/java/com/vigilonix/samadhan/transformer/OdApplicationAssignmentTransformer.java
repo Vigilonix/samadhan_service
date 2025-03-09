@@ -27,6 +27,8 @@ public class OdApplicationAssignmentTransformer implements Transformer<OdApplica
                         .status(odApplicationAssignment.getStatus())
                         .assigneeUuid(odApplicationAssignment.getEnquiryOfficer().getUuid())
                         .assigneeName(odApplicationAssignment.getEnquiryOfficer().getName())
+                        .createdAt(odApplicationAssignment.getCreatedAt())
+                        .modifiedAt(odApplicationAssignment.getModifiedAt())
                         .build();
     }
 }
