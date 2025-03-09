@@ -34,7 +34,8 @@ public class NotificationService {
                 log.info("Transformed payload {} for odApplication {}", notificationPayloads, odApplication);
                 for (NotificationPayload notificationPayload : notificationPayloads) {
                     try {
-                        if(NotificationMethod.WHATSAPP_TEMPLATE.equals(notificationPayload.getNotificationMethod()) && geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
+                        if(NotificationMethod.WHATSAPP_TEMPLATE.equals(notificationPayload.getNotificationMethod()) && 1==1) {
+//                            if(NotificationMethod.WHATSAPP_TEMPLATE.equals(notificationPayload.getNotificationMethod()) && geoHierarchyService.isTestNode(odApplication.getGeoHierarchyNodeUuid())) {
                             log.info("Test geonode, skipping notification for {}", odApplication);
                             continue;
                         }
