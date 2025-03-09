@@ -113,28 +113,22 @@ public class OdApplicationService {
     @Timed
     public OdApplicationPayload update(UUID uuid, OdApplicationPayload odApplicationPayload, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(uuid);
-        odUpdateValidationService.validate(ODApplicationValidationPayload.builder()
-                .odApplicationPayload(odApplicationPayload)
-                .odApplication(odApplication)
+//        odUpdateValidationService.validate(ODApplicationValidationPayload.builder()
+//                .odApplicationPayload(odApplicationPayload)
+//                .odApplication(odApplication)
 //                .enquiryUser(userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid()))
-                .principalUser(principal).build());
-//        if (CollectionUtils.isEmpty(odApplicationPayload.getEnquiries())) {
-//            User enquiryOfficer = userRepository.findByUuid(odApplicationPayload.getEnquiryOfficerUuid());
-//            GeoHierarchyNode geoHierarchyNode = geoHierarchyService.getHighestPostNode(enquiryOfficer.getPostGeoHierarchyNodeUuidMap());
-//            odApplication.setEnquiryOfficer(enquiryOfficer);
-//            odApplication.setGeoHierarchyNodeUuid(geoHierarchyNode.getUuid());
-//            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
-//        }
+//                .principalUser(principal).build());
+
 //        if (CollectionUtils.isNotEmpty(odApplicationPayload.getEnquiries())) {
 //            List<Enquiry> enquiries = odApplicationPayload.getEnquiries().stream().map(e-> Enquiry.builder().build()).collect(Collectors.toList());
 //            enquiries.addAll(odApplication.getEnquiries());
 //            odApplication.setEnquiries(enquiries);
 //            odApplication.setStatus(OdApplicationStatus.REVIEW);
 //        }
-        if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
-            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
-        }
-        if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
+//        if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
+//            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
+//        }
+        if (OdApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(OdApplicationStatus.CLOSED);
         }
 
