@@ -34,6 +34,12 @@ public class OdApplicationController {
     }
 
     @LogPayload
+    @PutMapping(value = "/assignment/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void updateAssignment(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody List<OdAssignmentPayload> assignments, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        odApplicationService.createAssignment(assignments, java.util.UUID.fromString(odApplicationUuid), authHelper.getPrincipal(), geoHierarchyNodeUuids);
+    }
+
+    @LogPayload
     @PutMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public OdApplicationPayload update(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody OdApplicationPayload odApplicationPayload) {
         return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPayload, authHelper.getPrincipal());

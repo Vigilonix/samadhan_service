@@ -173,7 +173,10 @@ public class OdApplicationService {
             }
         }
         return result.stream()
-                .map((odApplication) -> odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build()))
+                .map((odApplication) -> {
+                    List<OdApplicationAssignment> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication);
+                    return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().assignments(assignments).odApplication(odApplication).principalUser(principal).build());
+                })
                 .collect(Collectors.toList());
 
     }
