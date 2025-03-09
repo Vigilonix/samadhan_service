@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,4 +54,6 @@ public class OdApplication {
     @Column
     @Enumerated(EnumType.STRING)
     private ApplicationCategory category;
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<OdApplicationAssignment> assignments = new ArrayList<>();
 }

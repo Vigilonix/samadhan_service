@@ -38,4 +38,5 @@ public class OdApplicationPayload {
     private boolean hasAuthorityOnClosedStatus;
     private boolean hasAuthorityToReassign;
     private ApplicationCategory category;
+    private List<OdAssignmentPayload> assignments;
 }

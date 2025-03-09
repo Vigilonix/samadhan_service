@@ -29,7 +29,7 @@ public class OdApplicationAssignment {
     private UUID uuid;
     @ManyToOne
     private User od;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private OdApplication application;
     @Column
     private String filePath;

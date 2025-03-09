@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OdApplicationTransformer implements Transformer<ODApplicationTransformationRequest, OdApplicationPayload> {
     private final GeoHierarchyService geoHierarchyService;
+    private final OdApplicationAssignmentTransformer odApplicationAssignmentTransformer;
     @Override
     public OdApplicationPayload transform(ODApplicationTransformationRequest odApplicationTransformationRequest) {
         User principalUser = odApplicationTransformationRequest.getPrincipalUser();
@@ -43,6 +44,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .hasAuthorityOnClosedStatus(OdApplicationStatus.CLOSED.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .hasAuthorityToReassign(Arrays.asList(OdApplicationStatus.ENQUIRY, OdApplicationStatus.REVIEW).contains(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .category(odApplication.getCategory())
+                .assignments(odApplication.getAssignments().stream().map(odApplicationAssignmentTransformer::transform).collect(Collectors.toList()))
                 .build();
     }
 }
