@@ -42,4 +42,6 @@ public class OdApplicationAssignment {
     private Long createdAt;
     @Column
     private Long modifiedAt;
+    @Column
+    private String comment;
 }
