@@ -26,6 +26,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
     public OdApplicationPayload transform(ODApplicationTransformationRequest odApplicationTransformationRequest) {
         User principalUser = odApplicationTransformationRequest.getPrincipalUser();
         OdApplication odApplication = odApplicationTransformationRequest.getOdApplication();
+        boolean hasAuthorityOnEnquiryStatus = CollectionUtils.isNotEmpty(odApplicationTransformationRequest.getAssignments()) && odApplicationTransformationRequest.getAssignments().stream().anyMatch(a-> a.getEnquiryOfficer().getUuid().equals(principalUser.getUuid()));
         return OdApplicationPayload.builder()
                 .uuid(odApplication.getUuid())
                 .applicantName(odApplication.getApplicantName())
@@ -40,7 +41,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .createdAt(odApplication.getCreatedAt())
                 .modifiedAt(odApplication.getModifiedAt())
                 .hasAuthorityOnReviewStatus(OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
-//                .hasAuthorityOnEnquiryStatus(OdApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && (principalUser.getUuid().equals(odApplication.getEnquiryOfficer().getUuid())))
+                .hasAuthorityOnEnquiryStatus(OdApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && hasAuthorityOnEnquiryStatus)
                 .hasAuthorityOnOpenStatus(OdApplicationStatus.OPEN.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .hasAuthorityOnClosedStatus(OdApplicationStatus.CLOSED.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .hasAuthorityToReassign(Arrays.asList(OdApplicationStatus.ENQUIRY, OdApplicationStatus.REVIEW).contains(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
