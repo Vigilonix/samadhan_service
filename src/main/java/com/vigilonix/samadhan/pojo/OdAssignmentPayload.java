@@ -20,6 +20,7 @@ public class OdAssignmentPayload {
     private String assigneeName;
     private OdApplicationStatus status;
     private String filePath;
+    private String comment;
     private Long createdAt;
     private Long modifiedAt;
 }

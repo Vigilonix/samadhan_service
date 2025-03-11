@@ -29,6 +29,7 @@ public class OdApplicationAssignmentTransformer implements Transformer<OdApplica
                         .assigneeName(odApplicationAssignment.getEnquiryOfficer().getName())
                         .createdAt(odApplicationAssignment.getCreatedAt())
                         .modifiedAt(odApplicationAssignment.getModifiedAt())
+                        .comment(odApplicationAssignment.getComment())
                         .build();
     }
 }

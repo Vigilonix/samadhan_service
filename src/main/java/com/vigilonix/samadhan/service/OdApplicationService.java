@@ -257,6 +257,9 @@ public class OdApplicationService {
 
     public OdAssignmentPayload updateAssignment(OdAssignmentPayload assignmentPayload, UUID assignmentUuid, User principal) {
         OdApplicationAssignment odApplicationAssignment = odApplicationAssignmentRepository.findByUuid(assignmentUuid);
+        if(StringUtils.isNotEmpty(assignmentPayload.getComment())) {
+            odApplicationAssignment.setComment(assignmentPayload.getComment());
+        }
         if (StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
             odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
             odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
