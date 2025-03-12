@@ -260,16 +260,16 @@ public class OdApplicationService {
         if(StringUtils.isNotEmpty(assignmentPayload.getComment())) {
             odApplicationAssignment.setComment(assignmentPayload.getComment());
         }
-        if (StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
-            odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
-            odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
-        }
         if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.ENQUIRY.equals(assignmentPayload.getStatus())) {
             odApplicationAssignment.setStatus(OdApplicationStatus.ENQUIRY);
             odApplicationAssignment.setFilePath(null);
         }
         if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.CLOSED.equals(assignmentPayload.getStatus())) {
             odApplicationAssignment.setStatus(OdApplicationStatus.CLOSED);
+        }
+        if (StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
+            odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
+            odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
         }
         odApplicationAssignment.setModifiedAt(System.currentTimeMillis());
         odApplicationAssignmentRepository.save(odApplicationAssignment);

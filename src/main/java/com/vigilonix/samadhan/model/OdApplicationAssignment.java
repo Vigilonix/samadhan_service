@@ -22,14 +22,12 @@ public class OdApplicationAssignment {
     private UUID uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application_uuid") // This should match your database column name for the application's UUID
     private OdApplication application;
 
     @Column
     private String filePath;
 
     @ManyToOne
-    @JoinColumn(name = "enquiry_officer_uuid") // This should match your database column name for the user's UUID
     private User enquiryOfficer;
 
     @Column
