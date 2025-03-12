@@ -80,7 +80,7 @@ public class GeoHierarchyService {
     // Node filtering methods
     private List<GeoHierarchyNode> getFirstLevelNodesOfAuthorityPost(Map<Post, List<UUID>> postGeoNodeMap) {
         return postGeoNodeMap.entrySet().stream()
-                .filter(entry -> entry.getKey().getLevel() > 1)
+                .filter(entry -> entry.getKey().getLevel() >= 100)
                 .flatMap(entry -> entry.getValue().stream())
                 .map(nodeByUuid::get)
                 .distinct()
