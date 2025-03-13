@@ -308,6 +308,7 @@ public class OdApplicationService {
 
     private OdAssignmentPayload getOdAssignmentPayload(OdApplicationAssignmentHistory h) {
         return OdAssignmentPayload.builder()
+                .uuid(h.getUuid())
                 .assigneeUuid(h.getAssignmentUuid())
                 .modifiedAt(h.getModifiedAt())
                 .comment(h.getComment())
