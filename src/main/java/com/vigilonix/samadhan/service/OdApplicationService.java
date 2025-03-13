@@ -276,8 +276,16 @@ public class OdApplicationService {
             odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
         }
         odApplicationAssignment.setModifiedAt(System.currentTimeMillis());
+        odApplicationAssignment.setActor(principal);
         odApplicationAssignmentRepository.save(odApplicationAssignment);
 
+        OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment);
+        odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
+
+        return odApplicationAssignmentTransformer.transform(odApplicationAssignment);
+    }
+
+    private OdApplicationAssignmentHistory getOdApplicationAssignmentHistory(OdApplicationAssignment odApplicationAssignment) {
         OdApplicationAssignmentHistory odApplicationAssignmentHistory = OdApplicationAssignmentHistory.builder()
                 .uuid(UUID.randomUUID())
                 .assignmentUuid(odApplicationAssignment.getUuid())
@@ -287,23 +295,28 @@ public class OdApplicationService {
                 .enquiryOfficer(odApplicationAssignment.getEnquiryOfficer())
                 .modifiedAt(odApplicationAssignment.getModifiedAt())
                 .status(odApplicationAssignment.getStatus())
+                .actor(odApplicationAssignment.getActor())
                 .build();
-        odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
-
-        return odApplicationAssignmentTransformer.transform(odApplicationAssignment);
+        return odApplicationAssignmentHistory;
     }
 
     public List<OdAssignmentPayload> getAssignmentHistory(UUID assignmentUuid, User principal) {
         return odApplicationAssignmentHistoryRepository.findByAssignmentUuid(assignmentUuid).stream()
-                .map(h->OdAssignmentPayload.builder()
-                        .assigneeUuid(h.getAssignmentUuid())
-                        .modifiedAt(h.getModifiedAt())
-                        .comment(h.getComment())
-                        .filePath(h.getFilePath())
-                        .createdAt(h.getCreatedAt())
-                        .status(h.getStatus())
-                        .assigneeUuid(h.getEnquiryOfficer().getUuid())
-                        .build())
+                .map(h-> getOdAssignmentPayload(h))
                 .collect(Collectors.toList());
+    }
+
+    private OdAssignmentPayload getOdAssignmentPayload(OdApplicationAssignmentHistory h) {
+        return OdAssignmentPayload.builder()
+                .assigneeUuid(h.getAssignmentUuid())
+                .modifiedAt(h.getModifiedAt())
+                .comment(h.getComment())
+                .filePath(h.getFilePath())
+                .createdAt(h.getCreatedAt())
+                .status(h.getStatus())
+                .actorUuid(h.getActor().getUuid())
+                .actorName(h.getActor().getName())
+                .assigneeUuid(h.getEnquiryOfficer().getUuid())
+                .build();
     }
 }

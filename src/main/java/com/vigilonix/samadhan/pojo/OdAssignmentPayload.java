@@ -23,4 +23,6 @@ public class OdAssignmentPayload {
     private String comment;
     private Long createdAt;
     private Long modifiedAt;
+    private UUID actorUuid;
+    private String actorName;
 }

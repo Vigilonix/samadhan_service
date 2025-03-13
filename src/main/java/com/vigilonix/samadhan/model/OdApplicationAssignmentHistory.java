@@ -40,4 +40,7 @@ public class OdApplicationAssignmentHistory {
 
     @Column
     private String comment;
+
+    @ManyToOne
+    private User actor;
 }

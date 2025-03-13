@@ -42,4 +42,7 @@ public class OdApplicationAssignment {
 
     @Column
     private String comment;
+
+    @ManyToOne
+    private User actor;
 }
