@@ -50,6 +50,6 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<Object[]> countByStatusForGeoNodes(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user)  GROUP BY o.status")
+    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE oaa.enquiryOfficer = :user  GROUP BY o.status")
     List<Object[]>  countByStatusForOdOfficer(User user);
 }
