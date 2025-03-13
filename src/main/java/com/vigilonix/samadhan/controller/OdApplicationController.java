@@ -40,6 +40,12 @@ public class OdApplicationController {
     }
 
     @LogPayload
+    @GetMapping(value = "/assignment/{uuid}/history", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<OdAssignmentPayload> getAssignmentHistory(@PathVariable(name = "uuid") String assignmentUuid) {
+        return odApplicationService.getAssignmentHistory(java.util.UUID.fromString(assignmentUuid), authHelper.getPrincipal());
+    }
+
+    @LogPayload
     @PutMapping(path = UUID, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public OdApplicationPayload update(@PathVariable(name = "uuid") String odApplicationUuid, @RequestBody OdApplicationPayload odApplicationPayload) {
         return odApplicationService.update(java.util.UUID.fromString(odApplicationUuid), odApplicationPayload, authHelper.getPrincipal());

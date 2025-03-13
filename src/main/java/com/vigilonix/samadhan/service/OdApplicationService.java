@@ -5,8 +5,10 @@ import com.vigilonix.samadhan.aop.Timed;
 import com.vigilonix.samadhan.enums.Post;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.OdApplicationAssignment;
+import com.vigilonix.samadhan.model.OdApplicationAssignmentHistory;
 import com.vigilonix.samadhan.model.User;
 import com.vigilonix.samadhan.pojo.*;
+import com.vigilonix.samadhan.repository.OdApplicationAssignmentHistoryRepository;
 import com.vigilonix.samadhan.repository.OdApplicationAssignmentRepository;
 import com.vigilonix.samadhan.repository.OdApplicationRepository;
 import com.vigilonix.samadhan.repository.UserRepository;
@@ -38,6 +40,7 @@ public class OdApplicationService {
     private final ValidationService<ODApplicationValidationPayload> odCreateValidationService;
     private final NotificationService notificationService;
     private final OdApplicationAssignmentRepository odApplicationAssignmentRepository;
+    private final OdApplicationAssignmentHistoryRepository odApplicationAssignmentHistoryRepository;
     private final OdApplicationAssignmentTransformer odApplicationAssignmentTransformer;
 
     @Autowired
@@ -47,7 +50,7 @@ public class OdApplicationService {
             UserRepository userRepository,
             GeoHierarchyService geoHierarchyService,
             @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
-            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService, OdApplicationAssignmentRepository odApplicationAssignmentRepository, OdApplicationAssignmentTransformer odApplicationAssignmentTransformer) {
+            @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService, OdApplicationAssignmentRepository odApplicationAssignmentRepository, OdApplicationAssignmentHistoryRepository odApplicationAssignmentHistoryRepository, OdApplicationAssignmentTransformer odApplicationAssignmentTransformer) {
         this.odApplicationRepository = odApplicationRepository;
         this.odApplicationTransformer = odApplicationTransformer;
         this.userRepository = userRepository;
@@ -56,6 +59,7 @@ public class OdApplicationService {
         this.odCreateValidationService = odCreateValidationService;
         this.notificationService = notificationService;
         this.odApplicationAssignmentRepository = odApplicationAssignmentRepository;
+        this.odApplicationAssignmentHistoryRepository = odApplicationAssignmentHistoryRepository;
         this.odApplicationAssignmentTransformer = odApplicationAssignmentTransformer;
     }
 
@@ -273,6 +277,33 @@ public class OdApplicationService {
         }
         odApplicationAssignment.setModifiedAt(System.currentTimeMillis());
         odApplicationAssignmentRepository.save(odApplicationAssignment);
+
+        OdApplicationAssignmentHistory odApplicationAssignmentHistory = OdApplicationAssignmentHistory.builder()
+                .uuid(UUID.randomUUID())
+                .assignmentUuid(odApplicationAssignment.getUuid())
+                .comment(odApplicationAssignment.getComment())
+                .filePath(odApplicationAssignment.getFilePath())
+                .createdAt(odApplicationAssignment.getCreatedAt())
+                .enquiryOfficer(odApplicationAssignment.getEnquiryOfficer())
+                .modifiedAt(odApplicationAssignment.getModifiedAt())
+                .status(odApplicationAssignment.getStatus())
+                .build();
+        odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
+
         return odApplicationAssignmentTransformer.transform(odApplicationAssignment);
+    }
+
+    public List<OdAssignmentPayload> getAssignmentHistory(UUID assignmentUuid, User principal) {
+        return odApplicationAssignmentHistoryRepository.findByAssignmentUuid(assignmentUuid).stream()
+                .map(h->OdAssignmentPayload.builder()
+                        .assigneeUuid(h.getAssignmentUuid())
+                        .modifiedAt(h.getModifiedAt())
+                        .comment(h.getComment())
+                        .filePath(h.getFilePath())
+                        .createdAt(h.getCreatedAt())
+                        .status(h.getStatus())
+                        .assigneeUuid(h.getEnquiryOfficer().getUuid())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
