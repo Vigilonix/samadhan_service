@@ -27,11 +27,11 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<OdApplication> findByGeoHierarchyNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
 
     @Timed
-    @Query("SELECT o FROM od_application o WHERE (o.od = :user OR o.enquiryOfficer = :user)")
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user)")
     List<OdApplication> findByOdOrEnquiryOfficer(User user);
 
     @Timed
-    @Query("SELECT o FROM od_application o WHERE (o.od = :user OR o.enquiryOfficer = :user) AND o.status = :status")
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user) AND o.status = :status")
     List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, OdApplicationStatus status);
 
 
@@ -46,10 +46,10 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
 
     @Timed
-    @Query("SELECT o.status, COUNT(o) FROM od_application o WHERE o.geoHierarchyNodeUuid IN :geoNodeUuids GROUP BY o.status")
+    @Query("SELECT o.status, COUNT(o)  FROM od_application o WHERE o.geoHierarchyNodeUuid IN :geoNodeUuids GROUP BY o.status")
     List<Object[]> countByStatusForGeoNodes(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-    @Query("SELECT o.status, COUNT(o) FROM od_application o WHERE o.enquiryOfficer = :user  GROUP BY o.status")
+    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user)  GROUP BY o.status")
     List<Object[]>  countByStatusForOdOfficer(User user);
 }
