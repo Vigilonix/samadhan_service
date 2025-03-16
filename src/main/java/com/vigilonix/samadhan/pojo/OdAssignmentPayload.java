@@ -24,5 +24,7 @@ public class OdAssignmentPayload {
     private Long createdAt;
     private Long modifiedAt;
     private UUID actorUuid;
+    private UUID geoHierarchyNodeUuid;
+    private String geoHierarchyNodeName;
     private String actorName;
 }

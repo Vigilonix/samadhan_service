@@ -46,7 +46,7 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
 
     @Timed
-    @Query("SELECT o.status, COUNT(o)  FROM od_application o WHERE o.geoHierarchyNodeUuid IN :geoNodeUuids GROUP BY o.status")
+    @Query(value = "SELECT sq.status, COUNT(sq.status) FROM (SELECT COALESCE(oaa.status, o.status) AS status FROM od_application o LEFT JOIN od_application_assignment oaa ON oaa.application_id = o.id WHERE o.geo_hierarchy_node_uuid IN :geoNodeUuids) AS sq GROUP BY sq.status", nativeQuery = true)
     List<Object[]> countByStatusForGeoNodes(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed

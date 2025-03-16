@@ -18,6 +18,7 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OdApplicationAssignmentTransformer implements Transformer<OdApplicationAssignment, OdAssignmentPayload> {
+    private final GeoHierarchyService geoHierarchyService;
     @Override
     public OdAssignmentPayload transform(OdApplicationAssignment odApplicationAssignment) {
         return
@@ -28,6 +29,8 @@ public class OdApplicationAssignmentTransformer implements Transformer<OdApplica
                         .assigneeUuid(odApplicationAssignment.getEnquiryOfficer().getUuid())
                         .assigneeName(odApplicationAssignment.getEnquiryOfficer().getName())
                         .createdAt(odApplicationAssignment.getCreatedAt())
+                        .geoHierarchyNodeName(geoHierarchyService.getNodeById(odApplicationAssignment.getGeoHierarchyNodeUuid()).getName())
+                        .geoHierarchyNodeUuid(odApplicationAssignment.getGeoHierarchyNodeUuid())
                         .modifiedAt(odApplicationAssignment.getModifiedAt())
                         .comment(odApplicationAssignment.getComment())
                         .build();

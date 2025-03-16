@@ -41,6 +41,9 @@ public class OdApplicationAssignmentHistory {
     @Column
     private String comment;
 
+    @Column
+    private UUID geoHierarchyNodeUuid;
+
     @ManyToOne
     private User actor;
 }

@@ -243,6 +243,7 @@ public class OdApplicationService {
 
     public void createAssignment(List<OdAssignmentPayload> assignmentRequests, UUID odApplicationUuid, User principal, List<UUID> geoHierarchyNodeUuids) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odApplicationUuid);
+        GeoHierarchyNode geoHierarchyNode = resolveGeoHierarchyNode(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         for (OdAssignmentPayload assignmentPojo : assignmentRequests) {
             User assignee = userRepository.findByUuid(assignmentPojo.getAssigneeUuid());
             OdApplicationAssignment odApplicationAssignment = OdApplicationAssignment.builder()
@@ -252,6 +253,7 @@ public class OdApplicationService {
                     .createdAt(System.currentTimeMillis())
                     .modifiedAt(System.currentTimeMillis())
                     .status(OdApplicationStatus.ENQUIRY)
+                    .geoHierarchyNodeUuid(geoHierarchyNode.getUuid())
                     .build();
             odApplicationAssignmentRepository.save(odApplicationAssignment);
         }
@@ -295,6 +297,7 @@ public class OdApplicationService {
                 .enquiryOfficer(odApplicationAssignment.getEnquiryOfficer())
                 .modifiedAt(odApplicationAssignment.getModifiedAt())
                 .status(odApplicationAssignment.getStatus())
+                .geoHierarchyNodeUuid(odApplicationAssignment.getGeoHierarchyNodeUuid())
                 .actor(odApplicationAssignment.getActor())
                 .build();
         return odApplicationAssignmentHistory;
@@ -318,6 +321,8 @@ public class OdApplicationService {
                 .actorUuid(h.getActor().getUuid())
                 .actorName(h.getActor().getName())
                 .assigneeUuid(h.getEnquiryOfficer().getUuid())
+                .geoHierarchyNodeName(geoHierarchyService.getNodeById(h.getGeoHierarchyNodeUuid()).getName())
+                .geoHierarchyNodeUuid(h.getGeoHierarchyNodeUuid())
                 .build();
     }
 }
