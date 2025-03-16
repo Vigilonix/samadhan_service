@@ -1,14 +1,11 @@
 package com.vigilonix.samadhan.model;
 
+import com.vigilonix.samadhan.enums.ApplicationPriority;
 import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.pojo.OdApplicationStatus;
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Type;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "od_application")
@@ -51,6 +48,11 @@ public class OdApplication {
     private Long createdAt;
     @Column
     private Long modifiedAt;
+    @Column
+    private Long dueEpoch;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ApplicationPriority priority;
     @Column
     @Enumerated(EnumType.STRING)
     private ApplicationCategory category;

@@ -89,6 +89,8 @@ public class OdApplicationService {
                 .modifiedAt(epoch)
                 .status(OdApplicationStatus.OPEN)
                 .category(odApplicationPayload.getCategory())
+                .dueEpoch(odApplicationPayload.getDueEpoch())
+                .priority(odApplicationPayload.getApplicationPriority())
                 .build();
         odApplicationRepository.save(odApplication);
         notificationService.sendNotification(odApplication);

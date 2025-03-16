@@ -3,6 +3,7 @@ package com.vigilonix.samadhan.pojo;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vigilonix.samadhan.enums.ApplicationCategory;
+import com.vigilonix.samadhan.enums.ApplicationPriority;
 import lombok.*;
 
 import java.util.List;
@@ -38,4 +39,6 @@ public class OdApplicationPayload {
     private boolean hasAuthorityToReassign;
     private ApplicationCategory category;
     private List<OdAssignmentPayload> assignments;
+    private Long dueEpoch;
+    private ApplicationPriority applicationPriority;
 }
