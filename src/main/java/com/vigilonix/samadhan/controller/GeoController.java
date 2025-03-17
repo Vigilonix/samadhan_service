@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/geo")
+@RequestMapping("/v1/geo")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GeoController {
     private final AuthHelper authHelper;
