@@ -33,10 +33,10 @@ public class OdApplicationCreationValidator implements Validator<List<Validation
                         .contains(odRequest.getGeoHierarchyNodeUuid())) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);
         }
-        if (ApplicationCategory.DEPARTMENTAL_WORK.equals(odRequest.getCategory()) &&  StringUtils.isEmpty(odRequest.getApplicantName()) || odRequest.getApplicantName().length() > 64) {
+        if (ApplicationCategory.PUBLIC_PETITION.equals(odRequest.getCategory()) &&  (StringUtils.isEmpty(odRequest.getApplicantName()) || odRequest.getApplicantName().length() > 64)) {
             errors.add(ValidationErrorEnum.NAME_ATTRIBUTE_LENGTH_MORE_THAN_EXPECTED);
         }
-        if (ApplicationCategory.DEPARTMENTAL_WORK.equals(odRequest.getCategory()) && StringUtils.isEmpty(odRequest.getApplicantPhoneNumber()) || odRequest.getApplicantPhoneNumber().length() != 10 || !odRequest.getApplicantPhoneNumber().chars().allMatch(Character::isDigit)) {
+        if (ApplicationCategory.PUBLIC_PETITION.equals(odRequest.getCategory()) && (StringUtils.isEmpty(odRequest.getApplicantPhoneNumber()) || odRequest.getApplicantPhoneNumber().length() != 10 || !odRequest.getApplicantPhoneNumber().chars().allMatch(Character::isDigit))) {
             errors.add(ValidationErrorEnum.INVALID_PHONE_NUMBER);
         }
         List<UUID> associatedGeoHierarchyNodeSet = geoHierarchyService.getAllLevelNodes(
