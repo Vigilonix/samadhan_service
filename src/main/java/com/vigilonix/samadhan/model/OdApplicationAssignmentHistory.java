@@ -25,9 +25,6 @@ public class OdApplicationAssignmentHistory {
     @Column
     private String filePath;
 
-    @ManyToOne
-    private User enquiryOfficer;
-
     @Column
     @Enumerated(EnumType.STRING)
     private OdApplicationStatus status;
@@ -46,4 +43,7 @@ public class OdApplicationAssignmentHistory {
 
     @ManyToOne
     private User actor;
+
+    @Column
+    private Boolean isSystemGenerated;
 }

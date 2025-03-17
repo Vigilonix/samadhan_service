@@ -258,6 +258,9 @@ public class OdApplicationService {
                     .geoHierarchyNodeUuid(assignmentPojo.getGeoHierarchyNodeUuid())
                     .build();
             odApplicationAssignmentRepository.save(odApplicationAssignment);
+
+            OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, true);
+            odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
         }
         odApplication.setStatus(OdApplicationStatus.ENQUIRY);
         odApplicationRepository.save(odApplication);
@@ -283,24 +286,24 @@ public class OdApplicationService {
         odApplicationAssignment.setActor(principal);
         odApplicationAssignmentRepository.save(odApplicationAssignment);
 
-        OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment);
+        OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, false);
         odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
 
         return odApplicationAssignmentTransformer.transform(odApplicationAssignment);
     }
 
-    private OdApplicationAssignmentHistory getOdApplicationAssignmentHistory(OdApplicationAssignment odApplicationAssignment) {
+    private OdApplicationAssignmentHistory getOdApplicationAssignmentHistory(OdApplicationAssignment odApplicationAssignment, boolean isSystemGenerated) {
         OdApplicationAssignmentHistory odApplicationAssignmentHistory = OdApplicationAssignmentHistory.builder()
                 .uuid(UUID.randomUUID())
                 .assignmentUuid(odApplicationAssignment.getUuid())
                 .comment(odApplicationAssignment.getComment())
                 .filePath(odApplicationAssignment.getFilePath())
                 .createdAt(odApplicationAssignment.getCreatedAt())
-//                .enquiryOfficer(odApplicationAssignment.getEnquiryOfficer())
                 .modifiedAt(odApplicationAssignment.getModifiedAt())
                 .status(odApplicationAssignment.getStatus())
                 .geoHierarchyNodeUuid(odApplicationAssignment.getGeoHierarchyNodeUuid())
                 .actor(odApplicationAssignment.getActor())
+                .isSystemGenerated(isSystemGenerated)
                 .build();
         return odApplicationAssignmentHistory;
     }
@@ -314,7 +317,7 @@ public class OdApplicationService {
     private OdAssignmentPayload getOdAssignmentPayload(OdApplicationAssignmentHistory h) {
         return OdAssignmentPayload.builder()
                 .uuid(h.getUuid())
-//                .assigneeUuid(h.getAssignmentUuid())
+                .assigneeUuid(h.getAssignmentUuid())
                 .modifiedAt(h.getModifiedAt())
                 .comment(h.getComment())
                 .filePath(h.getFilePath())
@@ -322,9 +325,9 @@ public class OdApplicationService {
                 .status(h.getStatus())
                 .actorUuid(h.getActor().getUuid())
                 .actorName(h.getActor().getName())
-                .assigneeUuid(h.getEnquiryOfficer().getUuid())
                 .geoHierarchyNodeName(geoHierarchyService.getNodeById(h.getGeoHierarchyNodeUuid()).getName())
                 .geoHierarchyNodeUuid(h.getGeoHierarchyNodeUuid())
+                .isSystemGenerated(h.getIsSystemGenerated())
                 .build();
     }
 }

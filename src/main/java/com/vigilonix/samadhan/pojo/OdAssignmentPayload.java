@@ -27,4 +27,5 @@ public class OdAssignmentPayload {
     private UUID geoHierarchyNodeUuid;
     private String geoHierarchyNodeName;
     private String actorName;
+    private Boolean isSystemGenerated;
 }
