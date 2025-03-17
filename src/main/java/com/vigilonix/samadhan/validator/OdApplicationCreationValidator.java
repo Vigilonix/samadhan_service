@@ -1,5 +1,6 @@
 package com.vigilonix.samadhan.validator;
 
+import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.enums.ValidationError;
 import com.vigilonix.samadhan.enums.ValidationErrorEnum;
 import com.vigilonix.samadhan.pojo.ODApplicationValidationPayload;
@@ -32,10 +33,10 @@ public class OdApplicationCreationValidator implements Validator<List<Validation
                         .contains(odRequest.getGeoHierarchyNodeUuid())) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);
         }
-        if (StringUtils.isEmpty(odRequest.getApplicantName()) || odRequest.getApplicantName().length() > 64) {
+        if (ApplicationCategory.DEPARTMENTAL_WORK.equals(odRequest.getCategory()) &&  StringUtils.isEmpty(odRequest.getApplicantName()) || odRequest.getApplicantName().length() > 64) {
             errors.add(ValidationErrorEnum.NAME_ATTRIBUTE_LENGTH_MORE_THAN_EXPECTED);
         }
-        if (StringUtils.isEmpty(odRequest.getApplicantPhoneNumber()) || odRequest.getApplicantPhoneNumber().length() != 10 || !odRequest.getApplicantPhoneNumber().chars().allMatch(Character::isDigit)) {
+        if (ApplicationCategory.DEPARTMENTAL_WORK.equals(odRequest.getCategory()) && StringUtils.isEmpty(odRequest.getApplicantPhoneNumber()) || odRequest.getApplicantPhoneNumber().length() != 10 || !odRequest.getApplicantPhoneNumber().chars().allMatch(Character::isDigit)) {
             errors.add(ValidationErrorEnum.INVALID_PHONE_NUMBER);
         }
         List<UUID> associatedGeoHierarchyNodeSet = geoHierarchyService.getAllLevelNodes(

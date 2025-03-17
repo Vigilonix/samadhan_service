@@ -10,6 +10,7 @@ import com.vigilonix.samadhan.exception.ValidationRuntimeException;
 import com.vigilonix.samadhan.helper.ChangeDetector;
 import com.vigilonix.samadhan.model.OAuthToken;
 import com.vigilonix.samadhan.model.User;
+import com.vigilonix.samadhan.pojo.GeoHierarchyNode;
 import com.vigilonix.samadhan.repository.UserRepository;
 import com.vigilonix.samadhan.repository.UserRepositoryCustom;
 import com.vigilonix.samadhan.request.*;
@@ -243,5 +244,15 @@ public class UserService {
         for(UserRequest userRequest: userRequests) {
             signUpViaUserPass(userRequest, principal);
         }
+    }
+
+    public List<GeoHierarchyNode> searchGeoFence(User principal, String prefixName) {
+        return geoHierarchyService.getAllLevelNodes(principal.getPostGeoHierarchyNodeUuidMap())
+                .stream()
+                .map(u -> GeoHierarchyNode.builder()
+                        .uuid(u)
+                        .name(geoHierarchyService.getNodeById(u).getName())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
