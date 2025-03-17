@@ -18,6 +18,7 @@ public interface OdApplicationAssignmentRepository extends JpaRepository<OdAppli
     List<OdApplicationAssignment> findByApplication(OdApplication application);
 
     // Finds the latest assignment for each assignee within a specific application
-    @Query("SELECT a FROM OdApplicationAssignment a WHERE a.application = :application AND a.createdAt IN (SELECT MAX(b.createdAt) FROM OdApplicationAssignment b WHERE b.enquiryOfficer = a.enquiryOfficer AND b.application = :application GROUP BY b.enquiryOfficer)")
+//    @Query("SELECT a FROM OdApplicationAssignment a WHERE a.application = :application AND a.createdAt IN (SELECT MAX(b.createdAt) FROM OdApplicationAssignment b WHERE b.enquiryOfficer = a.enquiryOfficer AND b.application = :application GROUP BY b.enquiryOfficer)")
+    @Query("SELECT a FROM OdApplicationAssignment a WHERE a.application = :application")
     List<OdApplicationAssignment> findLatestAssignmentForEachAssignee(@Param("application") OdApplication application);
 }

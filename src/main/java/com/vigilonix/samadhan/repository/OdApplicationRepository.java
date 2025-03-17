@@ -27,11 +27,13 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<OdApplication> findByGeoHierarchyNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user)")
+//    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user)")
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user )")
     List<OdApplication> findByOdOrEnquiryOfficer(User user);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user) AND o.status = :status")
+//    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user) AND o.status = :status")
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user ) AND o.status = :status")
     List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, OdApplicationStatus status);
 
 
@@ -50,6 +52,7 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<Object[]> countByStatusForGeoNodes(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE oaa.enquiryOfficer = :user  GROUP BY o.status")
+//    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE oaa.enquiryOfficer = :user  GROUP BY o.status")
+    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o GROUP BY o.status")
     List<Object[]>  countByStatusForOdOfficer(User user);
 }

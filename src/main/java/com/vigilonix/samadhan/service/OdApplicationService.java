@@ -247,15 +247,15 @@ public class OdApplicationService {
         OdApplication odApplication = odApplicationRepository.findByUuid(odApplicationUuid);
         GeoHierarchyNode geoHierarchyNode = resolveGeoHierarchyNode(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         for (OdAssignmentPayload assignmentPojo : assignmentRequests) {
-            User assignee = userRepository.findByUuid(assignmentPojo.getAssigneeUuid());
+//            User assignee = userRepository.findByUuid(assignmentPojo.getAssigneeUuid());
             OdApplicationAssignment odApplicationAssignment = OdApplicationAssignment.builder()
                     .uuid(UUID.randomUUID())
                     .application(odApplication)
-                    .enquiryOfficer(assignee)
+//                    .enquiryOfficer(assignee)
                     .createdAt(System.currentTimeMillis())
                     .modifiedAt(System.currentTimeMillis())
                     .status(OdApplicationStatus.ENQUIRY)
-                    .geoHierarchyNodeUuid(geoHierarchyNode.getUuid())
+                    .geoHierarchyNodeUuid(assignmentPojo.getGeoHierarchyNodeUuid())
                     .build();
             odApplicationAssignmentRepository.save(odApplicationAssignment);
         }
@@ -296,7 +296,7 @@ public class OdApplicationService {
                 .comment(odApplicationAssignment.getComment())
                 .filePath(odApplicationAssignment.getFilePath())
                 .createdAt(odApplicationAssignment.getCreatedAt())
-                .enquiryOfficer(odApplicationAssignment.getEnquiryOfficer())
+//                .enquiryOfficer(odApplicationAssignment.getEnquiryOfficer())
                 .modifiedAt(odApplicationAssignment.getModifiedAt())
                 .status(odApplicationAssignment.getStatus())
                 .geoHierarchyNodeUuid(odApplicationAssignment.getGeoHierarchyNodeUuid())
@@ -314,7 +314,7 @@ public class OdApplicationService {
     private OdAssignmentPayload getOdAssignmentPayload(OdApplicationAssignmentHistory h) {
         return OdAssignmentPayload.builder()
                 .uuid(h.getUuid())
-                .assigneeUuid(h.getAssignmentUuid())
+//                .assigneeUuid(h.getAssignmentUuid())
                 .modifiedAt(h.getModifiedAt())
                 .comment(h.getComment())
                 .filePath(h.getFilePath())

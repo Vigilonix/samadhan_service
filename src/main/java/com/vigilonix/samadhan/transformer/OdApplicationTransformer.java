@@ -26,7 +26,8 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
     public OdApplicationPayload transform(ODApplicationTransformationRequest odApplicationTransformationRequest) {
         User principalUser = odApplicationTransformationRequest.getPrincipalUser();
         OdApplication odApplication = odApplicationTransformationRequest.getOdApplication();
-        boolean hasAuthorityOnEnquiryStatus = CollectionUtils.isNotEmpty(odApplicationTransformationRequest.getAssignments()) && odApplicationTransformationRequest.getAssignments().stream().anyMatch(a-> a.getEnquiryOfficer().getUuid().equals(principalUser.getUuid()));
+        //boolean hasAuthorityOnEnquiryStatus = CollectionUtils.isNotEmpty(odApplicationTransformationRequest.getAssignments()) && odApplicationTransformationRequest.getAssignments().stream().anyMatch(a-> a.getEnquiryOfficer().getUuid().equals(principalUser.getUuid()));
+        boolean hasAuthorityOnEnquiryStatus = false;
         return OdApplicationPayload.builder()
                 .uuid(odApplication.getUuid())
                 .applicantName(odApplication.getApplicantName())

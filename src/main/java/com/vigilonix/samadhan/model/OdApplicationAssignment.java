@@ -27,8 +27,8 @@ public class OdApplicationAssignment {
     @Column
     private String filePath;
 
-    @ManyToOne
-    private User enquiryOfficer;
+//    @ManyToOne
+//    private User enquiryOfficer;
 
     @Column
     @Enumerated(EnumType.STRING)
