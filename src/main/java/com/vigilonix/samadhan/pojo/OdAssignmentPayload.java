@@ -28,4 +28,5 @@ public class OdAssignmentPayload {
     private String geoHierarchyNodeName;
     private String actorName;
     private Boolean isSystemGenerated;
+    private Boolean hasAuthorityOnEnquiryStatus;
 }
