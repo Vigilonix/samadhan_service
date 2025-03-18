@@ -254,6 +254,7 @@ public class UserService {
                         .uuid(u)
                         .name(geoHierarchyService.getNodeById(u).getName())
                         .type(geoHierarchyService.getNodeById(u).getType())
+                        .geofence(geoHierarchyService.getNodeById(u).getGeofence())
                         .build())
                 .filter(n-> StringUtils.isEmpty(prefixName) || n.getName().toLowerCase().contains(prefixName.toLowerCase()))
                 .collect(Collectors.toList());
