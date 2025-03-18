@@ -274,12 +274,12 @@ public class OdApplicationService {
         }
         if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.ENQUIRY.equals(assignmentPayload.getStatus())) {
             odApplicationAssignment.setStatus(OdApplicationStatus.ENQUIRY);
-            odApplicationAssignment.setFilePath(null);
+            odApplicationAssignment.setFilePath(odApplicationAssignment.getFilePath());
         }
         if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.CLOSED.equals(assignmentPayload.getStatus())) {
             odApplicationAssignment.setStatus(OdApplicationStatus.CLOSED);
         }
-        if (StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
+        if (OdApplicationStatus.ENQUIRY.equals(odApplicationAssignment.getStatus()) && StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
             odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
             odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
         }
