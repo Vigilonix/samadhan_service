@@ -253,6 +253,7 @@ public class UserService {
                 .map(u -> GeoHierarchyNode.builder()
                         .uuid(u)
                         .name(geoHierarchyService.getNodeById(u).getName())
+                        .type(geoHierarchyService.getNodeById(u).getType())
                         .build())
                 .filter(n-> StringUtils.isEmpty(prefixName) || n.getName().toLowerCase().contains(prefixName.toLowerCase()))
                 .collect(Collectors.toList());
