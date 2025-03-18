@@ -28,13 +28,13 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     @Timed
 //    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user)")
-    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user )")
-    List<OdApplication> findByOdOrEnquiryOfficer(User user);
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE o.od = :user OR oaa.geo_hierarchy_node_uuid IN :geoNodeUuids")
+    List<OdApplication> findByOdOrEnquiryOfficer(User user, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
 //    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user) AND o.status = :status")
-    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user ) AND o.status = :status")
-    List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, OdApplicationStatus status);
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.geo_hierarchy_node_uuid IN :geoNodeUuids) AND oaa.status = :status")
+    List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, OdApplicationStatus status, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
 
 

@@ -165,13 +165,13 @@ public class OdApplicationService {
         List<OdApplication> result = new ArrayList<>();
         if (status != null) {
             if (CollectionUtils.isEmpty(authorityNodes)) {
-                result = odApplicationRepository.findByOdOrEnquiryOfficerAndStatus(principal, status);
+                result = odApplicationRepository.findByOdOrEnquiryOfficerAndStatus(principal, status, geoHierarchyService.getAllLevelNodes(principal.getPostGeoHierarchyNodeUuidMap()));
             } else {
                 result = odApplicationRepository.findByGeoHierarchyNodeUuidInAndStatus(geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes), status);
             }
         } else {
             if (CollectionUtils.isEmpty(authorityNodes)) {
-                result = odApplicationRepository.findByOdOrEnquiryOfficer(principal);
+                result = odApplicationRepository.findByOdOrEnquiryOfficer(principal, geoHierarchyService.getAllLevelNodes(principal.getPostGeoHierarchyNodeUuidMap()));
             } else {
                 result = odApplicationRepository.findByGeoHierarchyNodeUuidIn(geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes));
             }
