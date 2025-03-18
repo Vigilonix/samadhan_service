@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @ToString
 @Table(name = "od_application_assignment", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"application_uuid", "enquiry_officer_uuid"}, name = "UC_application_enquiry_officer")
+        @UniqueConstraint(columnNames = {"application_uuid", "geo_hierarchy_node_uuid"}, name = "UC_application_geo_hierarchy")
 })
 public class OdApplicationAssignment {
     @Id
