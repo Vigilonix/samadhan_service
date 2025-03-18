@@ -8,6 +8,7 @@ import com.vigilonix.samadhan.model.OdApplicationAssignment;
 import com.vigilonix.samadhan.model.OdApplicationAssignmentHistory;
 import com.vigilonix.samadhan.model.User;
 import com.vigilonix.samadhan.pojo.*;
+import com.vigilonix.samadhan.pojo.whatsapp.ODApplicationAssignmentTransformationRequest;
 import com.vigilonix.samadhan.repository.OdApplicationAssignmentHistoryRepository;
 import com.vigilonix.samadhan.repository.OdApplicationAssignmentRepository;
 import com.vigilonix.samadhan.repository.OdApplicationRepository;
@@ -289,7 +290,11 @@ public class OdApplicationService {
         OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, false);
         odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
 
-        return odApplicationAssignmentTransformer.transform(odApplicationAssignment);
+        return odApplicationAssignmentTransformer.transform(ODApplicationAssignmentTransformationRequest
+                .builder()
+                .assignment(odApplicationAssignment)
+                .principalUser(principal)
+                .build());
     }
 
     private OdApplicationAssignmentHistory getOdApplicationAssignmentHistory(OdApplicationAssignment odApplicationAssignment, boolean isSystemGenerated) {
