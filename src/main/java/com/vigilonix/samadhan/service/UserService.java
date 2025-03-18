@@ -246,6 +246,7 @@ public class UserService {
         }
     }
 
+    @Timed
     public List<GeoHierarchyNode> searchGeoFence(User principal, String prefixName) {
         return geoHierarchyService.getAllLevelNodes(principal.getPostGeoHierarchyNodeUuidMap())
                 .stream()

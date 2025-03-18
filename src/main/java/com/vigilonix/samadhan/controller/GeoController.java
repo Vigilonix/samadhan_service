@@ -1,5 +1,6 @@
 package com.vigilonix.samadhan.controller;
 
+import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.helper.AuthHelper;
 import com.vigilonix.samadhan.pojo.GeoHierarchyNode;
 import com.vigilonix.samadhan.service.UserService;
@@ -17,6 +18,7 @@ public class GeoController {
     private final AuthHelper authHelper;
     private final UserService userService;
 
+    @LogPayload
     @GetMapping(path = "/search", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<GeoHierarchyNode> searchGeoFences(@RequestParam(value = "prefix_name", defaultValue = "")String prefixName) {
         return userService.searchGeoFence(authHelper.getPrincipal(), prefixName);
