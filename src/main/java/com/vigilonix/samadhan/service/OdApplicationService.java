@@ -2,6 +2,7 @@ package com.vigilonix.samadhan.service;
 
 import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.aop.Timed;
+import com.vigilonix.samadhan.enums.ActorType;
 import com.vigilonix.samadhan.enums.Post;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.OdApplicationAssignment;
@@ -261,7 +262,7 @@ public class OdApplicationService {
                     .build();
             odApplicationAssignmentRepository.save(odApplicationAssignment);
 
-            OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, true);
+            OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, ActorType.SYSTEM);
             odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
         }
         odApplication.setStatus(OdApplicationStatus.ENQUIRY);
@@ -270,17 +271,22 @@ public class OdApplicationService {
 
     public OdAssignmentPayload updateAssignment(OdAssignmentPayload assignmentPayload, UUID assignmentUuid, User principal) {
         OdApplicationAssignment odApplicationAssignment = odApplicationAssignmentRepository.findByUuid(assignmentUuid);
+        ActorType actorType = geoHierarchyService.hasAuthority(odApplicationAssignment.getApplication().getGeoHierarchyNodeUuid(), principal.getPostGeoHierarchyNodeUuidMap()) ? ActorType.APPLICATION : ActorType.ASSIGNMENT;
+
         if(StringUtils.isNotEmpty(assignmentPayload.getComment())) {
             odApplicationAssignment.setComment(assignmentPayload.getComment());
         }
         if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.ENQUIRY.equals(assignmentPayload.getStatus())) {
+            actorType = ActorType.APPLICATION;
             odApplicationAssignment.setStatus(OdApplicationStatus.ENQUIRY);
             odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
         }
         else if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.CLOSED.equals(assignmentPayload.getStatus())) {
+            actorType = ActorType.APPLICATION;
             odApplicationAssignment.setStatus(OdApplicationStatus.CLOSED);
         }
         else if (OdApplicationStatus.ENQUIRY.equals(odApplicationAssignment.getStatus()) && StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
+            actorType = ActorType.ASSIGNMENT;
             odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
             odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
         }
@@ -288,7 +294,7 @@ public class OdApplicationService {
         odApplicationAssignment.setActor(principal);
         odApplicationAssignmentRepository.save(odApplicationAssignment);
 
-        OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, false);
+        OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, actorType);
         odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
 
         return odApplicationAssignmentTransformer.transform(ODApplicationAssignmentTransformationRequest
@@ -298,7 +304,7 @@ public class OdApplicationService {
                 .build());
     }
 
-    private OdApplicationAssignmentHistory getOdApplicationAssignmentHistory(OdApplicationAssignment odApplicationAssignment, boolean isSystemGenerated) {
+    private OdApplicationAssignmentHistory getOdApplicationAssignmentHistory(OdApplicationAssignment odApplicationAssignment, ActorType actorType) {
         OdApplicationAssignmentHistory odApplicationAssignmentHistory = OdApplicationAssignmentHistory.builder()
                 .uuid(UUID.randomUUID())
                 .assignmentUuid(odApplicationAssignment.getUuid())
@@ -309,7 +315,7 @@ public class OdApplicationService {
                 .status(odApplicationAssignment.getStatus())
                 .geoHierarchyNodeUuid(odApplicationAssignment.getGeoHierarchyNodeUuid())
                 .actor(odApplicationAssignment.getActor())
-                .isSystemGenerated(isSystemGenerated)
+                .actorType(actorType)
                 .build();
         return odApplicationAssignmentHistory;
     }
@@ -333,7 +339,7 @@ public class OdApplicationService {
                 .actorName(h.getActor().getName())
                 .geoHierarchyNodeName(geoHierarchyService.getNodeById(h.getGeoHierarchyNodeUuid()).getName())
                 .geoHierarchyNodeUuid(h.getGeoHierarchyNodeUuid())
-                .isSystemGenerated(h.getIsSystemGenerated())
+                .actorType(h.getActorType())
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.vigilonix.samadhan.pojo;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.vigilonix.samadhan.enums.ActorType;
 import lombok.*;
 
 import java.util.UUID;
@@ -25,6 +26,6 @@ public class OdAssignmentPayload {
     private UUID geoHierarchyNodeUuid;
     private String geoHierarchyNodeName;
     private String actorName;
-    private Boolean isSystemGenerated;
+    private ActorType actorType;
     private Boolean hasAuthorityOnEnquiryStatus;
 }

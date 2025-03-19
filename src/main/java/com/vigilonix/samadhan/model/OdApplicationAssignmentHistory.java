@@ -1,5 +1,6 @@
 package com.vigilonix.samadhan.model;
 
+import com.vigilonix.samadhan.enums.ActorType;
 import com.vigilonix.samadhan.pojo.OdApplicationStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,5 +46,5 @@ public class OdApplicationAssignmentHistory {
     private User actor;
 
     @Column
-    private Boolean isSystemGenerated;
+    private ActorType actorType;
 }
