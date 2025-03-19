@@ -253,6 +253,7 @@ public class OdApplicationService {
                     .uuid(UUID.randomUUID())
                     .application(odApplication)
 //                    .enquiryOfficer(assignee)
+                    .actor(principal)
                     .createdAt(System.currentTimeMillis())
                     .modifiedAt(System.currentTimeMillis())
                     .status(OdApplicationStatus.ENQUIRY)
