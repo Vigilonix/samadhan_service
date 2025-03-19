@@ -217,7 +217,7 @@ public class OdApplicationService {
         Map<OdApplicationStatus, Long> geoStatusCountMap = allPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(
-                        record -> (OdApplicationStatus) record[0],  // status, which might be null
+                        record -> OdApplicationStatus.valueOf((String)record[0]),  // status, which might be null
                         record -> (Long) record[1],                 // count
                         Long::sum                                  // in case of duplicate keys, sum the values
                 ));
