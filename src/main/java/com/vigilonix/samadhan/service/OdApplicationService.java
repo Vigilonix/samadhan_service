@@ -277,10 +277,10 @@ public class OdApplicationService {
             odApplicationAssignment.setStatus(OdApplicationStatus.ENQUIRY);
             odApplicationAssignment.setFilePath(odApplicationAssignment.getFilePath());
         }
-        if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.CLOSED.equals(assignmentPayload.getStatus())) {
+        else if (OdApplicationStatus.REVIEW.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.CLOSED.equals(assignmentPayload.getStatus())) {
             odApplicationAssignment.setStatus(OdApplicationStatus.CLOSED);
         }
-        if (OdApplicationStatus.ENQUIRY.equals(odApplicationAssignment.getStatus()) && StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
+        else if (OdApplicationStatus.ENQUIRY.equals(odApplicationAssignment.getStatus()) && StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
             odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
             odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
         }
