@@ -195,18 +195,21 @@
           "name": "Barh District D",
           "type": "DISTRICT",
           "uuid": "75cf5b02-2629-44d6-9d63-3a20dd71d6ae",
+          "isDemo": true,
           "geofence": [],
           "children": [
             {
               "name": "Barh Circle D",
               "type": "CIRCLE",
               "uuid": "b2c4b96b-ebf2-46b5-8610-720b44220828",
+              "isDemo": true,
               "geofence": [],
               "children": [
                 {
                   "name": "Barh EM D",
                   "type": "EM_CIRCLE",
                   "uuid": "5ef89f90-36b5-4fb4-8d6b-1835f25a7d15",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -214,6 +217,7 @@
                   "name": "Barh DCLR D",
                   "type": "DCLR_CIRCLE",
                   "uuid": "a774e0f5-b4b3-4cb1-b84b-6f2dfe47b402",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -221,6 +225,7 @@
                   "name": "Mokama D",
                   "type": "BLOCK",
                   "uuid": "7a3995c6-3e4a-4a25-9964-39567b1f4f8b",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -228,6 +233,7 @@
                   "name": "Ghoswari D",
                   "type": "BLOCK",
                   "uuid": "45e79dc7-2c44-44d2-b6e6-3b78f953aa7b",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -235,6 +241,7 @@
                   "name": "Pandarak D",
                   "type": "BLOCK",
                   "uuid": "690b674b-f9d3-4e8e-9268-9bcaf7e6d243",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -242,6 +249,7 @@
                   "name": "Belchhi D",
                   "type": "BLOCK",
                   "uuid": "2c08d4f6-cc8e-4071-9457-2c71b50b91ec",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -249,6 +257,7 @@
                   "name": "Athmalgola D",
                   "type": "BLOCK",
                   "uuid": "d3d7189f-180f-4428-b659-12f1f8ceff15",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -256,6 +265,7 @@
                   "name": "Bakhtiyarpur D",
                   "type": "BLOCK",
                   "uuid": "a6cfd89a-b9ec-4b79-bc72-af65d9588459",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 },
@@ -263,6 +273,7 @@
                   "name": "BARH D",
                   "type": "BLOCK",
                   "uuid": "6e5a3d2d-0595-4579-8c18-0868dc3a0dc9",
+                  "isDemo": true,
                   "geofence": [],
                   "children": []
                 }
