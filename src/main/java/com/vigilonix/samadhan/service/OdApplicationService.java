@@ -208,7 +208,7 @@ public class OdApplicationService {
     @Timed
     public AnalyticalResponse getDashboardAnalytics(User principal, List<UUID> geoHierarchyNodeUuids) {
         Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
-        List<Object[]> allPostGeoAnalyticalRecord =  odApplicationRepository.applicationStatusCountBytGeoFilter(geoHierarchyService.getFirstLevelNodes(geoNodes));
+        List<Object[]> allPostGeoAnalyticalRecord  = odApplicationRepository.applicationStatusCountByAssignmentGeoFilter(geoHierarchyService.getFirstLevelNodes(geoNodes));
         Map<OdApplicationStatus, Long> geoStatusCountMap = allPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(
@@ -217,7 +217,7 @@ public class OdApplicationService {
                         Long::sum                                  // in case of duplicate keys, sum the values
                 ));
 
-        List<Object[]> selfAllPostGeoAnalyticalRecord = odApplicationRepository.applicationStatusCountByAssignmentGeoFilter(geoHierarchyService.getFirstLevelNodes(geoNodes));
+        List<Object[]>  selfAllPostGeoAnalyticalRecord =  odApplicationRepository.applicationStatusCountBytGeoFilter(geoHierarchyService.getFirstLevelNodes(geoNodes));
         Map<OdApplicationStatus, Long> selfStatusCountMap = selfAllPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(
