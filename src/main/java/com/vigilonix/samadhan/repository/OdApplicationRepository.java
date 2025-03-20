@@ -21,10 +21,12 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<OdApplication> findByOd(User uuid);
 
     @Timed
-    List<OdApplication> findByGeoHierarchyNodeUuidIn(List<UUID> uuids);
+    @Query(value = "SELECT DISTINCT o FROM od_application o LEFT JOIN OdApplicationAssignment oaa ON oaa.application = o WHERE (o.geoHierarchyNodeUuid IN :geoNodeUuids OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids)")
+    List<OdApplication> findByGeoHierarchyNodeUuidIn(@Param("geoNodeUuids")List<UUID> geoNodeUuids);
 
     @Timed
-    List<OdApplication> findByGeoHierarchyNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
+    @Query(value = "SELECT DISTINCT o FROM od_application o LEFT JOIN OdApplicationAssignment oaa ON oaa.application = o WHERE (o.geoHierarchyNodeUuid IN :geoNodeUuids OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids) AND o.status = :status" )
+    List<OdApplication> findByGeoHierarchyNodeUuidInAndStatus(@Param("geoNodeUuids")List<UUID> geoNodeUuids, OdApplicationStatus status);
 
     @Timed
     @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE o.od = :user OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids")
