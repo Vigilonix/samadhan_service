@@ -209,12 +209,11 @@ public class OdApplicationService {
     public AnalyticalResponse getDashboardAnalytics(User principal, List<UUID> geoHierarchyNodeUuids) {
         Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes);
+
         List<Object[]> allPostGeoAnalyticalRecord = new ArrayList<>();
-        List<Object[]> selfAllPostGeoAnalyticalRecord = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(authorityNodes)) {
-            allPostGeoAnalyticalRecord = odApplicationRepository.countByStatusForGeoNodes(authorityNodes);
+            allPostGeoAnalyticalRecord = odApplicationRepository.applicationStatusCountBytGeoFilter(authorityNodes);
         }
-        selfAllPostGeoAnalyticalRecord = odApplicationRepository.countByStatusForOdOfficer(principal);
         Map<OdApplicationStatus, Long> geoStatusCountMap = allPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(
@@ -222,6 +221,8 @@ public class OdApplicationService {
                         record -> (Long) record[1],                 // count
                         Long::sum                                  // in case of duplicate keys, sum the values
                 ));
+
+        List<Object[]> selfAllPostGeoAnalyticalRecord = odApplicationRepository.applicationStatusCountByAssignmentGeoFilter(geoHierarchyService.getFirstLevelNodes(geoNodes));
         Map<OdApplicationStatus, Long> selfStatusCountMap = selfAllPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(
@@ -234,7 +235,7 @@ public class OdApplicationService {
         }
         return AnalyticalResponse.builder()
                 .statusCountMap(geoStatusCountMap)
-                .self_statusCountMap(selfStatusCountMap)
+                .selfStatusCountMap(selfStatusCountMap)
                 .build();
     }
 
@@ -297,11 +298,34 @@ public class OdApplicationService {
         OdApplicationAssignmentHistory odApplicationAssignmentHistory = getOdApplicationAssignmentHistory(odApplicationAssignment, actorType);
         odApplicationAssignmentHistoryRepository.save(odApplicationAssignmentHistory);
 
+        updateApplicationStatus(odApplicationAssignment.getApplication());
+
         return odApplicationAssignmentTransformer.transform(ODApplicationAssignmentTransformationRequest
                 .builder()
                 .assignment(odApplicationAssignment)
                 .principalUser(principal)
                 .build());
+    }
+
+    private void updateApplicationStatus(OdApplication odApplication) {
+        List<OdApplicationAssignment> assignments = odApplicationAssignmentRepository.findByApplication(odApplication);
+
+        boolean isEnquiry = assignments.stream()
+                .anyMatch(a -> OdApplicationStatus.ENQUIRY.equals(a.getStatus()));
+        boolean isReview = assignments.stream()
+                .allMatch(a -> OdApplicationStatus.REVIEW.equals(a.getStatus()));
+        boolean isClosed = assignments.stream()
+                .allMatch(a -> OdApplicationStatus.CLOSED.equals(a.getStatus()));
+
+        if (isEnquiry) {
+            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
+        } else if (isReview) {
+            odApplication.setStatus(OdApplicationStatus.REVIEW);
+        } else if (isClosed) {
+            odApplication.setStatus(OdApplicationStatus.CLOSED);
+        }
+
+        odApplicationRepository.save(odApplication);
     }
 
     private OdApplicationAssignmentHistory getOdApplicationAssignmentHistory(OdApplicationAssignment odApplicationAssignment, ActorType actorType) {

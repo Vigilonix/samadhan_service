@@ -27,12 +27,10 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<OdApplication> findByGeoHierarchyNodeUuidInAndStatus(List<UUID> uuid, OdApplicationStatus status);
 
     @Timed
-//    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user)")
     @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE o.od = :user OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids")
     List<OdApplication> findByOdOrEnquiryOfficer(User user, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-//    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.enquiryOfficer = :user) AND o.status = :status")
     @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids) AND oaa.status = :status")
     List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, OdApplicationStatus status, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
@@ -49,10 +47,9 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     @Timed
     @Query(value = "SELECT sq.status, COUNT(sq.status) FROM (SELECT COALESCE(oaa.status, o.status) AS status FROM od_application o LEFT JOIN od_application_assignment oaa ON oaa.application_uuid = o.uuid WHERE o.geo_hierarchy_node_uuid IN :geoNodeUuids) AS sq GROUP BY sq.status", nativeQuery = true)
-    List<Object[]> countByStatusForGeoNodes(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
+    List<Object[]> applicationStatusCountByAssignmentGeoFilter(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-//    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE oaa.enquiryOfficer = :user  GROUP BY o.status")
-    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o GROUP BY o.status")
-    List<Object[]>  countByStatusForOdOfficer(User user);
+    @Query("SELECT o.status, COUNT(distinct(o)) FROM od_application o WHERE o.geoHierarchyNodeUuid IN :geoNodeUuids GROUP BY o.status")
+    List<Object[]>  applicationStatusCountBytGeoFilter(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 }

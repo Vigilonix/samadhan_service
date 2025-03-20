@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GeoHierarchyService {
     private final GeoHierarchyNode rootNode;
-    private final Map<UUID, GeoHierarchyNode> nodeByUuid;
+    private final Map<UUID, GeoHierarchyNode> nodeByUuidMap;
     @Getter
     private final Map<GeoHierarchyNode, GeoHierarchyNode> parentMap;
     private final Set<UUID> testNodes;
@@ -25,7 +25,7 @@ public class GeoHierarchyService {
     @Autowired
     public GeoHierarchyService(GeoHierarchyNode rootNode) {
         this.rootNode = rootNode;
-        this.nodeByUuid = new HashMap<>();
+        this.nodeByUuidMap = new HashMap<>();
         this.parentMap = new HashMap<>();
         testNodes = new HashSet<>();
 
@@ -39,11 +39,11 @@ public class GeoHierarchyService {
         bfsQueue.offer(rootNode);
         while (!bfsQueue.isEmpty()) {
             GeoHierarchyNode currentNode = bfsQueue.poll();
-            if(nodeByUuid.containsKey(currentNode.getUuid())) {
+            if(nodeByUuidMap.containsKey(currentNode.getUuid())) {
                 log.error("duplicate uuid present {}", currentNode);
                 throw new IllegalArgumentException("duplicate uuid" + currentNode);
             }
-            nodeByUuid.put(currentNode.getUuid(), currentNode);
+            nodeByUuidMap.put(currentNode.getUuid(), currentNode);
             currentNode.getChildren().forEach(child -> {
                 parentMap.put(child, currentNode);
                 if(BooleanUtils.isTrue(currentNode.getIsTest()) || testNodes.contains(currentNode.getUuid())) {
@@ -57,7 +57,7 @@ public class GeoHierarchyService {
 
     // Node retrieval methods
     public GeoHierarchyNode getNodeById(UUID uuid) {
-        return nodeByUuid.get(uuid);
+        return nodeByUuidMap.get(uuid);
     }
 
     private List<GeoHierarchyNode> getAllLevelNodes(GeoHierarchyNode startNode) {
@@ -74,7 +74,7 @@ public class GeoHierarchyService {
 
     public GeoHierarchyNode getHighestPostNode(Map<Post, List<UUID>> postGeoNodeMap) {
         Post highestPost = findHighestPost(postGeoNodeMap);
-        return nodeByUuid.get(postGeoNodeMap.get(highestPost).get(0));
+        return nodeByUuidMap.get(postGeoNodeMap.get(highestPost).get(0));
     }
 
     // Node filtering methods
@@ -82,7 +82,7 @@ public class GeoHierarchyService {
         return postGeoNodeMap.entrySet().stream()
                 .filter(entry -> entry.getKey().getLevel() >= 100)
                 .flatMap(entry -> entry.getValue().stream())
-                .map(nodeByUuid::get)
+                .map(nodeByUuidMap::get)
                 .distinct()
                 .collect(Collectors.toList());
     }
@@ -97,7 +97,7 @@ public class GeoHierarchyService {
     public List<UUID> getAllLevelNodes(Map<Post, List<UUID>> postGeoNodeMap) {
         return postGeoNodeMap.values().stream()
                 .flatMap(Collection::stream)
-                .map(nodeByUuid::get)
+                .map(nodeByUuidMap::get)
                 .flatMap(node -> getAllLevelNodes(node).stream())
                 .map(GeoHierarchyNode::getUuid)
                 .distinct()
@@ -149,7 +149,7 @@ public class GeoHierarchyService {
     }
 
     public List<GeoHierarchyNode> getAllLevelNodes(UUID geoHierarchyNodeUuid) {
-        return getAllLevelNodes(nodeByUuid.get(geoHierarchyNodeUuid));
+        return getAllLevelNodes(nodeByUuidMap.get(geoHierarchyNodeUuid));
     }
 
     public Map<Post, List<UUID>> resolveGeoHierarchyNodes(final Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap, List<UUID> geoHierarchyNodeUuids) {

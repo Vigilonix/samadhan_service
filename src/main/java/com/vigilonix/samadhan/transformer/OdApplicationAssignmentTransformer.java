@@ -34,9 +34,10 @@ public class OdApplicationAssignmentTransformer implements Transformer<ODApplica
                         .geoHierarchyNodeUuid(odApplicationAssignment.getGeoHierarchyNodeUuid())
                         .modifiedAt(odApplicationAssignment.getModifiedAt())
                         .comment(odApplicationAssignment.getComment())
-                        .hasAuthorityOnEnquiryStatus(geoHierarchyService
-                                .hasAuthority(odApplicationAssignment.getGeoHierarchyNodeUuid(),
-                                    odApplicationAssignmentTransformationRequest.getPrincipalUser().getPostGeoHierarchyNodeUuidMap()))
+                        .hasAuthorityOnEnquiryStatus(
+                                geoHierarchyService.getFirstLevelNodes(odApplicationAssignmentTransformationRequest
+                                                .getPrincipalUser().getPostGeoHierarchyNodeUuidMap())
+                                .contains(odApplicationAssignment.getGeoHierarchyNodeUuid()))
                         .build();
     }
 }

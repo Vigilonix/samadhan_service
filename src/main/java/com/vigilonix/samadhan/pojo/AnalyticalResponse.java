@@ -16,6 +16,6 @@ import java.util.Map;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AnalyticalResponse {
     private final Map<OdApplicationStatus, Long> statusCountMap;
-    private final Map<OdApplicationStatus, Long> self_statusCountMap;
+    private final Map<OdApplicationStatus, Long> selfStatusCountMap;
     private final GeoHierarchyAnalyticalResponse geoHierarchyAnalyticalResponse;
 }
