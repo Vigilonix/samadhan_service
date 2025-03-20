@@ -7,6 +7,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Rank {
     CONSTABLE(100),
+    SDM(900),
+    BDO(800),
+    CO(700),
+    BPRO(600),
+    EO(500),
+    EM(900),
+    DCLR(900),
     HEAD(200),
     HEAD_CONSTABLE(300),
     PTC(400),

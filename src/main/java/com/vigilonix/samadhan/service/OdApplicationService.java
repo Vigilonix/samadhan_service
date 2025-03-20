@@ -208,12 +208,7 @@ public class OdApplicationService {
     @Timed
     public AnalyticalResponse getDashboardAnalytics(User principal, List<UUID> geoHierarchyNodeUuids) {
         Map<Post, List<UUID>> geoNodes = geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
-        List<UUID> authorityNodes = geoHierarchyService.getAllLevelNodesOfAuthorityPost(geoNodes);
-
-        List<Object[]> allPostGeoAnalyticalRecord = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(authorityNodes)) {
-            allPostGeoAnalyticalRecord = odApplicationRepository.applicationStatusCountBytGeoFilter(authorityNodes);
-        }
+        List<Object[]> allPostGeoAnalyticalRecord =  odApplicationRepository.applicationStatusCountBytGeoFilter(geoHierarchyService.getFirstLevelNodes(geoNodes));
         Map<OdApplicationStatus, Long> geoStatusCountMap = allPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(

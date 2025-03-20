@@ -7,5 +7,8 @@ public enum GeoHierarchyType {
     SUB_DIVISION,
     CIRCLE,
     THANA,
-    BEAT
+    BEAT,
+    EM_CIRCLE,
+    DCLR_CIRCLE,
+    BLOCK;
 }
