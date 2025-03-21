@@ -218,6 +218,7 @@ public class OdApplicationService {
                 ));
 
         List<Object[]>  selfAllPostGeoAnalyticalRecord =  odApplicationRepository.applicationStatusCountBytGeoFilter(geoHierarchyService.getFirstLevelNodes(geoNodes));
+        log.info("self map out put size {} dump {}", selfAllPostGeoAnalyticalRecord.size(), selfAllPostGeoAnalyticalRecord);
         Map<OdApplicationStatus, Long> selfStatusCountMap = selfAllPostGeoAnalyticalRecord.stream()
                 .filter(record -> !Objects.isNull(record[0]))
                 .collect(Collectors.toMap(
@@ -225,10 +226,11 @@ public class OdApplicationService {
                         record -> (Long) record[1],                 // count
                         Long::sum                                  // in case of duplicate keys, sum the values
                 ));
+        log.info("transformed status map {}", selfStatusCountMap);
         for (OdApplicationStatus odApplicationStatus : Arrays.asList(OdApplicationStatus.REVIEW, OdApplicationStatus.OPEN, OdApplicationStatus.CLOSED)) {
-            selfStatusCountMap.put(odApplicationStatus, geoStatusCountMap.getOrDefault(odApplicationStatus, 0L));
+            selfStatusCountMap.put(odApplicationStatus, selfStatusCountMap.getOrDefault(odApplicationStatus, 0L));
         }
-        log.info("analytics output for user {} geonodes {} self {} geo {}", principal.getUuid(), geoNodes, selfStatusCountMap, geoStatusCountMap);
+        log.info("analytics output for user {} geonodes {} self {} geo {} input list {}", principal.getUuid(), geoNodes, selfStatusCountMap, geoStatusCountMap, geoHierarchyService.getFirstLevelNodes(geoNodes));
         return AnalyticalResponse.builder()
                 .statusCountMap(geoStatusCountMap)
                 .selfStatusCountMap(selfStatusCountMap)
