@@ -228,6 +228,7 @@ public class OdApplicationService {
         for (OdApplicationStatus odApplicationStatus : Arrays.asList(OdApplicationStatus.REVIEW, OdApplicationStatus.OPEN, OdApplicationStatus.CLOSED)) {
             selfStatusCountMap.put(odApplicationStatus, geoStatusCountMap.getOrDefault(odApplicationStatus, 0L));
         }
+        log.info("analytics output for user {} geonodes {} self {} geo {}", principal.getUuid(), geoNodes, selfStatusCountMap, geoStatusCountMap);
         return AnalyticalResponse.builder()
                 .statusCountMap(geoStatusCountMap)
                 .selfStatusCountMap(selfStatusCountMap)
