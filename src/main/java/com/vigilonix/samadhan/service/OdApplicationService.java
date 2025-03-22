@@ -284,7 +284,7 @@ public class OdApplicationService {
             actorType = ActorType.APPLICATION;
             odApplicationAssignment.setStatus(OdApplicationStatus.CLOSED);
         }
-        else if (OdApplicationStatus.ENQUIRY.equals(odApplicationAssignment.getStatus()) && StringUtils.isNotEmpty(assignmentPayload.getFilePath())) {
+        else if (OdApplicationStatus.ENQUIRY.equals(odApplicationAssignment.getStatus()) && OdApplicationStatus.ENQUIRY.equals(assignmentPayload.getStatus())) {
             actorType = ActorType.ASSIGNMENT;
             odApplicationAssignment.setFilePath(assignmentPayload.getFilePath());
             odApplicationAssignment.setStatus(OdApplicationStatus.REVIEW);
