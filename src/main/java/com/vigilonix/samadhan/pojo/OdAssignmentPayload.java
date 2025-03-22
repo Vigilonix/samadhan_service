@@ -28,4 +28,6 @@ public class OdAssignmentPayload {
     private String actorName;
     private ActorType actorType;
     private Boolean hasAuthorityOnEnquiryStatus;
+    private String enquiryUserName;
+    private String enquiryPhoneNumber;
 }

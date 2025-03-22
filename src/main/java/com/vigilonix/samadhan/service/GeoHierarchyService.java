@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class GeoHierarchyService {
+    private static final int AUTHORITY_LEVEL = 100;
     private final GeoHierarchyNode rootNode;
     private final Map<UUID, GeoHierarchyNode> nodeByUuidMap;
     @Getter
@@ -80,7 +81,7 @@ public class GeoHierarchyService {
     // Node filtering methods
     private List<GeoHierarchyNode> getFirstLevelNodesOfAuthorityPost(Map<Post, List<UUID>> postGeoNodeMap) {
         return postGeoNodeMap.entrySet().stream()
-                .filter(entry -> entry.getKey().getLevel() >= 100)
+                .filter(entry -> getAuthorityPosts().contains(entry.getKey()))
                 .flatMap(entry -> entry.getValue().stream())
                 .map(nodeByUuidMap::get)
                 .distinct()
@@ -175,5 +176,9 @@ public class GeoHierarchyService {
         });
 
         return postToFilteredGeoNodeUuidsMap;
+    }
+
+    public List<Post> getAuthorityPosts() {
+        return Arrays.stream(Post.values()).filter(p -> p.getLevel() >= AUTHORITY_LEVEL).collect(Collectors.toList());
     }
 }

@@ -15,4 +15,5 @@ import java.util.List;
 public class ODApplicationAssignmentTransformationRequest {
     private final User principalUser;
     private final OdApplicationAssignment assignment;
+    private final User enquiryUser;
 }

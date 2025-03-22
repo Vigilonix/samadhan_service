@@ -36,12 +36,11 @@ public class ApplicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer impl
                         ?                geoHierarchyService.getParentMap().get(odApplication.getGeoHierarchyNodeUuid()).getUuid()
                         : odApplication.getGeoHierarchyNodeUuid();
 
-        List<User> ownerUsers = userRepositoryCustom.findAuthorityGeoHierarchyUser(ownerGeoHierarachyNode);
-        if(CollectionUtils.isEmpty(ownerUsers)) {
+        User authorityUser = userRepositoryCustom.findAuthorityGeoHierarchyUser(ownerGeoHierarachyNode);
+        if(authorityUser == null) {
             log.error("failed to find owner user for geofence {} for odApplication {}", ownerGeoHierarachyNode, odApplication);
             throw new IllegalArgumentException("no one is owner of this geofence"+ odApplication.getGeoHierarchyNodeUuid());
         }
-        User authorityUser = ownerUsers.get(0);
         log.info("authority user for geonode {} is {}", ownerGeoHierarachyNode, authorityUser);
         Map<String, String> dataMap = Map.of(
         Constant.CLICK_ACTION, Constant.FLUTTER_NOTIFICATION_CLICK ,

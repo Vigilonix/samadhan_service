@@ -48,4 +48,5 @@ public class OdApplicationAssignment {
 
     @ManyToOne
     private User actor;
+
 }

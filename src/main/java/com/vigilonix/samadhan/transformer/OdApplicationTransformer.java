@@ -48,11 +48,10 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .hasAuthorityOnClosedStatus(OdApplicationStatus.CLOSED.equals(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .hasAuthorityToReassign(Arrays.asList(OdApplicationStatus.ENQUIRY, OdApplicationStatus.REVIEW).contains(odApplication.getStatus()) && geoHierarchyService.hasAuthority(odApplication.getGeoHierarchyNodeUuid(), principalUser.getPostGeoHierarchyNodeUuidMap()))
                 .category(odApplication.getCategory())
-                .assignments(CollectionUtils.isEmpty(odApplicationTransformationRequest.getAssignments())?Collections.emptyList() : odApplicationTransformationRequest.getAssignments().stream().map(a -> ODApplicationAssignmentTransformationRequest
-                        .builder()
-                        .assignment(a)
-                        .principalUser(principalUser)
-                        .build()).map(odApplicationAssignmentTransformer::transform).collect(Collectors.toList()))
+                .assignments(CollectionUtils.isEmpty(odApplicationTransformationRequest.getAssignments())?Collections.emptyList() : odApplicationTransformationRequest.getAssignments()
+                        .stream()
+                        .map(odApplicationAssignmentTransformer::transform)
+                        .collect(Collectors.toList()))
                 .dueEpoch(odApplication.getDueEpoch())
                 .applicationPriority(odApplication.getPriority())
                 .build();

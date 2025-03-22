@@ -34,11 +34,10 @@ public class ApplicationFirestoreStateChangeSSETransformer implements Transforme
                         ?                geoHierarchyService.getParentMap().get(odApplication.getGeoHierarchyNodeUuid()).getUuid()
                         : odApplication.getGeoHierarchyNodeUuid();
 
-        List<User> ownerUsers = userRepositoryCustom.findAuthorityGeoHierarchyUser(ownerGeoHierarachyNode);
-        if(CollectionUtils.isEmpty(ownerUsers)) {
+        User authorityUser = userRepositoryCustom.findAuthorityGeoHierarchyUser(ownerGeoHierarachyNode);
+        if(authorityUser==null) {
             throw new IllegalArgumentException("no one is owner of this geofence"+ odApplication.getGeoHierarchyNodeUuid());
         }
-        User authorityUser = ownerUsers.get(0);
         Map<String,Object> dataMap = Map.of("last_od_application_refresh_epoch", System.currentTimeMillis());
         return         NotificationPayload.builder()
                 .notificationMethod(NotificationMethod.SSE_EVENT)

@@ -10,10 +10,7 @@ import com.vigilonix.samadhan.model.OdApplicationAssignmentHistory;
 import com.vigilonix.samadhan.model.User;
 import com.vigilonix.samadhan.pojo.*;
 import com.vigilonix.samadhan.pojo.whatsapp.ODApplicationAssignmentTransformationRequest;
-import com.vigilonix.samadhan.repository.OdApplicationAssignmentHistoryRepository;
-import com.vigilonix.samadhan.repository.OdApplicationAssignmentRepository;
-import com.vigilonix.samadhan.repository.OdApplicationRepository;
-import com.vigilonix.samadhan.repository.UserRepository;
+import com.vigilonix.samadhan.repository.*;
 import com.vigilonix.samadhan.transformer.OdApplicationAssignmentTransformer;
 import com.vigilonix.samadhan.transformer.OdApplicationTransformer;
 import com.vigilonix.samadhan.validator.ValidationService;
@@ -37,6 +34,7 @@ public class OdApplicationService {
     private final OdApplicationRepository odApplicationRepository;
     private final OdApplicationTransformer odApplicationTransformer;
     private final UserRepository userRepository;
+    private final UserRepositoryCustom userRepositoryCustom;
     private final GeoHierarchyService geoHierarchyService;
     private final ValidationService<ODApplicationValidationPayload> odUpdateValidationService;
     private final ValidationService<ODApplicationValidationPayload> odCreateValidationService;
@@ -50,12 +48,13 @@ public class OdApplicationService {
             OdApplicationRepository odApplicationRepository,
             OdApplicationTransformer odApplicationTransformer,
             UserRepository userRepository,
-            GeoHierarchyService geoHierarchyService,
+            UserRepositoryCustom userRepositoryCustom, GeoHierarchyService geoHierarchyService,
             @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
             @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService, OdApplicationAssignmentRepository odApplicationAssignmentRepository, OdApplicationAssignmentHistoryRepository odApplicationAssignmentHistoryRepository, OdApplicationAssignmentTransformer odApplicationAssignmentTransformer) {
         this.odApplicationRepository = odApplicationRepository;
         this.odApplicationTransformer = odApplicationTransformer;
         this.userRepository = userRepository;
+        this.userRepositoryCustom = userRepositoryCustom;
         this.geoHierarchyService = geoHierarchyService;
         this.odUpdateValidationService = odUpdateValidationService;
         this.odCreateValidationService = odCreateValidationService;
@@ -150,7 +149,14 @@ public class OdApplicationService {
     @Timed
     public OdApplicationPayload get(UUID odUuid, User principal) {
         OdApplication odApplication = odApplicationRepository.findByUuid(odUuid);
-        List<OdApplicationAssignment> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication);
+        List<ODApplicationAssignmentTransformationRequest> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication)
+                .stream()
+                .map(a -> ODApplicationAssignmentTransformationRequest.builder()
+                        .assignment(a)
+                        .principalUser(principal)
+                        .enquiryUser(userRepositoryCustom.findAuthorityGeoHierarchyUser(a.getGeoHierarchyNodeUuid()))
+                        .build())
+                .collect(Collectors.toList());
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).assignments(assignments).build());
     }
 
@@ -179,7 +185,14 @@ public class OdApplicationService {
         }
         return result.stream()
                 .map((odApplication) -> {
-                    List<OdApplicationAssignment> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication);
+                    List<ODApplicationAssignmentTransformationRequest> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication)
+                            .stream()
+                            .map(a -> ODApplicationAssignmentTransformationRequest.builder()
+                                    .assignment(a)
+                                    .principalUser(principal)
+                                    .enquiryUser(userRepositoryCustom.findAuthorityGeoHierarchyUser(a.getGeoHierarchyNodeUuid()))
+                                    .build())
+                            .collect(Collectors.toList());
                     return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().assignments(assignments).odApplication(odApplication).principalUser(principal).build());
                 })
                 .collect(Collectors.toList());
@@ -301,6 +314,7 @@ public class OdApplicationService {
         return odApplicationAssignmentTransformer.transform(ODApplicationAssignmentTransformationRequest
                 .builder()
                 .assignment(odApplicationAssignment)
+                .enquiryUser(userRepositoryCustom.findAuthorityGeoHierarchyUser(odApplicationAssignment.getGeoHierarchyNodeUuid()))
                 .principalUser(principal)
                 .build());
     }
