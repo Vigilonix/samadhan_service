@@ -33,6 +33,7 @@ public class UserResponseTransformer implements Transformer<User, UserResponse> 
                 .stateChangedOn(principal.getStateChangedOn())
                 .role(principal.getRole())
                 .rank(principal.getRank())
+                .phoneNumber(principal.getPhoneNumber())
                 .state(principal.getState())
                 .lastLive(principal.getLastLive())
                 .latitude(principal.getLatitude())
