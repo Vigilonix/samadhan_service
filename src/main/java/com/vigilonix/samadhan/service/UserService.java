@@ -149,6 +149,10 @@ public class UserService {
                 && changeDetector.isChanged(principal.getDeviceToken(), userRequest.getFirebaseDeviceToken())) {
             principal.setDeviceToken(userRequest.getFirebaseDeviceToken());
         }
+        if(StringUtils.isNotEmpty(userRequest.getPhoneNumber())
+                && changeDetector.isChanged(principal.getPhoneNumber(), userRequest.getPhoneNumber())) {
+            principal.setPhoneNumber(userRequest.getPhoneNumber());
+        }
         if(StringUtils.isNotEmpty(userRequest.getPassword())) {
             principal.setSecret(encoder.encode(userRequest.getPassword()));
         }
