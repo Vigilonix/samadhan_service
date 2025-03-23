@@ -378,4 +378,50 @@ public class OdApplicationService {
                 .actorType(h.getActorType())
                 .build();
     }
+
+    public List<OdApplicationPayload> getFilteredList(User principal, OdApplicationFilterRequest odApplicationFilterRequest, List<UUID> geoHierarchyNodeUuids) {
+        Map<Post, List<UUID>> postGeoHierarchyNodeMap= geoHierarchyService.resolveFirstGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        boolean isAuthority = !CollectionUtils.isEmpty(geoHierarchyService.getAllLevelNodesOfAuthorityPost(postGeoHierarchyNodeMap));
+        List<UUID> geoNodes = geoHierarchyService.getFirstLevelNodes(postGeoHierarchyNodeMap);
+
+        List<OdApplication> result = new ArrayList<>();
+        if(OdApplicationStatus.OPEN.equals(odApplicationFilterRequest.getStatus()) && isAuthority) {
+            result = odApplicationRepository.findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, geoNodes);
+        }
+        else if(OdApplicationStatus.OPEN.equals(odApplicationFilterRequest.getStatus()) && !isAuthority) {
+            result = odApplicationRepository.findByOdAndStatusAndGeoHierarchyNodeUuidIn(principal, OdApplicationStatus.OPEN, geoNodes);
+        }
+        else if(OdApplicationStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
+            if(Boolean.TRUE.equals(odApplicationFilterRequest.getIsSelf())) {
+                result = odApplicationRepository.findByAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(geoNodes, OdApplicationStatus.ENQUIRY);
+            }else if(isAuthority){
+                result = odApplicationRepository.findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, geoNodes);
+            }else {
+                result = new ArrayList<>();
+            }
+        }
+        else if(OdApplicationStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
+            if(Boolean.TRUE.equals(odApplicationFilterRequest.getIsSelf())) {
+                result = odApplicationRepository.findByAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(geoNodes, OdApplicationStatus.REVIEW);
+            }else if(isAuthority){
+                result = odApplicationRepository.findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, geoNodes);
+            }else {
+                result = new ArrayList<>();
+            }
+        }
+
+        return result.stream()
+                .map((odApplication) -> {
+                    List<ODApplicationAssignmentTransformationRequest> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication)
+                            .stream()
+                            .map(a -> ODApplicationAssignmentTransformationRequest.builder()
+                                    .assignment(a)
+                                    .principalUser(principal)
+                                    .enquiryUser(userRepositoryCustom.findAuthorityGeoHierarchyUser(a.getGeoHierarchyNodeUuid()))
+                                    .build())
+                            .collect(Collectors.toList());
+                    return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().assignments(assignments).odApplication(odApplication).principalUser(principal).build());
+                })
+                .collect(Collectors.toList());
+    }
 }

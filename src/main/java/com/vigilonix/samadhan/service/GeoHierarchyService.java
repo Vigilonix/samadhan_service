@@ -178,6 +178,27 @@ public class GeoHierarchyService {
         return postToFilteredGeoNodeUuidsMap;
     }
 
+    public Map<Post, List<UUID>> resolveFirstGeoHierarchyNodes(final Map<Post, List<UUID>> postGeoHierarchyNodeUuidMap, List<UUID> geoHierarchyNodeUuids) {
+        if(CollectionUtils.isEmpty(geoHierarchyNodeUuids)) return postGeoHierarchyNodeUuidMap;
+        Map<Post, List<UUID>> postToFilteredGeoNodeUuidsMap = new HashMap<>();
+
+        // Iterate through posts and their corresponding geo node UUIDs
+        postGeoHierarchyNodeUuidMap.forEach((post, geoNodeUuids) -> {
+            // Filter the geo node UUIDs by checking if they match any input UUIDs
+            List<UUID> matchedGeoNodeUuids = geoNodeUuids.stream()
+                    .filter(geoHierarchyNodeUuids::contains) // Retain only those in geoHierarchyNodeUuids
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            // If matches are found, add them to the result map
+            if (!matchedGeoNodeUuids.isEmpty()) {
+                postToFilteredGeoNodeUuidsMap.put(post, matchedGeoNodeUuids);
+            }
+        });
+
+        return postToFilteredGeoNodeUuidsMap;
+    }
+
     public List<Post> getAuthorityPosts() {
         return Arrays.stream(Post.values()).filter(p -> p.getLevel() >= AUTHORITY_LEVEL).collect(Collectors.toList());
     }

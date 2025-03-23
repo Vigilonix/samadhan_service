@@ -33,6 +33,9 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<OdApplication> findByOdOrEnquiryOfficer(User user, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
+    List<OdApplication> findByOdAndGeoHierarchyNodeUuidIn(User user, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
+
+    @Timed
     @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids) AND oaa.status = :status")
     List<OdApplication> findByOdOrEnquiryOfficerAndStatus(User user, OdApplicationStatus status, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
@@ -54,4 +57,14 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     @Timed
     @Query(value = "SELECT sq.status, COUNT(sq.status) FROM (SELECT DISTINCT COALESCE(oaa.status, o.status) AS status, o.uuid as application_uuid FROM od_application o LEFT JOIN OdApplicationAssignment oaa ON oaa.application = o WHERE oaa.geoHierarchyNodeUuid IN :geoNodeUuids) AS sq GROUP BY sq.status")
     List<Object[]>  applicationStatusCountBytGeoFilter(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
+
+    @Timed
+    List<OdApplication> findByOdAndStatusAndGeoHierarchyNodeUuidIn(User principal, OdApplicationStatus status, List<UUID> geoNodes);
+
+    @Timed
+    List<OdApplication> findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus status, List<UUID> geoNodes);
+
+    @Timed
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE oaa.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status")
+    List<OdApplication> findByAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status);
 }
