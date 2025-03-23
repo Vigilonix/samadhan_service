@@ -3,6 +3,7 @@ package com.vigilonix.samadhan.service;
 import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.aop.Timed;
 import com.vigilonix.samadhan.enums.ActorType;
+import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.enums.Post;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.OdApplicationAssignment;
@@ -383,28 +384,28 @@ public class OdApplicationService {
         Map<Post, List<UUID>> postGeoHierarchyNodeMap= geoHierarchyService.resolveFirstGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         boolean isAuthority = !CollectionUtils.isEmpty(geoHierarchyService.getAllLevelNodesOfAuthorityPost(postGeoHierarchyNodeMap));
         List<UUID> geoNodes = geoHierarchyService.getFirstLevelNodes(postGeoHierarchyNodeMap);
-
+        List<ApplicationCategory> categories = getCategoryFilters(odApplicationFilterRequest.getCategory());
         List<OdApplication> result = new ArrayList<>();
         if(OdApplicationStatus.OPEN.equals(odApplicationFilterRequest.getStatus()) && isAuthority) {
-            result = odApplicationRepository.findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, geoNodes);
+            result = odApplicationRepository.findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes);
         }
         else if(OdApplicationStatus.OPEN.equals(odApplicationFilterRequest.getStatus()) && !isAuthority) {
-            result = odApplicationRepository.findByOdAndStatusAndGeoHierarchyNodeUuidIn(principal, OdApplicationStatus.OPEN, geoNodes);
+            result = odApplicationRepository.findByOdAndStatusAndCategoryInAndGeoHierarchyNodeUuidIn(principal, OdApplicationStatus.OPEN, categories, geoNodes);
         }
         else if(OdApplicationStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
             if(Boolean.TRUE.equals(odApplicationFilterRequest.getIsSelf())) {
-                result = odApplicationRepository.findByAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(geoNodes, OdApplicationStatus.ENQUIRY);
+                result = odApplicationRepository.findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
             }else if(isAuthority){
-                result = odApplicationRepository.findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, geoNodes);
+                result = odApplicationRepository.findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, categories, geoNodes);
             }else {
                 result = new ArrayList<>();
             }
         }
         else if(OdApplicationStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
             if(Boolean.TRUE.equals(odApplicationFilterRequest.getIsSelf())) {
-                result = odApplicationRepository.findByAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(geoNodes, OdApplicationStatus.REVIEW);
+                result = odApplicationRepository.findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW);
             }else if(isAuthority){
-                result = odApplicationRepository.findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, geoNodes);
+                result = odApplicationRepository.findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, categories, geoNodes);
             }else {
                 result = new ArrayList<>();
             }
@@ -423,5 +424,13 @@ public class OdApplicationService {
                     return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().assignments(assignments).odApplication(odApplication).principalUser(principal).build());
                 })
                 .collect(Collectors.toList());
+    }
+
+    private List<ApplicationCategory> getCategoryFilters(ApplicationCategory category) {
+        if(category==null) {
+            return List.of(ApplicationCategory.values());
+        }else {
+            return Arrays.asList(category);
+        }
     }
 }

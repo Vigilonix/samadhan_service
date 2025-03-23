@@ -1,6 +1,7 @@
 package com.vigilonix.samadhan.repository;
 
 import com.vigilonix.samadhan.aop.Timed;
+import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.User;
 import com.vigilonix.samadhan.pojo.OdApplicationStatus;
@@ -59,12 +60,12 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<Object[]>  applicationStatusCountBytGeoFilter(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-    List<OdApplication> findByOdAndStatusAndGeoHierarchyNodeUuidIn(User principal, OdApplicationStatus status, List<UUID> geoNodes);
+    List<OdApplication> findByOdAndStatusAndCategoryInAndGeoHierarchyNodeUuidIn(User principal, OdApplicationStatus status, List<ApplicationCategory> categories, List<UUID> geoNodes);
 
     @Timed
-    List<OdApplication> findByStatusAndGeoHierarchyNodeUuidIn(OdApplicationStatus status, List<UUID> geoNodes);
+    List<OdApplication> findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus status, List<ApplicationCategory> categories, List<UUID> geoNodes);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE oaa.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status")
-    List<OdApplication> findByAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status);
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE o.category IN :categories AND oaa.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status")
+    List<OdApplication> findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status);
 }
