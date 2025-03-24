@@ -4,7 +4,7 @@ import com.vigilonix.samadhan.aop.Timed;
 import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.User;
-import com.vigilonix.samadhan.pojo.OdApplicationStatus;
+import com.vigilonix.samadhan.enums.OdApplicationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -60,12 +60,16 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<Object[]>  applicationStatusCountBytGeoFilter(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-    List<OdApplication> findByOdAndStatusAndCategoryInAndGeoHierarchyNodeUuidIn(User principal, OdApplicationStatus status, List<ApplicationCategory> categories, List<UUID> geoNodes);
+    List<OdApplication> findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus status, List<ApplicationCategory> categories, List<UUID> geoNodes);
 
     @Timed
-    List<OdApplication> findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus status, List<ApplicationCategory> categories, List<UUID> geoNodes);
+    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status")
+    List<OdApplication> findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status);
 
     @Timed
     @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE o.category IN :categories AND oaa.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status")
     List<OdApplication> findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status);
+
+    @Timed
+    List<OdApplication> findByCategoryInAndGeoHierarchyNodeUuidIn(List<ApplicationCategory> categories, List<UUID> geoNodes);
 }

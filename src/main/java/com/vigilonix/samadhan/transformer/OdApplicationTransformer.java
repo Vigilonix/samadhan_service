@@ -2,11 +2,9 @@ package com.vigilonix.samadhan.transformer;
 
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.User;
-import com.vigilonix.samadhan.pojo.EnquiryPayload;
 import com.vigilonix.samadhan.pojo.OdApplicationPayload;
-import com.vigilonix.samadhan.pojo.OdApplicationStatus;
+import com.vigilonix.samadhan.enums.OdApplicationStatus;
 import com.vigilonix.samadhan.pojo.ODApplicationTransformationRequest;
-import com.vigilonix.samadhan.pojo.whatsapp.ODApplicationAssignmentTransformationRequest;
 import com.vigilonix.samadhan.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;

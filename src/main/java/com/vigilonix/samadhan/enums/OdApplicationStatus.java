@@ -1,4 +1,4 @@
-package com.vigilonix.samadhan.pojo;
+package com.vigilonix.samadhan.enums;
 
 public enum OdApplicationStatus {
     OPEN,

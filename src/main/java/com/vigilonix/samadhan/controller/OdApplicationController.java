@@ -2,10 +2,7 @@ package com.vigilonix.samadhan.controller;
 
 import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.helper.AuthHelper;
-import com.vigilonix.samadhan.pojo.AnalyticalResponse;
-import com.vigilonix.samadhan.pojo.OdApplicationFilterRequest;
-import com.vigilonix.samadhan.pojo.OdApplicationPayload;
-import com.vigilonix.samadhan.pojo.OdAssignmentPayload;
+import com.vigilonix.samadhan.pojo.*;
 import com.vigilonix.samadhan.service.OdApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +63,7 @@ public class OdApplicationController {
 
     @LogPayload
     @PostMapping(path = "/filtered", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<OdApplicationPayload> getFilteredList(@RequestBody OdApplicationFilterRequest odApplicationFilterRequest, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+    public OdApplicationFilterResponse getFilteredList(@RequestBody OdApplicationFilterRequest odApplicationFilterRequest, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
         return odApplicationService.getFilteredList(authHelper.getPrincipal(), odApplicationFilterRequest, geoHierarchyNodeUuids);
     }
 

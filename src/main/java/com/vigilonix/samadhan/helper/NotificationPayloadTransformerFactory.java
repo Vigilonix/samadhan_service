@@ -2,7 +2,7 @@ package com.vigilonix.samadhan.helper;
 
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.pojo.NotificationPayload;
-import com.vigilonix.samadhan.pojo.OdApplicationStatus;
+import com.vigilonix.samadhan.enums.OdApplicationStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.enums.ApplicationPriority;
+import com.vigilonix.samadhan.enums.OdApplicationStatus;
 import lombok.*;
 
 import java.util.List;

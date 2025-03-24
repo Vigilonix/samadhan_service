@@ -1,5 +1,6 @@
 package com.vigilonix.samadhan.pojo;
 
+import com.vigilonix.samadhan.enums.OdApplicationStatus;
 import lombok.*;
 
 import java.util.UUID;

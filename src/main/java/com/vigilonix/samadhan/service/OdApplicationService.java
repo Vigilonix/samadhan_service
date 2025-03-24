@@ -2,9 +2,8 @@ package com.vigilonix.samadhan.service;
 
 import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.aop.Timed;
-import com.vigilonix.samadhan.enums.ActorType;
-import com.vigilonix.samadhan.enums.ApplicationCategory;
-import com.vigilonix.samadhan.enums.Post;
+import com.vigilonix.samadhan.enums.*;
+import com.vigilonix.samadhan.pojo.OdApplicationFilterRequest;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.OdApplicationAssignment;
 import com.vigilonix.samadhan.model.OdApplicationAssignmentHistory;
@@ -380,57 +379,75 @@ public class OdApplicationService {
                 .build();
     }
 
-    public List<OdApplicationPayload> getFilteredList(User principal, OdApplicationFilterRequest odApplicationFilterRequest, List<UUID> geoHierarchyNodeUuids) {
+    public OdApplicationFilterResponse getFilteredList(User principal, OdApplicationFilterRequest odApplicationFilterRequest, List<UUID> geoHierarchyNodeUuids) {
         Map<Post, List<UUID>> postGeoHierarchyNodeMap= geoHierarchyService.resolveFirstGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         boolean isAuthority = !CollectionUtils.isEmpty(geoHierarchyService.getAllLevelNodesOfAuthorityPost(postGeoHierarchyNodeMap));
         List<UUID> geoNodes = geoHierarchyService.getFirstLevelNodes(postGeoHierarchyNodeMap);
-        List<ApplicationCategory> categories = getCategoryFilters(odApplicationFilterRequest.getCategory());
-        List<OdApplication> result = new ArrayList<>();
-        if(OdApplicationStatus.OPEN.equals(odApplicationFilterRequest.getStatus()) && isAuthority) {
-            result = odApplicationRepository.findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes);
-        }
-        else if(OdApplicationStatus.OPEN.equals(odApplicationFilterRequest.getStatus()) && !isAuthority) {
-            result = odApplicationRepository.findByOdAndStatusAndCategoryInAndGeoHierarchyNodeUuidIn(principal, OdApplicationStatus.OPEN, categories, geoNodes);
-        }
-        else if(OdApplicationStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
-            if(Boolean.TRUE.equals(odApplicationFilterRequest.getIsSelf())) {
-                result = odApplicationRepository.findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
-            }else if(isAuthority){
-                result = odApplicationRepository.findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, categories, geoNodes);
-            }else {
-                result = new ArrayList<>();
-            }
-        }
-        else if(OdApplicationStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
-            if(Boolean.TRUE.equals(odApplicationFilterRequest.getIsSelf())) {
-                result = odApplicationRepository.findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW);
-            }else if(isAuthority){
-                result = odApplicationRepository.findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.ENQUIRY, categories, geoNodes);
-            }else {
-                result = new ArrayList<>();
-            }
-        }
+        List<ApplicationCategory> categories = odApplicationFilterRequest.getCategories();
+        Map<ApplicationFilterRequestStatus, List<OdApplicationPayload>> resultMap = new HashMap<>() ;
 
-        return result.stream()
-                .map((odApplication) -> {
-                    List<ODApplicationAssignmentTransformationRequest> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication)
-                            .stream()
-                            .map(a -> ODApplicationAssignmentTransformationRequest.builder()
-                                    .assignment(a)
-                                    .principalUser(principal)
-                                    .enquiryUser(userRepositoryCustom.findAuthorityGeoHierarchyUser(a.getGeoHierarchyNodeUuid()))
-                                    .build())
-                            .collect(Collectors.toList());
-                    return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().assignments(assignments).odApplication(odApplication).principalUser(principal).build());
-                })
-                .collect(Collectors.toList());
+        if(!isAuthority) {
+            resultMap.put(ApplicationFilterRequestStatus.ALL, transformApplication(odApplicationRepository
+                    .findByOdAndGeoHierarchyNodeUuidIn(principal, geoNodes), principal));
+        }
+        else if(ApplicationFilterRequestStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
+            resultMap.put(ApplicationFilterRequestStatus.ENQUIRY,
+                    transformApplication(odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY)
+                            , principal));
+        }
+        else if(ApplicationFilterRequestStatus.PENDING_ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
+            resultMap.put(ApplicationFilterRequestStatus.PENDING_ENQUIRY,
+                    transformApplication(odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY)
+                            , principal));
+        }
+        else if(ApplicationFilterRequestStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
+            resultMap.put(ApplicationFilterRequestStatus.REVIEW,
+                    transformApplication(odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW)
+                            , principal));
+        }
+        else if(ApplicationFilterRequestStatus.PENDING_REVIEW.equals(odApplicationFilterRequest.getStatus())) {
+            resultMap.put(ApplicationFilterRequestStatus.PENDING_REVIEW,
+                    transformApplication(odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY)
+                            , principal));
+        }
+        else if(ApplicationFilterRequestStatus.OPEN.equals(odApplicationFilterRequest.getStatus())) {
+            resultMap.put(ApplicationFilterRequestStatus.OPEN,
+                    transformApplication(odApplicationRepository
+                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes)
+                            , principal));
+        }
+        else if(ApplicationFilterRequestStatus.CLOSED.equals(odApplicationFilterRequest.getStatus())) {
+            resultMap.put(ApplicationFilterRequestStatus.CLOSED,
+                    transformApplication(odApplicationRepository
+                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes)
+                            , principal));
+        }else if(ApplicationFilterRequestStatus.ALL.equals(odApplicationFilterRequest.getStatus())) {
+            resultMap.put(ApplicationFilterRequestStatus.ALL,
+                    transformApplication(odApplicationRepository
+                                    .findByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes)
+                            , principal));
+        }
+        return OdApplicationFilterResponse.builder()
+                .statusApplicationMap(resultMap)
+                .build();
     }
-
-    private List<ApplicationCategory> getCategoryFilters(ApplicationCategory category) {
-        if(category==null) {
-            return List.of(ApplicationCategory.values());
-        }else {
-            return Arrays.asList(category);
-        }
+    private List<OdApplicationPayload> transformApplication(List<OdApplication> odApplications, User principal) {
+        return odApplications.stream()
+                .map((odApplication) -> {
+                            List<ODApplicationAssignmentTransformationRequest> assignments = odApplicationAssignmentRepository.findLatestAssignmentForEachAssignee(odApplication)
+                                    .stream()
+                                    .map(a -> ODApplicationAssignmentTransformationRequest.builder()
+                                            .assignment(a)
+                                            .principalUser(principal)
+                                            .enquiryUser(userRepositoryCustom.findAuthorityGeoHierarchyUser(a.getGeoHierarchyNodeUuid()))
+                                            .build())
+                                    .collect(Collectors.toList());
+                            return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().assignments(assignments).odApplication(odApplication).principalUser(principal).build());
+                        }
+                ).collect(Collectors.toList());
     }
 }

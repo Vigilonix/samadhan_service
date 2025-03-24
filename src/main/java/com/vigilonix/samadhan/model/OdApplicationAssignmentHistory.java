@@ -1,7 +1,7 @@
 package com.vigilonix.samadhan.model;
 
 import com.vigilonix.samadhan.enums.ActorType;
-import com.vigilonix.samadhan.pojo.OdApplicationStatus;
+import com.vigilonix.samadhan.enums.OdApplicationStatus;
 import jakarta.persistence.*;
 import lombok.*;
 

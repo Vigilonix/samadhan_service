@@ -1,16 +1,12 @@
 package com.vigilonix.samadhan.validator;
 
-import com.google.common.collect.Sets;
 import com.vigilonix.samadhan.enums.ValidationError;
 import com.vigilonix.samadhan.enums.ValidationErrorEnum;
 import com.vigilonix.samadhan.model.User;
-import com.vigilonix.samadhan.pojo.OdApplicationStatus;
 import com.vigilonix.samadhan.pojo.OdApplicationPayload;
 import com.vigilonix.samadhan.pojo.ODApplicationValidationPayload;
 import com.vigilonix.samadhan.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
