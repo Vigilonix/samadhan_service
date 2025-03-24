@@ -386,36 +386,37 @@ public class OdApplicationService {
         List<ApplicationCategory> categories = odApplicationFilterRequest.getCategories();
         Map<ApplicationFilterRequestStatus, List<OdApplicationPayload>> resultMap = new HashMap<>() ;
         List<OdApplication> response = new ArrayList<>();
+        String searchKeyword = StringUtils.isEmpty(odApplicationFilterRequest.getSearchKeyword())? "":StringUtils.strip(odApplicationFilterRequest.getSearchKeyword()).toLowerCase();
         if(!isAuthority) {
             response = odApplicationRepository
                     .findByOdAndGeoHierarchyNodeUuidIn(principal, geoNodes);
         }
         else if(ApplicationFilterRequestStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
                     response = odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
+                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword);
         }
         else if(ApplicationFilterRequestStatus.PENDING_ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
                     response = odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
+                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword);
         }
         else if(ApplicationFilterRequestStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
                     response =odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW);
+                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW, searchKeyword);
         }
         else if(ApplicationFilterRequestStatus.PENDING_REVIEW.equals(odApplicationFilterRequest.getStatus())) {
                     response = odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
+                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword);
         }
         else if(ApplicationFilterRequestStatus.OPEN.equals(odApplicationFilterRequest.getStatus())) {
                     response = odApplicationRepository
-                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes);
+                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes, searchKeyword);
         }
         else if(ApplicationFilterRequestStatus.CLOSED.equals(odApplicationFilterRequest.getStatus())) {
                     response = odApplicationRepository
-                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes);
+                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes, searchKeyword);
         }else if(ApplicationFilterRequestStatus.ALL.equals(odApplicationFilterRequest.getStatus())) {
                     response = odApplicationRepository
-                                    .findByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes);
+                                    .findByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes, searchKeyword);
         }
         return OdApplicationFilterResponse.builder()
                 .applications(transformApplication(response, principal))

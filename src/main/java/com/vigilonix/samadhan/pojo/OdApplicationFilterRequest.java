@@ -18,4 +18,5 @@ import java.util.List;
 public class OdApplicationFilterRequest {
     private ApplicationFilterRequestStatus status;
     private List<ApplicationCategory> categories;
+    private String searchKeyword;
 }
