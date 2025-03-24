@@ -72,6 +72,6 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<OdApplication> findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status, @Param("searchTerm")String searchTerm);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o WHERE (lower(receiptNo) like CONCAT('%', :searchTerm, '%') or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') or lower(applicantName) like CONCAT('%', :searchTerm, '%')) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND o.status = :status")
+    @Query("SELECT distinct o FROM od_application o WHERE (lower(receiptNo) like CONCAT('%', :searchTerm, '%') or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') or lower(applicantName) like CONCAT('%', :searchTerm, '%')) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids")
     List<OdApplication> findByCategoryInAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids") List<UUID> geoNodes, @Param("searchTerm") String searchTerm);
 }
