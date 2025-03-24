@@ -380,7 +380,7 @@ public class OdApplicationService {
     }
 
     public OdApplicationFilterResponse getFilteredList(User principal, OdApplicationFilterRequest odApplicationFilterRequest, List<UUID> geoHierarchyNodeUuids) {
-        Map<Post, List<UUID>> postGeoHierarchyNodeMap= geoHierarchyService.resolveFirstGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        Map<Post, List<UUID>> postGeoHierarchyNodeMap= geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
         boolean isAuthority = !CollectionUtils.isEmpty(geoHierarchyService.getAllLevelNodesOfAuthorityPost(postGeoHierarchyNodeMap));
         List<UUID> geoNodes = geoHierarchyService.getFirstLevelNodes(postGeoHierarchyNodeMap);
         List<ApplicationCategory> categories = odApplicationFilterRequest.getCategories();
