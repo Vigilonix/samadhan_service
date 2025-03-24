@@ -385,54 +385,40 @@ public class OdApplicationService {
         List<UUID> geoNodes = geoHierarchyService.getFirstLevelNodes(postGeoHierarchyNodeMap);
         List<ApplicationCategory> categories = odApplicationFilterRequest.getCategories();
         Map<ApplicationFilterRequestStatus, List<OdApplicationPayload>> resultMap = new HashMap<>() ;
-
+        List<OdApplication> response = new ArrayList<>();
         if(!isAuthority) {
-            resultMap.put(ApplicationFilterRequestStatus.ALL, transformApplication(odApplicationRepository
-                    .findByOdAndGeoHierarchyNodeUuidIn(principal, geoNodes), principal));
+            response = odApplicationRepository
+                    .findByOdAndGeoHierarchyNodeUuidIn(principal, geoNodes);
         }
         else if(ApplicationFilterRequestStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
-            resultMap.put(ApplicationFilterRequestStatus.ENQUIRY,
-                    transformApplication(odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY)
-                            , principal));
+                    response = odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
         }
         else if(ApplicationFilterRequestStatus.PENDING_ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
-            resultMap.put(ApplicationFilterRequestStatus.PENDING_ENQUIRY,
-                    transformApplication(odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY)
-                            , principal));
+                    response = odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
         }
         else if(ApplicationFilterRequestStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
-            resultMap.put(ApplicationFilterRequestStatus.REVIEW,
-                    transformApplication(odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW)
-                            , principal));
+                    response =odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW);
         }
         else if(ApplicationFilterRequestStatus.PENDING_REVIEW.equals(odApplicationFilterRequest.getStatus())) {
-            resultMap.put(ApplicationFilterRequestStatus.PENDING_REVIEW,
-                    transformApplication(odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY)
-                            , principal));
+                    response = odApplicationRepository
+                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY);
         }
         else if(ApplicationFilterRequestStatus.OPEN.equals(odApplicationFilterRequest.getStatus())) {
-            resultMap.put(ApplicationFilterRequestStatus.OPEN,
-                    transformApplication(odApplicationRepository
-                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes)
-                            , principal));
+                    response = odApplicationRepository
+                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes);
         }
         else if(ApplicationFilterRequestStatus.CLOSED.equals(odApplicationFilterRequest.getStatus())) {
-            resultMap.put(ApplicationFilterRequestStatus.CLOSED,
-                    transformApplication(odApplicationRepository
-                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes)
-                            , principal));
+                    response = odApplicationRepository
+                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes);
         }else if(ApplicationFilterRequestStatus.ALL.equals(odApplicationFilterRequest.getStatus())) {
-            resultMap.put(ApplicationFilterRequestStatus.ALL,
-                    transformApplication(odApplicationRepository
-                                    .findByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes)
-                            , principal));
+                    response = odApplicationRepository
+                                    .findByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes);
         }
         return OdApplicationFilterResponse.builder()
-                .statusApplicationMap(resultMap)
+                .applications(transformApplication(response, principal))
                 .build();
     }
     private List<OdApplicationPayload> transformApplication(List<OdApplication> odApplications, User principal) {

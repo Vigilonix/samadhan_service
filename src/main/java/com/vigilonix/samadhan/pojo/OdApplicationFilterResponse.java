@@ -15,5 +15,5 @@ import java.util.Map;
 @ToString
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class OdApplicationFilterResponse {
-    private Map<ApplicationFilterRequestStatus, List<OdApplicationPayload>> statusApplicationMap;
+    private List<OdApplicationPayload> applications;
 }
