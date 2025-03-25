@@ -60,18 +60,60 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     List<Object[]>  applicationStatusCountBytGeoFilter(@Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o WHERE (lower(receiptNo) like CONCAT('%', :searchTerm, '%') or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') or lower(applicantName) like CONCAT('%', :searchTerm, '%')) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND o.status = :status")
-    List<OdApplication> findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(@Param("status") OdApplicationStatus status, @Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids") List<UUID> geoNodes, @Param("searchTerm") String searchTerm);
+    @Query("""
+    SELECT distinct o FROM od_application o WHERE
+     (lower(receiptNo) like CONCAT('%', :searchTerm, '%') 
+     or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
+     or lower(applicantName) like CONCAT('%', :searchTerm, '%')
+     ) AND (o.geoHierarchyNodeUuid IN :filterGeoNodes ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND o.status = :status
+     """)
+    List<OdApplication> findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(@Param("status") OdApplicationStatus status,
+                                                                           @Param("categories") List<ApplicationCategory> categories,
+                                                                           @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                           @Param("searchTerm") String searchTerm,
+                                                                           @Param("filterGeoNodes") List<UUID> filterGeoNodes);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (lower(receiptNo) like CONCAT('%', :searchTerm, '%') or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') or lower(applicantName) like CONCAT('%', :searchTerm, '%')) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status")
-    List<OdApplication> findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status, @Param("searchTerm") String searchTerm);
+    @Query( """
+ SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE
+ (
+    lower(receiptNo) like CONCAT('%', :searchTerm, '%') 
+    or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') 
+    or lower(applicantName) like CONCAT('%', :searchTerm, '%')
+) AND (o.geoHierarchyNodeUuid IN :filterGeoNodes  OR oaa.geoHierarchyNodeUuid IN :filterGeoNodes  ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status
+ """ )
+    List<OdApplication> findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
+                                                                                     @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                                     @Param("status") OdApplicationStatus status,
+                                                                                     @Param("searchTerm") String searchTerm,
+                                                                                     @Param("filterGeoNodes")List<UUID> filterGeoNodes);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (lower(receiptNo) like CONCAT('%', :searchTerm, '%') or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') or lower(applicantName)  like CONCAT('%', :searchTerm, '%')) AND o.category IN :categories AND oaa.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status")
-    List<OdApplication> findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids")List<UUID> geoNodes, @Param("status")OdApplicationStatus status, @Param("searchTerm")String searchTerm);
+    @Query("""
+    SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE 
+    (
+    lower(receiptNo) like CONCAT('%', :searchTerm, '%')
+     or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
+     or lower(applicantName)  like CONCAT('%', :searchTerm, '%')
+    )AND (o.geoHierarchyNodeUuid IN :filterGeoNodes OR oaa.geoHierarchyNodeUuid IN :filterGeoNodes)  AND o.category IN :categories AND oaa.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status
+    """)
+    List<OdApplication> findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
+                                                                                               @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                                               @Param("status") OdApplicationStatus status,
+                                                                                               @Param("searchTerm") String searchTerm,
+                                                                                               @Param("filterGeoNodes")List<UUID> filterGeoNodes);
 
     @Timed
-    @Query("SELECT distinct o FROM od_application o WHERE (lower(receiptNo) like CONCAT('%', :searchTerm, '%') or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') or lower(applicantName) like CONCAT('%', :searchTerm, '%')) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids")
-    List<OdApplication> findByCategoryInAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories, @Param("geoNodeUuids") List<UUID> geoNodes, @Param("searchTerm") String searchTerm);
+    @Query("""
+    SELECT distinct o FROM od_application o WHERE
+    (
+        lower(receiptNo) like CONCAT('%', :searchTerm, '%')
+         or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
+         or lower(applicantName) like CONCAT('%', :searchTerm, '%')
+    )AND (o.geoHierarchyNodeUuid IN :filterGeoNodes ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids
+    """)
+    List<OdApplication> findByCategoryInAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
+                                                                  @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                  @Param("searchTerm") String searchTerm,
+                                                                  @Param("filterGeoNodes")List<UUID> filterGeoNodes);
 }

@@ -8,6 +8,7 @@ import com.vigilonix.samadhan.enums.OdApplicationStatus;
 import lombok.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Builder
@@ -19,4 +20,5 @@ public class OdApplicationFilterRequest {
     private ApplicationFilterRequestStatus status;
     private List<ApplicationCategory> categories;
     private String searchKeyword;
+    private List<UUID> geoHierarchyNodeUuids;
 }
