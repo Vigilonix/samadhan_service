@@ -395,35 +395,96 @@ public class OdApplicationService {
                     .findByOdAndGeoHierarchyNodeUuidIn(principal, geoNodes);
         }
         else if(ApplicationFilterRequestStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
-                    response = odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+            response = odApplicationRepository
+                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.PENDING_ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
-                    response = odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+            response = odApplicationRepository
+                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
-                    response =odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW, searchKeyword, filterGeoNodes);
+            response =odApplicationRepository
+                    .findByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.PENDING_REVIEW.equals(odApplicationFilterRequest.getStatus())) {
-                    response = odApplicationRepository
-                                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+            response = odApplicationRepository
+                    .findByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.OPEN.equals(odApplicationFilterRequest.getStatus())) {
-                    response = odApplicationRepository
-                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes, searchKeyword, filterGeoNodes);
+            response = odApplicationRepository
+                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.CLOSED.equals(odApplicationFilterRequest.getStatus())) {
-                    response = odApplicationRepository
-                                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes, searchKeyword, filterGeoNodes);
+            response = odApplicationRepository
+                    .findByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes, searchKeyword, filterGeoNodes);
         }else if(ApplicationFilterRequestStatus.ALL.equals(odApplicationFilterRequest.getStatus())) {
-                    response = odApplicationRepository
-                                    .findByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes, searchKeyword, filterGeoNodes);
+            response = odApplicationRepository
+                    .findByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes, searchKeyword, filterGeoNodes);
         }
         return OdApplicationFilterResponse.builder()
                 .applications(transformApplication(response, principal))
                 .build();
+    }
+
+    public AnalyticalResponse getAnalyticaCount(User principal, OdApplicationFilterRequest odApplicationFilterRequest, List<UUID> geoHierarchyNodeUuids) {
+        Map<ApplicationFilterRequestStatus, Integer> resultMap = new HashMap<>();
+        for(ApplicationFilterRequestStatus applicationFilterRequestStatus : ApplicationFilterRequestStatus.values()) {
+            resultMap.put(applicationFilterRequestStatus, getFilteredCount(principal, OdApplicationFilterRequest.builder()
+                    .categories(odApplicationFilterRequest.getCategories())
+                    .searchKeyword(odApplicationFilterRequest.getSearchKeyword())
+                    .geoHierarchyNodeUuids(odApplicationFilterRequest.getGeoHierarchyNodeUuids())
+                    .status(applicationFilterRequestStatus)
+                    .build(), geoHierarchyNodeUuids));
+        }
+        return AnalyticalResponse.builder()
+                .requestStatusCountMap(resultMap)
+                .build();
+    }
+
+    public Integer getFilteredCount(User principal, OdApplicationFilterRequest odApplicationFilterRequest, List<UUID> geoHierarchyNodeUuids) {
+        Map<Post, List<UUID>> postGeoHierarchyNodeMap= geoHierarchyService.resolveGeoHierarchyNodes(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+        boolean isAuthority = !CollectionUtils.isEmpty(geoHierarchyService.getAllLevelNodesOfAuthorityPost(postGeoHierarchyNodeMap));
+        List<UUID> geoNodes = geoHierarchyService.getFirstLevelNodes(postGeoHierarchyNodeMap);
+        List<UUID> filterGeoNodes = CollectionUtils.isEmpty(odApplicationFilterRequest.getGeoHierarchyNodeUuids())
+                ? geoHierarchyService.getAllLevelNodes(postGeoHierarchyNodeMap)
+                : odApplicationFilterRequest.getGeoHierarchyNodeUuids();
+        List<ApplicationCategory> categories = odApplicationFilterRequest.getCategories();
+        Map<ApplicationFilterRequestStatus, List<OdApplicationPayload>> resultMap = new HashMap<>() ;
+        List<OdApplication> response = new ArrayList<>();
+        String searchKeyword = StringUtils.isEmpty(odApplicationFilterRequest.getSearchKeyword())? "":StringUtils.strip(odApplicationFilterRequest.getSearchKeyword()).toLowerCase();
+
+        if(!isAuthority) {
+            Integer count= odApplicationRepository
+                    .countByOdAndGeoHierarchyNodeUuidIn(principal, geoNodes);
+        }
+        else if(ApplicationFilterRequestStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
+                    return odApplicationRepository
+                                    .countByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+        }
+        else if(ApplicationFilterRequestStatus.PENDING_ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
+                    return odApplicationRepository
+                                    .countByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+        }
+        else if(ApplicationFilterRequestStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
+                    Integer count =odApplicationRepository
+                                    .countByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW, searchKeyword, filterGeoNodes);
+        }
+        else if(ApplicationFilterRequestStatus.PENDING_REVIEW.equals(odApplicationFilterRequest.getStatus())) {
+                    return odApplicationRepository
+                                    .countByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+        }
+        else if(ApplicationFilterRequestStatus.OPEN.equals(odApplicationFilterRequest.getStatus())) {
+                    return odApplicationRepository
+                                    .countByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes, searchKeyword, filterGeoNodes);
+        }
+        else if(ApplicationFilterRequestStatus.CLOSED.equals(odApplicationFilterRequest.getStatus())) {
+                    return odApplicationRepository
+                                    .countByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes, searchKeyword, filterGeoNodes);
+        }else if(ApplicationFilterRequestStatus.ALL.equals(odApplicationFilterRequest.getStatus())) {
+                    return odApplicationRepository
+                                    .countByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes, searchKeyword, filterGeoNodes);
+        }
+        return 0;
     }
 
     private List<OdApplicationPayload> transformApplication(List<OdApplication> odApplications, User principal) {

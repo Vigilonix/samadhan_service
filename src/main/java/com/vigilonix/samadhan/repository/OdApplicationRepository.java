@@ -5,6 +5,7 @@ import com.vigilonix.samadhan.enums.ApplicationCategory;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.User;
 import com.vigilonix.samadhan.enums.OdApplicationStatus;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,6 +36,9 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     @Timed
     List<OdApplication> findByOdAndGeoHierarchyNodeUuidIn(User user, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
+
+    @Timed
+    Integer countByOdAndGeoHierarchyNodeUuidIn(User user, @Param("geoNodeUuids") List<UUID> geoNodeUuids);
 
     @Timed
     @Query("SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE (o.od = :user OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids) AND oaa.status = :status")
@@ -113,6 +117,64 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
     )AND (o.geoHierarchyNodeUuid IN :filterGeoNodes ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids
     """)
     List<OdApplication> findByCategoryInAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
+                                                                  @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                  @Param("searchTerm") String searchTerm,
+                                                                  @Param("filterGeoNodes")List<UUID> filterGeoNodes);
+
+    @Timed
+    @Query("""
+    SELECT count(distinct o) FROM od_application o WHERE
+     (lower(receiptNo) like CONCAT('%', :searchTerm, '%') 
+     or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
+     or lower(applicantName) like CONCAT('%', :searchTerm, '%')
+     ) AND (o.geoHierarchyNodeUuid IN :filterGeoNodes ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND o.status = :status
+     """)
+    Integer countByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(@Param("status") OdApplicationStatus status,
+                                                                           @Param("categories") List<ApplicationCategory> categories,
+                                                                           @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                           @Param("searchTerm") String searchTerm,
+                                                                           @Param("filterGeoNodes") List<UUID> filterGeoNodes);
+
+    @Timed
+    @Query( """
+ SELECT count(distinct o) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE
+ (
+    lower(receiptNo) like CONCAT('%', :searchTerm, '%') 
+    or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%') 
+    or lower(applicantName) like CONCAT('%', :searchTerm, '%')
+) AND (o.geoHierarchyNodeUuid IN :filterGeoNodes  OR oaa.geoHierarchyNodeUuid IN :filterGeoNodes  ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status
+ """ )
+    Integer countByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
+                                                                                     @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                                     @Param("status") OdApplicationStatus status,
+                                                                                     @Param("searchTerm") String searchTerm,
+                                                                                     @Param("filterGeoNodes")List<UUID> filterGeoNodes);
+
+    @Timed
+    @Query("""
+    SELECT count(distinct o) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE 
+    (
+    lower(receiptNo) like CONCAT('%', :searchTerm, '%')
+     or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
+     or lower(applicantName)  like CONCAT('%', :searchTerm, '%')
+    )AND (o.geoHierarchyNodeUuid IN :filterGeoNodes OR oaa.geoHierarchyNodeUuid IN :filterGeoNodes)  AND o.category IN :categories AND oaa.geoHierarchyNodeUuid IN :geoNodeUuids AND oaa.status = :status
+    """)
+     Integer countByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
+                                                                                               @Param("geoNodeUuids") List<UUID> geoNodes,
+                                                                                               @Param("status") OdApplicationStatus status,
+                                                                                               @Param("searchTerm") String searchTerm,
+                                                                                               @Param("filterGeoNodes")List<UUID> filterGeoNodes);
+
+    @Timed
+    @Query("""
+    SELECT count(distinct o) FROM od_application o WHERE
+    (
+        lower(receiptNo) like CONCAT('%', :searchTerm, '%')
+         or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
+         or lower(applicantName) like CONCAT('%', :searchTerm, '%')
+    )AND (o.geoHierarchyNodeUuid IN :filterGeoNodes ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids
+    """)
+    Integer countByCategoryInAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
                                                                   @Param("geoNodeUuids") List<UUID> geoNodes,
                                                                   @Param("searchTerm") String searchTerm,
                                                                   @Param("filterGeoNodes")List<UUID> filterGeoNodes);

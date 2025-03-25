@@ -68,6 +68,12 @@ public class OdApplicationController {
     }
 
     @LogPayload
+    @PostMapping(path = "/filtered_analytics", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public AnalyticalResponse getFilteredAnalytics(@RequestBody OdApplicationFilterRequest odApplicationFilterRequest, @RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
+        return odApplicationService.getAnalyticaCount(authHelper.getPrincipal(), odApplicationFilterRequest, geoHierarchyNodeUuids);
+    }
+
+    @LogPayload
     @GetMapping(path = "/receipt", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<OdApplicationPayload> getOdApplication(@RequestParam(name = "geo_hierarchy_node_uuids", required = false)List<java.util.UUID> geoHierarchyNodeUuids) {
         return odApplicationService.getReceiptList(authHelper.getPrincipal(), geoHierarchyNodeUuids);
