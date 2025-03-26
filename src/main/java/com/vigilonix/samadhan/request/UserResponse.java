@@ -48,4 +48,5 @@ public class UserResponse {
     @JsonProperty("post_field_map")
     private Map<Post, List<GeoHierarchyNode>> postGeoHierarchyNodeUuidMap;
     private Post highestPost;
+    private Boolean isAuthorityUser;
 }

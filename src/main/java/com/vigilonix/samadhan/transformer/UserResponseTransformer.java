@@ -5,6 +5,7 @@ import com.vigilonix.samadhan.model.User;
 import com.vigilonix.samadhan.request.UserResponse;
 import com.vigilonix.samadhan.service.GeoHierarchyService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Transformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,7 @@ public class UserResponseTransformer implements Transformer<User, UserResponse> 
                                 .collect(Collectors.toList())
                 )))
                 .highestPost(geoHierarchyService.findHighestPost(principal.getPostGeoHierarchyNodeUuidMap()))
+                .isAuthorityUser(CollectionUtils.isNotEmpty(geoHierarchyService.getAllLevelNodesOfAuthorityPost(principal.getPostGeoHierarchyNodeUuidMap())))
                 .build();
     }
 }
