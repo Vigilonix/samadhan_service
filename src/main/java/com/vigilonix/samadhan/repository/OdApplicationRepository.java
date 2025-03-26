@@ -109,12 +109,12 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     @Timed
     @Query("""
-    SELECT distinct o FROM od_application o WHERE
+    SELECT count(distinct o) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE
     (
         lower(receiptNo) like CONCAT('%', :searchTerm, '%')
          or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
          or lower(applicantName) like CONCAT('%', :searchTerm, '%')
-    )AND (o.geoHierarchyNodeUuid IN :filterGeoNodes ) AND o.category IN :categories AND o.geoHierarchyNodeUuid IN :geoNodeUuids
+    )AND (o.geoHierarchyNodeUuid IN :filterGeoNodes OR oaa.geoHierarchyNodeUuid IN :filterGeoNodes) AND o.category IN :categories AND (o.geoHierarchyNodeUuid IN :geoNodeUuids OR oaa.geoHierarchyNodeUuid IN :geoNodeUuids)
     """)
     List<OdApplication> findByCategoryInAndGeoHierarchyNodeUuidIn(@Param("categories") List<ApplicationCategory> categories,
                                                                   @Param("geoNodeUuids") List<UUID> geoNodes,
