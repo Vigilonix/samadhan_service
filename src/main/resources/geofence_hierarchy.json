@@ -17,13 +17,13 @@
           "geofence": [],
           "children": [
             {
-              "name": "Barh Subdivision",
+              "name": "SDM Barh",
               "type": "SUB_DIVISION",
               "uuid": "c986305b-d477-578d-a820-3258ddd24055",
               "geofence": [],
               "children": [
                 {
-                  "name": "Barh DCLR",
+                  "name": "DCLR Barh",
                   "type": "DCLR",
                   "uuid": "9cf50471-16b6-592c-ba7e-999e61cd2048",
                   "geofence": [],
