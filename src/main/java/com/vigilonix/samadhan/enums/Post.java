@@ -11,11 +11,11 @@ public enum Post {
     MANAGER(600),
 
     SDM(900),
-    BDO(800),
-    CO(700),
-    BPRO(600),
-    EO(500),
-    EM(900),
-    DCLR(900);
+    EM(800),
+    EO(700),
+    DCLR(800),
+    CO(600),
+    BDO(500),
+    BPRO(400);
     private final int level;
 }
