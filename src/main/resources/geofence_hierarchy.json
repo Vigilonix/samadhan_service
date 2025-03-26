@@ -11,6 +11,213 @@
       "geofence": [],
       "children": [
         {
+          "name": "Patna",
+          "type": "DISTRICT",
+          "uuid": "158807b4-18cf-4228-b952-90145d8985d4",
+          "geofence": [],
+          "children": [
+            {
+              "name": "Barh Subdivision",
+              "type": "SUB_DIVISION",
+              "uuid": "c986305b-d477-578d-a820-3258ddd24055",
+              "geofence": [],
+              "children": [
+                {
+                  "name": "Barh DCLR",
+                  "type": "DCLR",
+                  "uuid": "9cf50471-16b6-592c-ba7e-999e61cd2048",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "CO Bakhtiyarpur",
+                      "type": "CIRCLE",
+                      "uuid": "e791ff7f-5492-51f4-9b0f-1b6f91b30636",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "CO Ghoswari",
+                      "type": "CIRCLE",
+                      "uuid": "6bee96c1-04d1-55fa-b3fc-8af82fddd541",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "CO Athmalgola",
+                      "type": "CIRCLE",
+                      "uuid": "4d1f3800-2420-5fa2-8b8d-373cc2136e98",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "CO Barh",
+                      "type": "CIRCLE",
+                      "uuid": "b856ce23-0e72-554e-a059-5905d1b25e9c",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "CO Mokama",
+                      "type": "CIRCLE",
+                      "uuid": "a71dbef4-2fd7-5085-8c3a-b269d276bcb8",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "CO Belchi",
+                      "type": "CIRCLE",
+                      "uuid": "f2ffe1a0-43a4-5648-8cba-9253f6cef32b",
+                      "geofence": [],
+                      "children": []
+                    },
+                    {
+                      "name": "CO Pandarak",
+                      "type": "CIRCLE",
+                      "uuid": "1eceed4e-6bc9-5640-b738-9e7ddf8feb92",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "EO Bakhtiyarpur",
+                  "type": "MUNCIPAL",
+                  "uuid": "86c3823d-a456-5be8-a5b0-67f56c46697f",
+                  "geofence": [],
+                  "children": []
+                },
+                {
+                  "name": "EO Mokama",
+                  "type": "MUNCIPAL",
+                  "uuid": "099a0562-8294-5bee-87dd-49c30a0bfcb0",
+                  "geofence": [],
+                  "children": []
+                },
+                {
+                  "name": "EO Barh",
+                  "type": "MUNCIPAL",
+                  "uuid": "e740cea2-7e35-57f1-854f-16437faf1ec3",
+                  "geofence": [],
+                  "children": []
+                },
+                {
+                  "name": "EM Barh",
+                  "type": "EM",
+                  "uuid": "f48dbff3-c1a4-56af-b517-91bfb43f71a9",
+                  "geofence": [],
+                  "children": []
+                },
+                {
+                  "name": "BDO Mokama",
+                  "type": "BLOCK",
+                  "uuid": "37aeaaf4-547f-5572-88ec-90a12a387f4e",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "BPRO Mokama",
+                      "type": "BPRO",
+                      "uuid": "60eb75a2-d7f5-5781-92d1-ad80118d7b8a",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "BDO Bakhtiyarpur",
+                  "type": "BLOCK",
+                  "uuid": "6736586e-6209-5607-982d-2e6f2ea30e9d",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "BPRO Bakhtiyarpur",
+                      "type": "BPRO",
+                      "uuid": "69faf843-8c04-5657-bf7d-31213ba68c17",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "BDO Belchi",
+                  "type": "BLOCK",
+                  "uuid": "c1360f9c-de3f-536f-b109-0835f2227939",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "BPRO Belchi",
+                      "type": "BPRO",
+                      "uuid": "9c699631-4692-5116-97f2-75347c5a5d06",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "BDO Pandarak",
+                  "type": "BLOCK",
+                  "uuid": "bba62951-6620-5d45-a101-aa92a13f512a",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "BPRO Pandarak",
+                      "type": "BPRO",
+                      "uuid": "8fd06f2f-ec34-514e-91bf-db818cd2dd70",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "BDO Ghoswari",
+                  "type": "BLOCK",
+                  "uuid": "3a40ca96-3814-5b74-be84-8247ee8025a3",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "BPRO Ghoswari",
+                      "type": "BPRO",
+                      "uuid": "01f55130-c379-53e1-b878-428126c975da",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "BDO Athmalgola",
+                  "type": "BLOCK",
+                  "uuid": "b915a3f9-9b14-5952-a278-182ea8256e15",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "BPRO Athmalgola",
+                      "type": "BPRO",
+                      "uuid": "a886dd3d-3c9b-5b83-879d-56f574860fb1",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "name": "BDO Barh",
+                  "type": "BLOCK",
+                  "uuid": "20c1d33e-b695-5316-bbc3-52a768fff05e",
+                  "geofence": [],
+                  "children": [
+                    {
+                      "name": "BPRO Barh",
+                      "type": "BPRO",
+                      "uuid": "4ca53f02-55b8-53ce-8549-c3107436ec0c",
+                      "geofence": [],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+
+          ]
+        },
+        {
           "name": "TPatna",
           "type": "DISTRICT",
           "uuid": "9e5a4f7b-8c3e-4a5f-8b7c-6e4a5b3f9a7e",
@@ -215,7 +422,7 @@
                 },
                 {
                   "name": "Barh DCLR D",
-                  "type": "DCLR_CIRCLE",
+                  "type": "DCLR",
                   "uuid": "a774e0f5-b4b3-4cb1-b84b-6f2dfe47b402",
                   "is_demo": true,
                   "geofence": [],

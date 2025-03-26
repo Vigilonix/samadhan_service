@@ -9,6 +9,9 @@ public enum GeoHierarchyType {
     THANA,
     BEAT,
     EM_CIRCLE,
-    DCLR_CIRCLE,
+    DCLR,
+    MUNCIPAL,
+    EM,
+    BPRO,
     BLOCK;
 }
