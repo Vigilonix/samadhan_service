@@ -64,7 +64,7 @@
                       "children": []
                     },
                     {
-                      "name": "CO Belchi",
+                      "name": "CO Belchhi",
                       "type": "CIRCLE",
                       "uuid": "f2ffe1a0-43a4-5648-8cba-9253f6cef32b",
                       "geofence": [],
@@ -138,13 +138,13 @@
                   ]
                 },
                 {
-                  "name": "BDO Belchi",
+                  "name": "BDO Belchhi",
                   "type": "BLOCK",
                   "uuid": "c1360f9c-de3f-536f-b109-0835f2227939",
                   "geofence": [],
                   "children": [
                     {
-                      "name": "BPRO Belchi",
+                      "name": "BPRO Belchhi",
                       "type": "BPRO",
                       "uuid": "9c699631-4692-5116-97f2-75347c5a5d06",
                       "geofence": [],
