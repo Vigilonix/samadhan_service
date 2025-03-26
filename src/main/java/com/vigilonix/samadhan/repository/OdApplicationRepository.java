@@ -109,7 +109,7 @@ public interface OdApplicationRepository extends JpaRepository<OdApplication, Lo
 
     @Timed
     @Query("""
-    SELECT count(distinct o) FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE
+    SELECT distinct o FROM od_application o left join OdApplicationAssignment oaa on oaa.application = o WHERE
     (
         lower(receiptNo) like CONCAT('%', :searchTerm, '%')
          or lower(applicantPhoneNumber) like CONCAT('%', :searchTerm, '%')
