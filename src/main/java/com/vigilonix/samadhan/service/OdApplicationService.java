@@ -436,6 +436,7 @@ public class OdApplicationService {
                     .status(applicationFilterRequestStatus)
                     .build(), geoHierarchyNodeUuids));
         }
+        log.info("fauload for request geo {} {} is {}", geoHierarchyNodeUuids, odApplicationFilterRequest, resultMap);
         return AnalyticalResponse.builder()
                 .requestStatusCountMap(resultMap)
                 .build();
