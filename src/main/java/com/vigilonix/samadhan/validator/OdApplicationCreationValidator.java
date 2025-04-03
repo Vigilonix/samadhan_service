@@ -49,8 +49,9 @@ public class OdApplicationCreationValidator implements Validator<List<Validation
                 associatedGeoHierarchyNodeSet)) {
             errors.add(ValidationErrorEnum.INVALID_GRANT);
         }
-        errors.addAll(pdfValidator.validate(odRequest.getApplicationFilePath()));
+        if(StringUtils.isNotEmpty(odRequest.getApplicationFilePath())) {
+            errors.addAll(pdfValidator.validate(odRequest.getApplicationFilePath()));
+        }
         return errors;
     }
-
 }

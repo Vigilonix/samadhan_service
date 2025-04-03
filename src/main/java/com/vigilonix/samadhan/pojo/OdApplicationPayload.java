@@ -42,4 +42,5 @@ public class OdApplicationPayload {
     private List<OdAssignmentPayload> assignments;
     private Long dueEpoch;
     private ApplicationPriority applicationPriority;
+    private String comment;
 }

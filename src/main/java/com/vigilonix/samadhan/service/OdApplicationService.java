@@ -92,6 +92,7 @@ public class OdApplicationService {
                 .category(odApplicationPayload.getCategory())
                 .dueEpoch(odApplicationPayload.getDueEpoch())
                 .priority(odApplicationPayload.getApplicationPriority())
+                .comment(odApplicationPayload.getComment())
                 .build();
         odApplicationRepository.save(odApplication);
         notificationService.sendNotification(odApplication);

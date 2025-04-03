@@ -56,4 +56,5 @@ public class OdApplication {
     @Column
     @Enumerated(EnumType.STRING)
     private ApplicationCategory category;
+    private String comment;
 }
