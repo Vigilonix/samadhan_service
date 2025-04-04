@@ -52,6 +52,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                         .collect(Collectors.toList()))
                 .dueEpoch(odApplication.getDueEpoch())
                 .applicationPriority(odApplication.getPriority())
+                .comment(odApplication.getComment())
                 .build();
     }
 }
