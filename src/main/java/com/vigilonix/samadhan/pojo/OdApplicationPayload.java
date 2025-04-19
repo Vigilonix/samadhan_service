@@ -43,4 +43,6 @@ public class OdApplicationPayload {
     private Long dueEpoch;
     private ApplicationPriority applicationPriority;
     private String comment;
+    private UUID parentApplicationUuid;
+    private UUID childApplicationUuid;
 }

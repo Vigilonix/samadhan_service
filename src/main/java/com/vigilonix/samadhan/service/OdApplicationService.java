@@ -94,6 +94,14 @@ public class OdApplicationService {
                 .priority(odApplicationPayload.getApplicationPriority())
                 .comment(odApplicationPayload.getComment())
                 .build();
+        if(odApplicationPayload.getParentApplicationUuid()!=null) {
+            OdApplication parentApplication = odApplicationRepository.findByUuid(odApplicationPayload.getParentApplicationUuid());
+            if(parentApplication!=null) {
+                parentApplication.setChildApplicationUuid(odApplication.getUuid());
+                odApplicationRepository.save(parentApplication);
+                odApplication.setParentApplicationUuid(parentApplication.getUuid());
+            }
+        }
         odApplicationRepository.save(odApplication);
         notificationService.sendNotification(odApplication);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());

@@ -57,4 +57,8 @@ public class OdApplication {
     @Enumerated(EnumType.STRING)
     private ApplicationCategory category;
     private String comment;
+    @Column
+    private UUID parentApplicationUuid;
+    @Column
+    private UUID childApplicationUuid;
 }

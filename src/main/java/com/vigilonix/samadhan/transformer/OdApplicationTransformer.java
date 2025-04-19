@@ -53,6 +53,8 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .dueEpoch(odApplication.getDueEpoch())
                 .applicationPriority(odApplication.getPriority())
                 .comment(odApplication.getComment())
+                .parentApplicationUuid(odApplication.getParentApplicationUuid())
+                .childApplicationUuid(odApplication.getChildApplicationUuid())
                 .build();
     }
 }
