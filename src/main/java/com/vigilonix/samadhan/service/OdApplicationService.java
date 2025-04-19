@@ -100,6 +100,7 @@ public class OdApplicationService {
                 parentApplication.setChildApplicationUuid(odApplication.getUuid());
                 odApplicationRepository.save(parentApplication);
                 odApplication.setParentApplicationUuid(parentApplication.getUuid());
+                odApplication.setCategory(parentApplication.getCategory());
             }
         }
         odApplicationRepository.save(odApplication);
