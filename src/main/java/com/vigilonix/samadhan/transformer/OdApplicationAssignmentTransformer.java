@@ -32,6 +32,7 @@ public class OdApplicationAssignmentTransformer implements Transformer<ODApplica
                                 .contains(odApplicationAssignment.getGeoHierarchyNodeUuid()))
                         .enquiryUserName(odApplicationAssignmentTransformationRequest.getEnquiryUser()==null? null : odApplicationAssignmentTransformationRequest.getEnquiryUser().getName())
                         .enquiryPhoneNumber(odApplicationAssignmentTransformationRequest.getEnquiryUser()==null? null : odApplicationAssignmentTransformationRequest.getEnquiryUser().getPhoneNumber())
+                        .childApplicationUuid(odApplicationAssignment.getChildApplicationUuid())
                         .build();
     }
 }

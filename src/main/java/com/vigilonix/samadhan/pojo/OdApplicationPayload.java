@@ -44,5 +44,5 @@ public class OdApplicationPayload {
     private ApplicationPriority applicationPriority;
     private String comment;
     private UUID parentApplicationUuid;
-    private UUID childApplicationUuid;
+    private UUID parentAssignmentUuid;
 }

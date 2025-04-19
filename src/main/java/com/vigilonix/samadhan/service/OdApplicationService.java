@@ -95,12 +95,14 @@ public class OdApplicationService {
                 .comment(odApplicationPayload.getComment())
                 .build();
         if(odApplicationPayload.getParentApplicationUuid()!=null) {
-            OdApplication parentApplication = odApplicationRepository.findByUuid(odApplicationPayload.getParentApplicationUuid());
-            if(parentApplication!=null) {
-                parentApplication.setChildApplicationUuid(odApplication.getUuid());
-                odApplicationRepository.save(parentApplication);
-                odApplication.setParentApplicationUuid(parentApplication.getUuid());
-                odApplication.setCategory(parentApplication.getCategory());
+            OdApplicationAssignment parentAssignment = odApplicationAssignmentRepository.findByUuid(odApplicationPayload.getParentAssignmentUuid());
+            if(parentAssignment!=null) {
+                odApplication.setParentApplicationUuid(parentAssignment.getApplication().getUuid());
+                odApplication.setParentAssignmentUuid(parentAssignment.getUuid());
+                odApplication.setCategory(parentAssignment.getApplication().getCategory());
+
+                parentAssignment.setChildApplicationUuid(odApplication.getUuid());
+                odApplicationAssignmentRepository.save(parentAssignment);
             }
         }
         odApplicationRepository.save(odApplication);

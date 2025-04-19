@@ -60,5 +60,5 @@ public class OdApplication {
     @Column
     private UUID parentApplicationUuid;
     @Column
-    private UUID childApplicationUuid;
+    private UUID parentAssignmentUuid;
 }

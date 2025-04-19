@@ -31,4 +31,5 @@ public class OdAssignmentPayload {
     private Boolean hasAuthorityOnEnquiryStatus;
     private String enquiryUserName;
     private String enquiryPhoneNumber;
+    private UUID childApplicationUuid;
 }

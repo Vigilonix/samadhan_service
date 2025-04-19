@@ -49,4 +49,6 @@ public class OdApplicationAssignment {
     @ManyToOne
     private User actor;
 
+    @Column
+    private UUID childApplicationUuid;
 }

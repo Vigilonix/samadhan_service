@@ -54,7 +54,7 @@ public class OdApplicationTransformer implements Transformer<ODApplicationTransf
                 .applicationPriority(odApplication.getPriority())
                 .comment(odApplication.getComment())
                 .parentApplicationUuid(odApplication.getParentApplicationUuid())
-                .childApplicationUuid(odApplication.getChildApplicationUuid())
+                .parentAssignmentUuid(odApplication.getParentAssignmentUuid())
                 .build();
     }
 }
