@@ -3,6 +3,7 @@ package com.vigilonix.samadhan.service;
 import com.vigilonix.samadhan.aop.LogPayload;
 import com.vigilonix.samadhan.aop.Timed;
 import com.vigilonix.samadhan.enums.*;
+import com.vigilonix.samadhan.exception.ValidationRuntimeException;
 import com.vigilonix.samadhan.pojo.OdApplicationFilterRequest;
 import com.vigilonix.samadhan.model.OdApplication;
 import com.vigilonix.samadhan.model.OdApplicationAssignment;
@@ -33,7 +34,6 @@ import java.util.stream.Collectors;
 public class OdApplicationService {
     private final OdApplicationRepository odApplicationRepository;
     private final OdApplicationTransformer odApplicationTransformer;
-    private final UserRepository userRepository;
     private final UserRepositoryCustom userRepositoryCustom;
     private final GeoHierarchyService geoHierarchyService;
     private final ValidationService<ODApplicationValidationPayload> odUpdateValidationService;
@@ -47,13 +47,11 @@ public class OdApplicationService {
     public OdApplicationService(
             OdApplicationRepository odApplicationRepository,
             OdApplicationTransformer odApplicationTransformer,
-            UserRepository userRepository,
             UserRepositoryCustom userRepositoryCustom, GeoHierarchyService geoHierarchyService,
             @Qualifier("update") ValidationService<ODApplicationValidationPayload> odUpdateValidationService,
             @Qualifier("create") ValidationService<ODApplicationValidationPayload> odCreateValidationService, NotificationService notificationService, OdApplicationAssignmentRepository odApplicationAssignmentRepository, OdApplicationAssignmentHistoryRepository odApplicationAssignmentHistoryRepository, OdApplicationAssignmentTransformer odApplicationAssignmentTransformer) {
         this.odApplicationRepository = odApplicationRepository;
         this.odApplicationTransformer = odApplicationTransformer;
-        this.userRepository = userRepository;
         this.userRepositoryCustom = userRepositoryCustom;
         this.geoHierarchyService = geoHierarchyService;
         this.odUpdateValidationService = odUpdateValidationService;
@@ -72,39 +70,50 @@ public class OdApplicationService {
                 .geoHierarchyNodeUuids(geoHierarchyNodeUuids)
                 .build());
 
+        UUID applicationUuid = UUID.randomUUID();
         Long epoch = System.currentTimeMillis();
-        GeoHierarchyNode geoHierarchyNode = resolveGeoHierarchyNode(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
-        Optional<Integer> maxBucketNo = odApplicationRepository.findMaxReceiptBucketNumberForCurrentMonth(geoHierarchyNode.getUuid());
-        int bucketNo = maxBucketNo.map(integer -> integer + 1).orElse(1);
 
-        OdApplication odApplication = OdApplication.builder()
-                .uuid(UUID.randomUUID())
+
+        OdApplication.OdApplicationBuilder odApplicationBuilder = OdApplication.builder()
+                .uuid(applicationUuid)
                 .od(principal)
                 .applicantName(odApplicationPayload.getApplicantName())
                 .applicationFilePath(odApplicationPayload.getApplicationFilePath())
                 .applicantPhoneNumber(odApplicationPayload.getApplicantPhoneNumber())
-                .receiptNo(generateReceiptNumber(geoHierarchyNode, bucketNo))
-                .receiptBucketNumber(bucketNo)
-                .geoHierarchyNodeUuid(geoHierarchyNode.getUuid())
                 .createdAt(epoch)
                 .modifiedAt(epoch)
                 .status(OdApplicationStatus.OPEN)
                 .category(odApplicationPayload.getCategory())
                 .dueEpoch(odApplicationPayload.getDueEpoch())
-                .priority(odApplicationPayload.getApplicationPriority())
-                .comment(odApplicationPayload.getComment())
-                .build();
-        if(odApplicationPayload.getParentApplicationUuid()!=null) {
+                .category(odApplicationPayload.getCategory())
+                .priority(odApplicationPayload.getApplicationPriority()==null?ApplicationPriority.MEDIUM:odApplicationPayload.getApplicationPriority())
+                .comment(odApplicationPayload.getComment());
+
+        GeoHierarchyNode geoHierarchyNode = resolveGeoHierarchyNode(principal.getPostGeoHierarchyNodeUuidMap(), geoHierarchyNodeUuids);
+
+        if(odApplicationPayload.getParentAssignmentUuid()!=null) {
             OdApplicationAssignment parentAssignment = odApplicationAssignmentRepository.findByUuid(odApplicationPayload.getParentAssignmentUuid());
             if(parentAssignment!=null) {
-                odApplication.setParentApplicationUuid(parentAssignment.getApplication().getUuid());
-                odApplication.setParentAssignmentUuid(parentAssignment.getUuid());
-                odApplication.setCategory(parentAssignment.getApplication().getCategory());
+                odApplicationBuilder.parentApplicationUuid(parentAssignment.getApplication().getUuid())
+                .parentAssignmentUuid(parentAssignment.getUuid())
+                .priority(parentAssignment.getApplication().getPriority())
+                .category(parentAssignment.getApplication().getCategory());
 
-                parentAssignment.setChildApplicationUuid(odApplication.getUuid());
+                parentAssignment.setChildApplicationUuid(applicationUuid);
                 odApplicationAssignmentRepository.save(parentAssignment);
+            } else {
+                throw new ValidationRuntimeException(Collections.singletonList(ValidationErrorEnum.INVALID_ID));
             }
         }
+
+        Optional<Integer> maxBucketNo = odApplicationRepository.findMaxReceiptBucketNumberForCurrentMonth(geoHierarchyNode.getUuid());
+        int bucketNo = maxBucketNo.map(integer -> integer + 1).orElse(1);
+
+        OdApplication odApplication = odApplicationBuilder
+                .geoHierarchyNodeUuid(geoHierarchyNode.getUuid())
+                .receiptNo(generateReceiptNumber(geoHierarchyNode, bucketNo))
+                .receiptBucketNumber(bucketNo)
+                .build();
         odApplicationRepository.save(odApplication);
         notificationService.sendNotification(odApplication);
         return odApplicationTransformer.transform(ODApplicationTransformationRequest.builder().odApplication(odApplication).principalUser(principal).build());
@@ -471,31 +480,31 @@ public class OdApplicationService {
                     .countByOdAndGeoHierarchyNodeUuidIn(principal, geoNodes);
         }
         else if(ApplicationFilterRequestStatus.ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
-                    return odApplicationRepository
-                                    .countByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+            return odApplicationRepository
+                    .countByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.PENDING_ENQUIRY.equals(odApplicationFilterRequest.getStatus())) {
-                    return odApplicationRepository
-                                    .countByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+            return odApplicationRepository
+                    .countByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.REVIEW.equals(odApplicationFilterRequest.getStatus())) {
-                    return odApplicationRepository
-                                    .countByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW, searchKeyword, filterGeoNodes);
+            return odApplicationRepository
+                    .countByCategoryInAndAssignmentStatusAndGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.REVIEW, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.PENDING_REVIEW.equals(odApplicationFilterRequest.getStatus())) {
-                    return odApplicationRepository
-                                    .countByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
+            return odApplicationRepository
+                    .countByCategoryInAndAssignmentStatusAndAssignmentGeoHierarchyNodeUuidIn(categories, geoNodes, OdApplicationStatus.ENQUIRY, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.OPEN.equals(odApplicationFilterRequest.getStatus())) {
-                    return odApplicationRepository
-                                    .countByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes, searchKeyword, filterGeoNodes);
+            return odApplicationRepository
+                    .countByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.OPEN, categories, geoNodes, searchKeyword, filterGeoNodes);
         }
         else if(ApplicationFilterRequestStatus.CLOSED.equals(odApplicationFilterRequest.getStatus())) {
-                    return odApplicationRepository
-                                    .countByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes, searchKeyword, filterGeoNodes);
+            return odApplicationRepository
+                    .countByStatusAndCategoryInAndGeoHierarchyNodeUuidIn(OdApplicationStatus.CLOSED, categories, geoNodes, searchKeyword, filterGeoNodes);
         }else if(ApplicationFilterRequestStatus.ALL.equals(odApplicationFilterRequest.getStatus())) {
-                    return odApplicationRepository
-                                    .countByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes, searchKeyword, filterGeoNodes);
+            return odApplicationRepository
+                    .countByCategoryInAndGeoHierarchyNodeUuidIn(categories, geoNodes, searchKeyword, filterGeoNodes);
         }
         return 0;
     }

@@ -159,7 +159,7 @@ public class BeanConfig {
                                                                                                                              ApplicantApplicationCreationWhatasappDocumentReplyTemplateTransformer applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer,
                                                                                                                              ApplicationFirestoreStateChangeSSETransformer applicationFirestoreStateChangeSSETransformer) {
         Map<OdApplicationStatus, List<Transformer<OdApplication, NotificationPayload>>> templateTransformerMap = new HashMap<>();
-        templateTransformerMap.put(OdApplicationStatus.OPEN, Arrays.asList(applicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer, applicantApplicationCreationWhatasappDocumentReplyTemplateTransformer, applicationFirestoreStateChangeSSETransformer));
+        templateTransformerMap.put(OdApplicationStatus.OPEN, Arrays.asList(applicationPendingGeoFenceOwnerFirebaseCloudMessageTransformer, applicationFirestoreStateChangeSSETransformer));
         templateTransformerMap.put(OdApplicationStatus.ENQUIRY,  Arrays.asList(applicationFirestoreStateChangeSSETransformer));
         templateTransformerMap.put(OdApplicationStatus.REVIEW,  Arrays.asList(applicationFirestoreStateChangeSSETransformer));
         templateTransformerMap.put(OdApplicationStatus.CLOSED,  Arrays.asList(applicantApplicationClosedWhatasappDocumentTemplateTransformer, applicationFirestoreStateChangeSSETransformer));
