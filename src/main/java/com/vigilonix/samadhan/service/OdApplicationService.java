@@ -99,6 +99,7 @@ public class OdApplicationService {
                 .priority(parentAssignment.getApplication().getPriority())
                 .category(parentAssignment.getApplication().getCategory());
 
+                geoHierarchyNode = geoHierarchyService.getNodeById(parentAssignment.getGeoHierarchyNodeUuid());
                 parentAssignment.setChildApplicationUuid(applicationUuid);
                 odApplicationAssignmentRepository.save(parentAssignment);
             } else {
