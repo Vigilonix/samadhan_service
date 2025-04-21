@@ -96,6 +96,14 @@ public class OdApplicationService {
             if(parentAssignment!=null) {
                 odApplicationBuilder.parentApplicationUuid(parentAssignment.getApplication().getUuid())
                 .parentAssignmentUuid(parentAssignment.getUuid())
+                .od(principal)
+                .applicantName(parentAssignment.getApplication().getApplicantName())
+                .applicationFilePath(parentAssignment.getApplication().getApplicationFilePath())
+                .applicantPhoneNumber(parentAssignment.getApplication().getApplicantPhoneNumber())
+                .createdAt(epoch)
+                .modifiedAt(epoch)
+                .status(OdApplicationStatus.OPEN)
+                .dueEpoch(parentAssignment.getApplication().getDueEpoch())
                 .priority(parentAssignment.getApplication().getPriority())
                 .category(parentAssignment.getApplication().getCategory());
 
