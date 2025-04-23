@@ -165,7 +165,7 @@ public class OdApplicationService {
 //        if (OdApplicationStatus.REVIEW.equals(odApplication.getStatus()) && OdApplicationStatus.ENQUIRY.equals(odApplicationPayload.getStatus())) {
 //            odApplication.setStatus(OdApplicationStatus.ENQUIRY);
 //        }
-        if (OdApplicationStatus.ENQUIRY.equals(odApplication.getStatus()) && OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
+        if (OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(OdApplicationStatus.CLOSED);
         }
 
