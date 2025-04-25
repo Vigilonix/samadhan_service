@@ -167,6 +167,7 @@ public class OdApplicationService {
 //        }
         if (OdApplicationStatus.CLOSED.equals(odApplicationPayload.getStatus())) {
             odApplication.setStatus(OdApplicationStatus.CLOSED);
+            log.info("closing {}", odApplication);
         }
 
         odApplication.setModifiedAt(System.currentTimeMillis());
